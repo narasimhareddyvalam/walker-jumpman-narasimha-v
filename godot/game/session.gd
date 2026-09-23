@@ -3,7 +3,15 @@ extends Node2D
 const Player = preload("res://features/player/player.gd")
 const Hud = preload("res://ui/hud.gd")
 enum State { MENU, PLAYING, PAUSED, DYING, COMPLETE }
+## Ticks a crumbling ledge supports the player after first contact. Deliberately
+## generous: the section's difficulty is meant to come from the chain of jumps,
+## not from an unreadable timer.
+const CRUMBLE_TICKS: int = 36
+## Ticks of falling debris drawn after a ledge gives way.
+const DEBRIS_TICKS: int = 40
+enum Crumble { INTACT, SHAKING, COLLAPSED }
 var state: State = State.MENU
+var crumble_ledges: Array[Dictionary] = []
 var player: CharacterBody2D
 var camera: Camera2D
 var hud: Control
@@ -26,6 +34,8 @@ func _ready() -> void:
 		_add_solid(Rect2(entry[0], entry[1], entry[2], entry[3]))
 	_add_solid(Rect2(-32, 0, 32, 430))
 	_add_solid(Rect2(level.width, 0, 32, 430))
+	for entry in level.get("crumbling", []):
+		_add_crumble(Rect2(entry[0], entry[1], entry[2], entry[3]))
 	for entry in level.hazards:
 		hazard_areas.append(_add_area(Rect2(entry[0], entry[1], entry[2], entry[3]), 8, true))
 	var f: Array = level.finish
@@ -67,6 +77,53 @@ func _add_solid(rect: Rect2) -> void:
 	body.add_child(collision)
 	add_child(body)
 
+func _add_crumble(rect: Rect2) -> void:
+	# Same static body as any solid, plus the state needed to withdraw it.
+	var body := StaticBody2D.new()
+	body.position = rect.position + rect.size / 2
+	body.collision_layer = 1
+	body.collision_mask = 2
+	var shape := RectangleShape2D.new()
+	shape.size = rect.size
+	var collision := CollisionShape2D.new()
+	collision.shape = shape
+	body.add_child(collision)
+	add_child(body)
+	crumble_ledges.append({"rect": rect, "body": body, "shape": collision,
+		"state": Crumble.INTACT, "timer": 0, "debris": 0})
+
+func _player_standing_on(rect: Rect2) -> bool:
+	# Feet resting on this ledge's top surface, within the ledge's horizontal span.
+	if not player.is_on_floor():
+		return false
+	if absf(player.position.y - rect.position.y) > 3.0:
+		return false
+	return player.position.x + 9.0 > rect.position.x and player.position.x - 9.0 < rect.end.x
+
+func _update_crumble() -> void:
+	for ledge in crumble_ledges:
+		match int(ledge.state):
+			Crumble.INTACT:
+				if _player_standing_on(ledge.rect):
+					ledge.state = Crumble.SHAKING
+					ledge.timer = CRUMBLE_TICKS
+			Crumble.SHAKING:
+				ledge.timer -= 1
+				if ledge.timer <= 0:
+					ledge.state = Crumble.COLLAPSED
+					ledge.debris = 0
+					# Deferred: collision state cannot be mutated mid-query.
+					ledge.shape.set_deferred("disabled", true)
+			Crumble.COLLAPSED:
+				ledge.debris += 1
+
+func _reset_crumble() -> void:
+	for ledge in crumble_ledges:
+		ledge.state = Crumble.INTACT
+		ledge.timer = 0
+		ledge.debris = 0
+		ledge.shape.set_deferred("disabled", false)
+
 func _add_area(rect: Rect2, layer: int, spikes: bool) -> Area2D:
 	var area := Area2D.new()
 	area.position = rect.position
@@ -102,6 +159,7 @@ func restart_attempt() -> void:
 	# Area2D overlaps are physics-step snapshots. Discard pre-teleport contacts
 	# until the broadphase has observed the reset, preventing a phantom second death.
 	contact_settle_ticks = 2
+	_reset_crumble()
 	player.reset_at(Vector2(level.spawn[0], level.spawn[1]))
 	player.enabled = true
 	camera.position = Vector2(320, 180)
@@ -142,6 +200,7 @@ func _physics_process(delta: float) -> void:
 			restart_attempt()
 	elif state == State.PLAYING:
 		elapsed += delta
+		_update_crumble()
 		var fatal := player.position.y > float(level.fall_y)
 		death_reason = "Missed the landing" if fatal else "Watch the spikes"
 		for hazard in hazard_areas:
@@ -151,6 +210,9 @@ func _physics_process(delta: float) -> void:
 		else:
 			resolve_contacts(fatal, goal.overlaps_body(player))
 		camera.position.x = clampf(player.position.x + 100, 320, float(level.width) - 320)
+	# The starter drew the world once. Parallax scenery and collapsing ledges are
+	# both camera- and time-dependent, so the world now redraws with the HUD.
+	queue_redraw()
 	if is_instance_valid(hud):
 		hud.queue_redraw()
 
