@@ -10,8 +10,14 @@ const CRUMBLE_TICKS: int = 36
 ## Ticks of falling debris drawn after a ledge gives way.
 const DEBRIS_TICKS: int = 40
 enum Crumble { INTACT, SHAKING, COLLAPSED }
+## Ticks a single Feather charge holds gravity inverted before it snaps back.
+const REVERSAL_TICKS: int = 180
 var state: State = State.MENU
 var crumble_ledges: Array[Dictionary] = []
+var feathers: Array[Dictionary] = []
+var feather_charges: int = 0
+var reversal_ticks: int = 0
+var test_feather_pressed: bool = false
 var player: CharacterBody2D
 var camera: Camera2D
 var hud: Control
@@ -36,6 +42,8 @@ func _ready() -> void:
 	_add_solid(Rect2(level.width, 0, 32, 430))
 	for entry in level.get("crumbling", []):
 		_add_crumble(Rect2(entry[0], entry[1], entry[2], entry[3]))
+	for entry in level.get("feathers", []):
+		feathers.append({"pos": Vector2(entry[0], entry[1]), "charges": int(entry[2]), "taken": false})
 	for entry in level.hazards:
 		hazard_areas.append(_add_area(Rect2(entry[0], entry[1], entry[2], entry[3]), 8, true))
 	var f: Array = level.finish
@@ -55,7 +63,9 @@ func _ready() -> void:
 	queue_redraw()
 
 func _setup_input() -> void:
-	var actions := {"move_left": [KEY_A, KEY_LEFT], "move_right": [KEY_D, KEY_RIGHT], "jump": [KEY_SPACE], "pause": [KEY_ESCAPE, KEY_P], "restart": [KEY_R], "confirm": [KEY_ENTER], "menu": [KEY_M]}
+	# "feather" is the one added control. Move, jump, retry, pause, confirm and
+	# menu keep the starter's bindings exactly.
+	var actions := {"move_left": [KEY_A, KEY_LEFT], "move_right": [KEY_D, KEY_RIGHT], "jump": [KEY_SPACE], "pause": [KEY_ESCAPE, KEY_P], "restart": [KEY_R], "confirm": [KEY_ENTER], "menu": [KEY_M], "feather": [KEY_F, KEY_SHIFT]}
 	for action in actions:
 		if InputMap.has_action(action):
 			continue
@@ -117,6 +127,36 @@ func _update_crumble() -> void:
 			Crumble.COLLAPSED:
 				ledge.debris += 1
 
+func use_feather() -> void:
+	if reversal_ticks > 0:
+		# Cancelling early costs the charge anyway. Choosing the moment to flip
+		# back is the skill; a refund would make holding it strictly better.
+		restore_gravity()
+	elif feather_charges > 0:
+		feather_charges -= 1
+		reversal_ticks = REVERSAL_TICKS
+		player.gravity_sign = -1.0
+
+func restore_gravity() -> void:
+	reversal_ticks = 0
+	if is_instance_valid(player):
+		player.gravity_sign = 1.0
+
+func _update_feathers() -> void:
+	var body := Rect2(player.position.x - 9.0, player.position.y - 28.0, 18.0, 28.0)
+	for f in feathers:
+		if f.taken:
+			continue
+		if body.intersects(Rect2(f.pos.x - 9.0, f.pos.y - 9.0, 18.0, 18.0)):
+			f.taken = true
+			feather_charges += int(f.charges)
+
+func _reset_feathers() -> void:
+	feather_charges = 0
+	restore_gravity()
+	for f in feathers:
+		f.taken = false
+
 func _reset_crumble() -> void:
 	for ledge in crumble_ledges:
 		ledge.state = Crumble.INTACT
@@ -160,6 +200,7 @@ func restart_attempt() -> void:
 	# until the broadphase has observed the reset, preventing a phantom second death.
 	contact_settle_ticks = 2
 	_reset_crumble()
+	_reset_feathers()
 	player.reset_at(Vector2(level.spawn[0], level.spawn[1]))
 	player.enabled = true
 	camera.position = Vector2(320, 180)
@@ -201,8 +242,25 @@ func _physics_process(delta: float) -> void:
 	elif state == State.PLAYING:
 		elapsed += delta
 		_update_crumble()
-		var fatal := player.position.y > float(level.fall_y)
-		death_reason = "Missed the landing" if fatal else "Watch the spikes"
+		_update_feathers()
+		var feather_pressed := Input.is_action_just_pressed("feather") or test_feather_pressed
+		test_feather_pressed = false
+		if feather_pressed:
+			use_feather()
+		if reversal_ticks > 0:
+			reversal_ticks -= 1
+			if reversal_ticks <= 0:
+				restore_gravity()
+		# Inverted gravity makes the sky lethal too: falling upward out of the
+		# level is exactly as fatal as falling into the pit.
+		var below := player.position.y > float(level.fall_y)
+		var above := player.position.y < float(level.get("sky_y", -400))
+		var fatal := below or above
+		death_reason = "Watch the spikes"
+		if above:
+			death_reason = "You fell into the sky"
+		elif below:
+			death_reason = "Missed the landing"
 		for hazard in hazard_areas:
 			fatal = fatal or hazard.overlaps_body(player)
 		if contact_settle_ticks > 0:
