@@ -9,6 +9,9 @@ var jump_request_tick: int = -1000
 var opportunity_consumed: bool = false
 var require_jump_release: bool = true
 var facing: float = 1.0
+## +1 normal, -1 while the Feather holds gravity inverted. A world state, not a
+## tuning value: nothing in tuning.gd is modified when this flips.
+var gravity_sign: float = 1.0
 var jumps: int = 0
 var test_control: bool = false
 var test_axis: float = 0.0
@@ -36,6 +39,10 @@ func reset_at(spawn: Vector2) -> void:
 	require_jump_release = true
 	test_jump_pressed = false
 	jumps = 0
+	# Gravity always returns to normal on a retry, so no attempt inherits the
+	# previous one's world state.
+	gravity_sign = 1.0
+	up_direction = Vector2.UP
 	queue_redraw()
 
 func _physics_process(delta: float) -> void:
@@ -48,7 +55,10 @@ func _physics_process(delta: float) -> void:
 	test_jump_pressed = false
 	if not held:
 		require_jump_release = false
-	if is_on_floor() and velocity.y >= 0.0:
+	# "Falling" is whichever way gravity currently points, so the coyote window
+	# opens on descent in either orientation.
+	up_direction = Vector2(0.0, -gravity_sign)
+	if is_on_floor() and velocity.y * gravity_sign >= 0.0:
 		last_floor_tick = tick
 		opportunity_consumed = false
 	if pressed and not require_jump_release:
@@ -57,9 +67,15 @@ func _physics_process(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, axis * tuning.speed, rate * delta)
 	if not is_zero_approx(axis):
 		facing = signf(axis)
-	velocity.y = minf(velocity.y + tuning.gravity * delta, tuning.terminal_velocity)
+	# Only the direction of gravity changes. Every magnitude below is the
+	# unmodified value from tuning.gd: gravity 960, terminal 480, jump -320.
+	velocity.y += tuning.gravity * gravity_sign * delta
+	if gravity_sign > 0.0:
+		velocity.y = minf(velocity.y, tuning.terminal_velocity)
+	else:
+		velocity.y = maxf(velocity.y, -tuning.terminal_velocity)
 	if not opportunity_consumed and tick - last_floor_tick <= tuning.coyote_ticks and tick - jump_request_tick <= tuning.buffer_ticks:
-		velocity.y = tuning.jump_velocity
+		velocity.y = tuning.jump_velocity * gravity_sign
 		opportunity_consumed = true
 		jump_request_tick = -1000
 		jumps += 1
@@ -72,8 +88,14 @@ func _draw() -> void:
 	# Body geometry stays inside the unchanged 18x28 collider (x -9..9, y -28..0).
 	# Only the speed trail extends past it: a trailing soft element reads as
 	# non-solid, where an overhanging rigid body part would read as a bug.
+	# Inverted, the whole figure mirrors about the collider's centre line, so the
+	# drawing stays inside the same unchanged 18x28 box while reading upside down.
+	if gravity_sign < 0.0:
+		draw_set_transform(Vector2(0.0, -28.0), 0.0, Vector2(1.0, -1.0))
 	var ink := Color("25354a")
-	var amber := Color("ef875f")
+	# The trail reports gravity state: warm while normal, cold while inverted.
+	# This is the only readout of the Feather's effect; there is no UI for it.
+	var amber := Color("ef875f") if gravity_sign > 0.0 else Color("7fd8f0")
 	var pale := Color("fff9e9")
 	var speed_ratio: float = clampf(absf(velocity.x) / tuning.speed, 0.0, 1.0)
 	var grounded := is_on_floor()
