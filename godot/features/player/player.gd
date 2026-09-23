@@ -68,13 +68,50 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	# The Runner. Original vector drawing; no imported art.
+	# Body geometry stays inside the unchanged 18x28 collider (x -9..9, y -28..0).
+	# Only the speed trail extends past it: a trailing soft element reads as
+	# non-solid, where an overhanging rigid body part would read as a bug.
 	var ink := Color("25354a")
-	var blue := Color("287baf")
-	var stride := sin(float(tick) * 0.7) * 2.0 if is_on_floor() and absf(velocity.x) > 8 else 0.0
-	draw_rect(Rect2(-9, -27, 18, 24), ink)
-	draw_rect(Rect2(-7, -25, 14, 20), blue)
-	draw_rect(Rect2(-10, -18, 20, 4), Color("ef875f"))
-	draw_rect(Rect2(-6, -4, 5, 4 + stride), ink)
-	draw_rect(Rect2(2, -4, 5, 4 - stride), ink)
-	draw_rect(Rect2(1 if facing > 0 else -6, -24, 5, 5), Color("fff9e9"))
-	draw_rect(Rect2(4 if facing > 0 else -6, -23, 2, 3), ink)
+	var amber := Color("ef875f")
+	var pale := Color("fff9e9")
+	var speed_ratio: float = clampf(absf(velocity.x) / tuning.speed, 0.0, 1.0)
+	var grounded := is_on_floor()
+	var stride := sin(float(tick) * 0.7) * 3.0 if grounded and absf(velocity.x) > 8 else 0.0
+	var lean: float = facing * 2.0 * speed_ratio
+
+	# Speed trail: length reports velocity, so standing still visibly extinguishes
+	# the character and sprinting streams it. Drawn first so the body sits over it.
+	# One tapered polygon rather than segments, which read as detached slabs.
+	if speed_ratio > 0.05:
+		var trail_len: float = speed_ratio * 20.0
+		var droop: float = clampf(-velocity.y * 0.018, -4.0, 4.0)
+		var upper := PackedVector2Array()
+		var lower := PackedVector2Array()
+		for i in range(6):
+			var t: float = float(i) / 5.0
+			var px: float = -facing * (4.0 + trail_len * t)
+			var py: float = -14.0 + droop * t + sin(float(tick) * 0.45 - t * 1.6) * 1.1 * speed_ratio
+			var half: float = lerpf(3.2, 0.3, t)
+			upper.append(Vector2(px, py - half))
+			lower.insert(0, Vector2(px, py + half))
+		upper.append_array(lower)
+		draw_colored_polygon(upper, Color(amber.r, amber.g, amber.b, 0.72))
+
+	# Legs: the raised foot lifts off the ground rather than sinking through it.
+	draw_rect(Rect2(-6.0 + facing, -5.0, 4.0, 5.0 - maxf(stride, 0.0)), ink)
+	draw_rect(Rect2(2.0 + facing, -5.0, 4.0, 5.0 - maxf(-stride, 0.0)), ink)
+
+	# Forward-leaning parallelogram torso: reads as momentum even in a still frame.
+	# Every x is mirrored through `facing` so the lean and sash flip with the turn.
+	var tilt: float = 2.0 * speed_ratio
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(facing * (-5.0 + tilt), -20.0), Vector2(facing * (5.0 + tilt), -20.0),
+		Vector2(facing * 6.0, -5.0), Vector2(facing * -4.0, -5.0)]), ink)
+	draw_line(Vector2(facing * (-3.0 + tilt), -15.0), Vector2(facing * 5.0, -9.0), amber, 2.0)
+
+	# Rounded head breaks the starter's all-rectangle silhouette.
+	var head := Vector2(facing * 2.0 + lean * 0.5, -23.0)
+	draw_circle(head, 5.0, ink)
+	draw_circle(head + Vector2(facing * 2.0, -0.5), 2.2, amber)
+	draw_circle(head + Vector2(facing * 2.6, -1.1), 0.9, pale)
