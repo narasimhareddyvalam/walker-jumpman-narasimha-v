@@ -128,15 +128,77 @@ func run() -> void:
 	await fresh()
 	var route = Route.new()
 	var route_ticks := 0
+	# Landings added past the original section's x=960 boundary.
+	var new_landings: Array[Rect2] = []
+	for entry in game.level.solids:
+		if float(entry[0]) > 960.0:
+			new_landings.append(Rect2(entry[0], entry[1], entry[2], entry[3]))
+	for entry in game.level.crumbling:
+		new_landings.append(Rect2(entry[0], entry[1], entry[2], entry[3]))
+	var stood_on := {}
 	while game.state == Game.State.PLAYING and route_ticks < 900:
 		route.step(game.player)
 		await steps(1)
 		route_ticks += 1
+		if game.player.is_on_floor():
+			for i in range(new_landings.size()):
+				var lr: Rect2 = new_landings[i]
+				if absf(game.player.position.y - lr.position.y) < 3.0 \
+					and game.player.position.x + 9.0 > lr.position.x \
+					and game.player.position.x - 9.0 < lr.end.x:
+					stood_on[i] = true
 	check("complete-real-route", game.state == Game.State.COMPLETE and game.deaths == 0, {"state":game.state,"deaths":game.deaths,"ticks":route_ticks,"position":str(game.player.position),"jump_marks_used":route.next_jump})
+	# The assignment requires at least two new landings reached by jumping.
+	check("route-reaches-new-landings", stood_on.size() >= 2,
+		{"new_landings_available": new_landings.size(), "landed_on": stood_on.size()})
+	check("finish-past-original-section", float(game.level.finish[0]) > 960.0 and float(game.level.width) > 960.0,
+		{"finish_x": game.level.finish[0], "width": game.level.width})
 	game.start_session()
 	game.start_session()
 	check("replay-idempotent", game.state == Game.State.PLAYING and game.deaths == 0 and game.player.jumps == 0, {"state":game.state,"deaths":game.deaths,"jumps":game.player.jumps})
-	var report := {"scope":"First Steps slice; not full GDD acceptance or human playtesting", "engine":Engine.get_version_info().string,"created_at":Time.get_datetime_string_from_system(true),"results":results,"failures":failures}
+	# --- 03 / DON'T STOP: the crumbling-ledge mechanic ---
+	await fresh()
+	game.player.position = Vector2(1050, 290)
+	game.player.velocity = Vector2.ZERO
+	# Two ticks to clear the is_on_floor() left over from the spawn platform,
+	# otherwise the wait below returns before the player has fallen at all.
+	await steps(2)
+	var land_ticks := 0
+	while not game.player.is_on_floor() and land_ticks < 30:
+		await steps(1)
+		land_ticks += 1
+	await steps(1)
+	var ledge: Dictionary = game.crumble_ledges[0]
+	check("crumble-supports-then-triggers",
+		game.player.is_on_floor() and int(ledge.state) == Game.Crumble.SHAKING,
+		{"on_floor": game.player.is_on_floor(), "state": int(ledge.state), "timer": int(ledge.timer)})
+	await steps(Game.CRUMBLE_TICKS + 3)
+	check("crumble-collapses-after-timer",
+		int(ledge.state) == Game.Crumble.COLLAPSED and not game.player.is_on_floor(),
+		{"state": int(ledge.state), "on_floor": game.player.is_on_floor(), "y": game.player.position.y})
+	var stall_deaths: int = game.deaths
+	var stall_ticks := 0
+	while game.deaths == stall_deaths and stall_ticks < 150:
+		await steps(1)
+		stall_ticks += 1
+	check("crumble-stall-is-fatal", game.deaths == stall_deaths + 1,
+		{"deaths": game.deaths, "ticks_to_death": stall_ticks})
+	var back_ticks := 0
+	while game.state != Game.State.PLAYING and back_ticks < 90:
+		await steps(1)
+		back_ticks += 1
+	check("crumble-resets-on-retry",
+		int(game.crumble_ledges[0].state) == Game.Crumble.INTACT and not game.crumble_ledges[0].shape.disabled,
+		{"state": int(game.crumble_ledges[0].state), "shape_disabled": game.crumble_ledges[0].shape.disabled})
+	# A ledge untouched this attempt must still be solid: collapse is caused by
+	# contact, not by elapsed time.
+	await fresh()
+	await steps(Game.CRUMBLE_TICKS + 10)
+	check("crumble-untouched-stays-solid",
+		int(game.crumble_ledges[2].state) == Game.Crumble.INTACT,
+		{"state": int(game.crumble_ledges[2].state)})
+
+	var report := {"scope":"First Steps slice plus the 03 / DON'T STOP extension; not full GDD acceptance or human playtesting", "engine":Engine.get_version_info().string,"created_at":Time.get_datetime_string_from_system(true),"results":results,"failures":failures}
 	var out := ProjectSettings.globalize_path("res://../evidence")
 	DirAccess.make_dir_recursive_absolute(out)
 	var file := FileAccess.open(out + "/mechanics-" + str(Time.get_unix_time_from_system()) + ".json", FileAccess.WRITE)
