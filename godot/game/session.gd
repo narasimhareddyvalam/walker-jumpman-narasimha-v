@@ -244,27 +244,83 @@ func _draw() -> void:
 	var font := ThemeDB.fallback_font
 	var ink := Color("25354a")
 	# All visual assets are original Godot vector drawing, not recovered art.
-	draw_rect(Rect2(-400, -200, 1800, 900), Color("f6f3ec"))
-	for x in range(0, 961, 32):
+	# Every extent below is derived from level data; the starter hard-coded 960.
+	var w: float = float(level.width)
+	draw_rect(Rect2(-400, -200, w + 800, 900), Color("f6f3ec"))
+	var cam_x: float = camera.position.x if is_instance_valid(camera) else 320.0
+	_draw_ridges(cam_x, 0.70, Color("edefea"), 148.0, 260.0)
+	_draw_ridges(cam_x, 0.42, Color("e4e8e3"), 180.0, 370.0)
+	for x in range(0, int(w) + 1, 32):
 		draw_line(Vector2(x, 80), Vector2(x, 320), Color("e7e5df"), 1)
 	for y in range(96, 321, 32):
-		draw_line(Vector2(0, y), Vector2(960, y), Color("e7e5df"), 1)
-	for x in [100, 470, 770]:
-		draw_colored_polygon(PackedVector2Array([Vector2(x-90,320),Vector2(x+50,180),Vector2(x+190,320)]), Color("e4e8e3"))
+		draw_line(Vector2(0, y), Vector2(w, y), Color("e7e5df"), 1)
 	for entry in level.solids:
 		var r := Rect2(entry[0], entry[1], entry[2], entry[3])
 		draw_rect(r, ink)
 		draw_rect(Rect2(r.position, Vector2(r.size.x, 4)), Color("438e7d"))
 		for x in range(int(r.position.x)+12, int(r.end.x), 24):
 			draw_line(Vector2(x, r.position.y+12), Vector2(x+7, r.position.y+19), Color("405166"), 1)
+	_draw_crumble(ink)
+	# Spikes are drawn from the hazard's own rect. The starter drew every spike at
+	# a literal y=320/304 while _add_area built the trigger from the real rect, so
+	# any raised hazard rendered detached from the thing that actually kills you.
 	for entry in level.hazards:
+		var hr := Rect2(entry[0], entry[1], entry[2], entry[3])
 		for i in range(3):
-			var x: float = entry[0] + i*8
-			draw_colored_polygon(PackedVector2Array([Vector2(x,320),Vector2(x+4,304),Vector2(x+8,320)]), Color("d24e42"))
-	var finish_x: float = level.finish[0]
-	draw_line(Vector2(finish_x+3, 320), Vector2(finish_x+3, 250), ink, 3)
-	draw_colored_polygon(PackedVector2Array([Vector2(finish_x+5,250),Vector2(finish_x+32,260),Vector2(finish_x+5,274)]), Color("287c68"))
+			var x: float = hr.position.x + float(i) * hr.size.x / 3.0
+			draw_colored_polygon(PackedVector2Array([
+				Vector2(x, hr.end.y), Vector2(x + 4, hr.position.y), Vector2(x + 8, hr.end.y)]), Color("d24e42"))
+	# The finish pole likewise follows its own trigger rect instead of the ground.
+	var fr := Rect2(level.finish[0], level.finish[1], level.finish[2], level.finish[3])
+	draw_line(Vector2(fr.position.x + 3, fr.end.y), Vector2(fr.position.x + 3, fr.position.y - 14), ink, 3)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(fr.position.x + 5, fr.position.y - 14),
+		Vector2(fr.position.x + 32, fr.position.y - 4),
+		Vector2(fr.position.x + 5, fr.position.y + 10)]), Color("287c68"))
 	draw_string(font, Vector2(33, 251), "01 / GET MOVING", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, ink)
 	draw_string(font, Vector2(33, 273), "Read the landing. Then jump.", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, ink)
 	draw_string(font, Vector2(474, 227), "02 / MIND THE GAP", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, ink)
-	draw_string(font, Vector2(878, 225), "FINISH", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, ink)
+	draw_string(font, Vector2(975, 202), "03 / DON'T STOP", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, ink)
+	draw_string(font, Vector2(975, 222), "Cracked ledges do not wait.", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, ink)
+	draw_string(font, Vector2(1396, 196), "HIGH / FAST", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("a2542f"))
+	draw_string(font, Vector2(1386, 308), "LOW / SAFE", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("2f6a5c"))
+	draw_string(font, Vector2(fr.position.x - 48, fr.position.y - 22), "FINISH", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, ink)
+
+func _draw_ridges(cam_x: float, depth: float, tint: Color, peak_y: float, spacing: float) -> void:
+	# A layer drawn at base + camera.x * depth scrolls on screen at (1 - depth),
+	# so a larger depth reads as further away.
+	var shift: float = cam_x * depth
+	var lo: int = int(floor((cam_x - 520.0 - shift) / spacing))
+	var hi: int = int(ceil((cam_x + 520.0 - shift) / spacing))
+	for i in range(lo, hi + 1):
+		var x: float = float(i) * spacing + shift
+		draw_colored_polygon(PackedVector2Array([
+			Vector2(x - 150.0, 320.0), Vector2(x, peak_y), Vector2(x + 150.0, 320.0)]), tint)
+
+func _draw_crumble(ink: Color) -> void:
+	for ledge in crumble_ledges:
+		var r: Rect2 = ledge.rect
+		if int(ledge.state) == Crumble.COLLAPSED:
+			var f: float = float(ledge.debris)
+			if f >= float(DEBRIS_TICKS):
+				continue
+			for i in range(3):
+				var cw: float = r.size.x / 3.0
+				draw_rect(Rect2(r.position.x + float(i) * cw + (float(i) - 1.0) * f * 0.35,
+					r.position.y + f * f * 0.11, cw - 2.0, r.size.y),
+					Color(0.145, 0.208, 0.290, 1.0 - f / float(DEBRIS_TICKS)))
+			continue
+		var shake: float = sin(float(ledge.timer) * 1.1) * 1.6 if int(ledge.state) == Crumble.SHAKING else 0.0
+		var dr := Rect2(r.position + Vector2(shake, 0.0), r.size)
+		draw_rect(dr, ink)
+		# A broken cap, where solid ground gets an unbroken one, marks these as
+		# unreliable before the player ever touches them.
+		var accent := Color("438e7d")
+		if int(ledge.state) == Crumble.SHAKING:
+			accent = Color("d24e42").lerp(Color("ef875f"), float(ledge.timer) / float(CRUMBLE_TICKS))
+		var seg: float = dr.size.x / 5.0
+		for i in range(3):
+			draw_rect(Rect2(dr.position.x + float(i) * seg * 2.0, dr.position.y, seg, 3.0), accent)
+		for i in range(2):
+			var cx: float = dr.position.x + dr.size.x * (0.34 + 0.32 * float(i))
+			draw_line(Vector2(cx, dr.position.y + 3.0), Vector2(cx + 2.0, dr.end.y), Color("405166"), 1.0)
