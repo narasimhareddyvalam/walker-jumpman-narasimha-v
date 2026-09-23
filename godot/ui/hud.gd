@@ -21,7 +21,11 @@ func _draw() -> void:
 	text_at("FIRST STEPS", Vector2(497,27), 14)
 	text_at("A/D or arrows: move     Space: jump     R: retry     Esc: pause", Vector2(22,50), 13)
 	draw_rect(Rect2(22,63,596,3), Color("daddd6"))
-	var progress: float = clampf((game.player.position.x-64)/852, 0, 1)
+	# Spawn-to-finish span read from level data; the starter divided by a literal
+	# 852 (its own 916 - 64), which pins the bar at 100% on a longer level.
+	var origin: float = float(game.level.spawn[0])
+	var span: float = maxf(float(game.level.finish[0]) - origin, 1.0)
+	var progress: float = clampf((game.player.position.x - origin) / span, 0, 1)
 	draw_rect(Rect2(22,63,596*progress,3), Color("287c68"))
 	draw_rect(Rect2(0,335,640,25), Color("f6f3ec"))
 	text_at("No lives. Just another try.", Vector2(22,353), 13)
