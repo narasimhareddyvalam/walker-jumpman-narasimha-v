@@ -136,8 +136,11 @@ func run() -> void:
 	for entry in game.level.crumbling:
 		new_landings.append(Rect2(entry[0], entry[1], entry[2], entry[3]))
 	var stood_on := {}
-	while game.state == Game.State.PLAYING and route_ticks < 900:
-		route.step(game.player)
+	# Budget raised from the starter's 900 because the level is now roughly three
+	# times longer, not because the route became slower. The observed figure is
+	# reported below so the margin stays visible.
+	while game.state == Game.State.PLAYING and route_ticks < 2400:
+		route.step(game.player, game)
 		await steps(1)
 		route_ticks += 1
 		if game.player.is_on_floor():
@@ -198,7 +201,112 @@ func run() -> void:
 		int(game.crumble_ledges[2].state) == Game.Crumble.INTACT,
 		{"state": int(game.crumble_ledges[2].state)})
 
-	var report := {"scope":"First Steps slice plus the 03 / DON'T STOP extension; not full GDD acceptance or human playtesting", "engine":Engine.get_version_info().string,"created_at":Time.get_datetime_string_from_system(true),"results":results,"failures":failures}
+	# --- The Feather: gravity reversal ---
+	await fresh()
+	check("feather-starts-empty", game.feather_charges == 0 and game.player.gravity_sign > 0.0,
+		{"charges": game.feather_charges, "gravity_sign": game.player.gravity_sign})
+	game.test_feather_pressed = true
+	await steps(2)
+	check("feather-without-charge-does-nothing",
+		game.player.gravity_sign > 0.0 and game.feather_charges == 0,
+		{"gravity_sign": game.player.gravity_sign, "charges": game.feather_charges})
+
+	# Walking into a Feather grants its charges exactly once.
+	await fresh()
+	game.player.position = Vector2(game.level.feathers[0][0], game.level.feathers[0][1] + 20)
+	await steps(3)
+	var granted: int = game.feather_charges
+	await steps(5)
+	check("feather-grants-charges-once", granted == int(game.level.feathers[0][2]) and game.feather_charges == granted,
+		{"granted": granted, "after": game.feather_charges})
+
+	# Spending a charge inverts gravity; the player then falls upward onto a ceiling.
+	await fresh()
+	game.player.position = Vector2(2100, 260)
+	game.player.velocity = Vector2.ZERO
+	game.feather_charges = 1
+	game.test_feather_pressed = true
+	await steps(2)
+	check("feather-inverts-and-spends",
+		game.player.gravity_sign < 0.0 and game.feather_charges == 0 and game.reversal_ticks > 0,
+		{"gravity_sign": game.player.gravity_sign, "charges": game.feather_charges})
+	var rise_ticks := 0
+	while not game.player.is_on_floor() and rise_ticks < 80:
+		await steps(1)
+		rise_ticks += 1
+	check("inverted-grounds-on-ceiling",
+		game.player.is_on_floor() and game.player.position.y < 230.0,
+		{"y": game.player.position.y, "ticks": rise_ticks})
+
+	# The jump keeps its magnitude when mirrored: tuning.gd is untouched and only
+	# the direction of gravity changed.
+	var base_y: float = game.player.position.y
+	game.player.require_jump_release = false
+	game.player.test_jump_pressed = true
+	var far: float = base_y
+	for i in range(26):
+		await steps(1)
+		far = maxf(far, game.player.position.y)
+	check("inverted-jump-matches-normal-rise", absf((far - base_y) - 56.0) < 2.0,
+		{"inverted_displacement": far - base_y, "normal_rise": 56.0})
+
+	# Cancelling early restores gravity and does not refund the charge.
+	await fresh()
+	game.player.position = Vector2(2100, 260)
+	game.feather_charges = 2
+	game.test_feather_pressed = true
+	await steps(2)
+	game.test_feather_pressed = true
+	await steps(2)
+	check("feather-cancel-restores-without-refund",
+		game.player.gravity_sign > 0.0 and game.feather_charges == 1 and game.reversal_ticks == 0,
+		{"gravity_sign": game.player.gravity_sign, "charges": game.feather_charges})
+
+	# Left alone, the reversal expires on its own.
+	await fresh()
+	game.player.position = Vector2(2100, 260)
+	game.feather_charges = 1
+	game.test_feather_pressed = true
+	await steps(Game.REVERSAL_TICKS + 4)
+	check("reversal-expires-on-its-own",
+		game.player.gravity_sign > 0.0 and game.reversal_ticks == 0,
+		{"gravity_sign": game.player.gravity_sign})
+
+	# Falling upward out of the level is as fatal as falling into the pit.
+	await fresh()
+	game.player.position = Vector2(2100, float(game.level.sky_y) - 14)
+	await steps(4)
+	check("sky-is-fatal", game.state == Game.State.DYING and game.death_reason == "You fell into the sky",
+		{"state": game.state, "reason": game.death_reason})
+
+	# A retry restores normal gravity, clears charges, and re-arms the Feathers.
+	await fresh()
+	game.feather_charges = 3
+	game.test_feather_pressed = true
+	await steps(2)
+	game.restart_attempt()
+	await steps(2)
+	check("retry-resets-gravity-and-charges",
+		game.player.gravity_sign > 0.0 and game.feather_charges == 0 and not game.feathers[0].taken,
+		{"gravity_sign": game.player.gravity_sign, "charges": game.feather_charges, "feather_taken": game.feathers[0].taken})
+
+	# The observatory cannot be entered without the Feather: a normal jump from
+	# the floor below never reaches the doorway.
+	await fresh()
+	game.player.position = Vector2(2950, 288)
+	await steps(3)
+	game.player.require_jump_release = false
+	game.player.test_jump_pressed = true
+	var reached := false
+	for i in range(50):
+		await steps(1)
+		if game.state == Game.State.COMPLETE:
+			reached = true
+			break
+	check("finish-unreachable-without-feather", not reached,
+		{"state": game.state, "highest_y": game.player.position.y})
+
+	var report := {"scope":"Chapter One: The Fall. Machine checks only; not human playtesting or full GDD acceptance", "engine":Engine.get_version_info().string,"created_at":Time.get_datetime_string_from_system(true),"results":results,"failures":failures}
 	var out := ProjectSettings.globalize_path("res://../evidence")
 	DirAccess.make_dir_recursive_absolute(out)
 	var file := FileAccess.open(out + "/mechanics-" + str(Time.get_unix_time_from_system()) + ".json", FileAccess.WRITE)
