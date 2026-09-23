@@ -142,3 +142,87 @@ player has been instead of where they are going.
 ## Revisions
 
 *(Appended as findings arrive. Nothing above this line is edited.)*
+
+### 2026-09-23 — after implementing the character and the extension
+
+**Measured jump envelope.** Before designing any geometry I added
+`godot/tests/probe_reach.gd`, which flies the real player through a full jump and
+reports reach per landing height. Peak rise measured **56.00 px**, matching the
+starter's recorded 56.07. Every jump in the new section was then designed against
+this table with **≥23 px of margin**, so no jump tuning was touched.
+
+| Landing height vs takeoff | Measured reach |
+|---|---|
+| 32 px above | 88.0 px |
+| 24 px above | 96.0 px |
+| level | 109.3 px |
+| 40 px below | 82.7 px |
+
+**P1 — CONFIRMED, fixed.** Hazards and the finish pole were drawn from literal
+`y` values while their triggers came from level data. The new section's second
+hazard sits on the upper platform at `y=200`; under the starter's code it would
+have drawn at `y=304`, 104 px below what actually kills you. Both now derive
+from the rect. Evidence: `evidence/extension/24-raised-hazard.png`.
+
+**P2 — CONFIRMED, fixed.** Background, grid and scenery were capped at x=960.
+All now derive from `level.width` (1840). Scenery was additionally rebuilt as two
+parallax ridge layers. Evidence: `evidence/extension/22-the-fork.png`.
+
+**P3 — WRONG.** I predicted the crumble timer would break `complete-real-route`
+and might exceed the 900-tick budget. It did not. The route passed on the first
+run in **631 ticks with 0 deaths**, crossing both crumbling ledges under their
+live collapse timer. The reason is that the fixture's new marks were placed using
+the measured envelope rather than guessed. **The 900-tick budget was not raised
+and no assertion was weakened.**
+
+**P4 — partly settled, still open for the human playtest.** The collider-overlay
+captures (`evidence/character/*-collider.png`) show the body sitting entirely
+inside the 18×28 box, with only the trail outside it. No misleading overlap was
+observed in scripted captures, but whether the trail *reads* as non-solid during
+real play is a human judgement and is not yet answered.
+
+**P5 — still open.** Crumble delay is **36 ticks (0.6 s)**, chosen generously on
+the principle that a crumbling platform's danger must be readable before it is
+punishing. Untested by a human. No automated check can settle it.
+
+**P6 — still open.** The camera's forward-only `+100` lookahead is unchanged. It
+was not observed to hide the finish in scripted play, but it has not been judged
+by a human on the lower branch.
+
+### Geometry revisions made during the build
+
+- **The lower-route hazard was moved, not removed.** As first drawn, spikes on
+  the lower platform left only a 36 px landing zone after them — at full run
+  speed a jump covers ~109 px, so the "safe" route demanded a short hop the
+  controls cannot reliably produce. Rather than slow the player down, the hazard
+  was moved onto the upper platform, where it forces a committed leap to the
+  finish and suits the fast branch. This is a geometry revision, as required; no
+  physics value was altered to make a bad layout work.
+- **Crumbling ledges now demote rather than only kill.** The high-branch ledge
+  sits directly above the low branch, so a player who stalls falls onto the safe
+  route instead of dying. Missing a ledge entirely is still fatal.
+
+### Harness defects found (test code, not game code)
+
+Recorded because they cost real time and none were faults in the game:
+
+1. The character preview first rendered with no trail — the harness ran the
+   player into a step, so `velocity.x` was 0 and the trail *correctly* vanished.
+2. The same preview facing left crossed the old finish trigger, completing the
+   level and zeroing velocity.
+3. The extension capture missed the stall death: a PNG write can outlast the
+   ~34-tick retry window. The check now counts `deaths` instead of sampling for
+   `DYING`. **The original intermittent cause was not fully isolated.**
+4. Two new crumble checks failed at first because `is_on_floor()` still reported
+   the spawn platform immediately after teleporting the player.
+5. Windowed capture runs were being throttled by macOS to roughly 4 ticks/second
+   until `--fixed-fps 60` was passed.
+
+### Automated coverage after the change
+
+**32 mechanics checks / 0 failures** (25 starter checks, all retained and passing,
+plus 7 new) and **9 keyboard checks / 0 failures**. New checks:
+`route-reaches-new-landings`, `finish-past-original-section`,
+`crumble-supports-then-triggers`, `crumble-collapses-after-timer`,
+`crumble-stall-is-fatal`, `crumble-resets-on-retry`,
+`crumble-untouched-stays-solid`.
