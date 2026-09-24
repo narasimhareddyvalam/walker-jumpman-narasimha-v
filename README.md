@@ -102,20 +102,47 @@ entered without the mechanic. All geometry was sized against a **measured** jump
 envelope (`godot/tests/probe_reach.gd`), not arithmetic. No jump strength was
 changed to make anything reachable.
 
+### Theme — INVERSION
+One law governs the chapter: **the world renders what you believe, not what is
+there.** Upright vision draws *phantom* geometry and withholds *hidden*
+geometry; inverted vision does the exact reverse. Collision is never consulted
+by either, so the player can always check by flipping — which makes every
+surprise a deduction rather than a trick.
+
+Three beats teach it. The **Void Gap** is an apparent chasm with a hidden floor
+that catches anyone who keeps walking. The **Betrayal** is a visually identical
+gap with nothing in it — the lesson you just learned is the wrong lesson. The
+**Phantom** is a platform drawn exactly like real ground that holds nothing at
+all. A sign over the Betrayal reads `IT IS NOT THE SAME GAP`, and the ceiling
+route past it is visible from the approach: the punishment is for assuming, not
+for failing to read minds.
+
+Mechanically this is the difference between two loops that already existed —
+one building colliders from level data, one drawing from it. Hidden geometry
+joins only the first; phantom geometry joins neither.
+
 ### Presentation
 The starter drew hazards and the finish marker at hard-coded coordinates while
 building their triggers from level data — so anything above ground level
 rendered detached from the thing that actually kills or completes. All drawing
-is now data-driven. The cream-and-teal palette was replaced with a dark facility
-palette, parallax strata, drifting debris and a minimal HUD.
+is now data-driven.
+
+The cream-and-teal palette is gone. In its place are **two** schemes chosen by
+gravity: upright, the facility is pale institutional daylight — the comfortable
+lie; inverted, it is near-black — what is actually there. Sixteen colour keys
+flip together, the HUD included, so the interface can never contradict which
+world the player is standing in. Parallax strata, drifting debris and a minimal
+HUD throughout.
 
 ---
 
 ## Verification
 
-**43 mechanics checks and 9 keyboard checks, 0 failures.** All 25 of the
+**51 mechanics checks and 9 keyboard checks, 0 failures.** All 25 of the
 starter's original mechanics checks are retained and still pass; none were
-deleted, relaxed, or had an expected value changed.
+deleted, relaxed, or had an expected value changed. Every check added for the
+Feather and for INVERSION was written and **watched failing** before the code
+that satisfies it existed.
 
 ```bash
 godot --headless --path godot --script res://tests/test_game.gd
