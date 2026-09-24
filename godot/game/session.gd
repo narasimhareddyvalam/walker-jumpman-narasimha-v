@@ -51,6 +51,11 @@ func _ready() -> void:
 	_setup_input()
 	for entry in level.solids:
 		_add_solid(Rect2(entry[0], entry[1], entry[2], entry[3]))
+	# Hidden geometry is built exactly like any other solid. It is only the
+	# drawing that withholds it, so collision can never disagree with the world.
+	for entry in level.get("hidden", []):
+		_add_solid(Rect2(entry[0], entry[1], entry[2], entry[3]))
+	# Phantom geometry is deliberately never built. It exists only in _draw().
 	_add_solid(Rect2(-32, 0, 32, 430))
 	_add_solid(Rect2(level.width, 0, 32, 430))
 	for entry in level.get("crumbling", []):
@@ -332,6 +337,13 @@ func _draw() -> void:
 
 	for entry in level.solids:
 		_draw_slab(Rect2(entry[0], entry[1], entry[2], entry[3]))
+	# A phantom is painted exactly like real ground - that is the whole lie.
+	# A revealed hidden floor gets its own treatment so truth reads as truth.
+	for r in _belief_slabs():
+		if inverted():
+			_draw_revealed(r)
+		else:
+			_draw_slab(r)
 	_draw_crumble()
 	_draw_feathers(t)
 
@@ -364,11 +376,51 @@ func _draw() -> void:
 	_sign(font, Vector2(1376, 308), "LOWER DECK", 13, TEXT_DIM)
 	_sign(font, Vector2(1878, 236), "ANOMALY RECOVERED HERE", 12, TEXT_FAINT)
 	_sign(font, Vector2(2042, 250), "THE FLOOR IS NOT THE ONLY FLOOR", 13, TEXT_FAINT)
-	_sign(font, Vector2(2620, 232), "OBSERVATORY", 15, TEXT_WARN)
-	_sign(font, Vector2(2560, 252), "ONLY THOSE WHO CAN FALL UPWARD MAY ENTER", 13, COLD)
+	# The INVERSION corridor. Every warning the player needs is written down:
+	# the Betrayal punishes assuming, not reading.
+	_sign(font, Vector2(2806, 236), "WALK. DO NOT JUMP.", 13, TEXT_WARN)
+	_sign(font, Vector2(3002, 236), "YOU WERE NEVER FALLING", 13, TEXT_FAINT)
+	_sign(font, Vector2(3148, 236), "IT IS NOT THE SAME GAP", 13, TEXT_WARN)
+	_sign(font, Vector2(3362, 236), "BELIEF RENDERS. TRUTH DOES NOT.", 12, TEXT_FAINT)
+	_sign(font, Vector2(3480, 232), "OBSERVATORY", 15, TEXT_WARN)
+	_sign(font, Vector2(3420, 252), "ONLY THOSE WHO CAN FALL UPWARD MAY ENTER", 13, COLD)
 
 func _sign(font: Font, at: Vector2, text: String, size: int, tint: Color) -> void:
 	draw_string(font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, tint)
+
+func inverted() -> bool:
+	return is_instance_valid(player) and player.gravity_sign < 0.0
+
+## Slabs that exist only as appearance. The chapter's law is that the world
+## renders what you believe, not what is there: upright vision draws phantoms
+## and withholds hidden floors, and inverted vision does the exact reverse.
+## Collision is not consulted either way, which is what makes the rule fair -
+## the player can always check by flipping.
+func _belief_slabs() -> Array[Rect2]:
+	var out: Array[Rect2] = []
+	for entry in level.get("hidden" if inverted() else "phantom", []):
+		out.append(Rect2(entry[0], entry[1], entry[2], entry[3]))
+	return out
+
+## Everything _draw() will paint as a slab this frame. Exposed so the checks
+## can assert on what the player can see rather than on a screenshot.
+func rendered_slabs() -> Array[Rect2]:
+	var out: Array[Rect2] = []
+	for entry in level.solids:
+		out.append(Rect2(entry[0], entry[1], entry[2], entry[3]))
+	out.append_array(_belief_slabs())
+	return out
+
+func _draw_revealed(r: Rect2) -> void:
+	# Hidden geometry showing through under inverted gravity. Drawn unlike a
+	# solid on purpose: this is the world admitting to something that was
+	# always there, not a platform arriving.
+	draw_rect(r, Color(COLD.r, COLD.g, COLD.b, 0.05))
+	draw_rect(Rect2(r.position.x, r.position.y, r.size.x, 1.0), Color(COLD.r, COLD.g, COLD.b, 0.5))
+	var x: float = r.position.x
+	while x < r.end.x:
+		draw_line(Vector2(x, r.position.y), Vector2(x + 6.0, r.end.y), Color(COLD.r, COLD.g, COLD.b, 0.22), 1.0)
+		x += 16.0
 
 func _draw_slab(r: Rect2) -> void:
 	# Cold light on the surface the player can stand on. Anything high enough to

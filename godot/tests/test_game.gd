@@ -19,6 +19,12 @@ func check(id: String, passed: bool, observation: Dictionary) -> void:
 		failures += 1
 	print(JSON.stringify(results.back()))
 
+func has_rect(list: Array, target: Rect2) -> bool:
+	for r in list:
+		if r is Rect2 and r.position.is_equal_approx(target.position) and r.size.is_equal_approx(target.size):
+			return true
+	return false
+
 func fresh() -> void:
 	if is_instance_valid(game):
 		game.queue_free()
@@ -293,7 +299,9 @@ func run() -> void:
 	# The observatory cannot be entered without the Feather: a normal jump from
 	# the floor below never reaches the doorway.
 	await fresh()
-	game.player.position = Vector2(2950, 288)
+	# Moved from x=2950 with the observatory: that coordinate now sits on the
+	# Void Gap's hidden floor. The assertion itself is unchanged.
+	game.player.position = Vector2(3800, 280)
 	await steps(3)
 	game.player.require_jump_release = false
 	game.player.test_jump_pressed = true
@@ -305,6 +313,93 @@ func run() -> void:
 			break
 	check("finish-unreachable-without-feather", not reached,
 		{"state": game.state, "highest_y": game.player.position.y})
+
+	# --- INVERSION: hidden floors and phantom platforms ---
+	# The law: the world renders what you believe, not what is there. Upright
+	# (belief) draws phantoms and omits hidden floors. Inverted (truth) does the
+	# exact reverse. Collision never lies - only the drawing does.
+	await fresh()
+	var hidden_data: Array = game.level.get("hidden", [])
+	var phantom_data: Array = game.level.get("phantom", [])
+	if hidden_data.is_empty() or phantom_data.is_empty() or not game.has_method("rendered_slabs"):
+		var why := {"hidden_entries": hidden_data.size(), "phantom_entries": phantom_data.size(),
+			"has_rendered_slabs": game.has_method("rendered_slabs")}
+		for id in ["hidden-supports-but-is-not-drawn", "hidden-revealed-when-inverted",
+			"phantom-is-drawn", "phantom-is-drawn-but-not-solid",
+			"phantom-omitted-when-inverted", "betrayal-gap-is-fatal"]:
+			check(id, false, why)
+	else:
+		var hr := Rect2(hidden_data[0][0], hidden_data[0][1], hidden_data[0][2], hidden_data[0][3])
+		# Dropped onto a hidden floor, the player is caught by geometry they cannot see.
+		game.player.position = Vector2(hr.position.x + hr.size.x * 0.5, hr.position.y - 24.0)
+		game.player.velocity = Vector2.ZERO
+		await steps(2)
+		var drop_ticks := 0
+		while not game.player.is_on_floor() and drop_ticks < 40:
+			await steps(1)
+			drop_ticks += 1
+		check("hidden-supports-but-is-not-drawn",
+			game.player.is_on_floor() and not has_rect(game.rendered_slabs(), hr),
+			{"on_floor": game.player.is_on_floor(), "drawn_upright": has_rect(game.rendered_slabs(), hr),
+			 "y": game.player.position.y, "rect": str(hr)})
+
+		# Truth-vision: the same floor becomes visible the moment gravity inverts.
+		game.feather_charges = 1
+		game.test_feather_pressed = true
+		await steps(2)
+		check("hidden-revealed-when-inverted",
+			game.player.gravity_sign < 0.0 and has_rect(game.rendered_slabs(), hr),
+			{"gravity_sign": game.player.gravity_sign, "drawn_inverted": has_rect(game.rendered_slabs(), hr)})
+
+		# A phantom is drawn exactly like a slab and holds nothing at all.
+		await fresh()
+		var pr := Rect2(phantom_data[0][0], phantom_data[0][1], phantom_data[0][2], phantom_data[0][3])
+		check("phantom-is-drawn", has_rect(game.rendered_slabs(), pr), {"rect": str(pr)})
+		game.player.position = Vector2(pr.position.x + pr.size.x * 0.5, pr.position.y - 24.0)
+		game.player.velocity = Vector2.ZERO
+		await steps(2)
+		# Recorded inside the loop: a player who falls past the phantom keeps
+		# falling into the pit, and the respawn would otherwise put them back at
+		# y=320 and read as a pass.
+		var fell_through := false
+		var through_ticks := 0
+		while not fell_through and through_ticks < 40:
+			await steps(1)
+			through_ticks += 1
+			if game.state == Game.State.PLAYING and game.player.position.y > pr.end.y + 16.0:
+				fell_through = true
+		check("phantom-is-drawn-but-not-solid",
+			has_rect(game.rendered_slabs(), pr) and fell_through,
+			{"drawn": has_rect(game.rendered_slabs(), pr), "fell_through": fell_through,
+			 "phantom_bottom": pr.end.y, "ticks": through_ticks})
+
+		# Inverted, the lie stops being rendered.
+		await fresh()
+		game.player.position = Vector2(2100, 260)
+		game.feather_charges = 1
+		game.test_feather_pressed = true
+		await steps(2)
+		check("phantom-omitted-when-inverted",
+			game.player.gravity_sign < 0.0 and not has_rect(game.rendered_slabs(), pr),
+			{"gravity_sign": game.player.gravity_sign, "drawn_inverted": has_rect(game.rendered_slabs(), pr)})
+
+		# The Betrayal. The lesson from the first gap - "keep walking, a floor
+		# will catch me" - is the wrong lesson, and the level proves it.
+		await fresh()
+		var betrayal_x: float = float(game.level.get("betrayal_probe_x", 0.0))
+		game.player.position = Vector2(betrayal_x, 280.0)
+		game.player.velocity = Vector2.ZERO
+		await steps(2)
+		game.player.test_control = true
+		game.player.test_axis = 1.0
+		var walk_ticks := 0
+		while game.state == Game.State.PLAYING and walk_ticks < 180:
+			await steps(1)
+			walk_ticks += 1
+		game.player.test_axis = 0.0
+		check("betrayal-gap-is-fatal",
+			betrayal_x > 0.0 and game.state == Game.State.DYING and game.death_reason == "Missed the landing",
+			{"probe_x": betrayal_x, "state": game.state, "reason": game.death_reason, "ticks": walk_ticks})
 
 	var report := {"scope":"Chapter One: The Fall. Machine checks only; not human playtesting or full GDD acceptance", "engine":Engine.get_version_info().string,"created_at":Time.get_datetime_string_from_system(true),"results":results,"failures":failures}
 	var out := ProjectSettings.globalize_path("res://../evidence")
