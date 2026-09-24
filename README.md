@@ -215,8 +215,8 @@ Made with the Brutalist `godot-waikthrough` skill, walker modifier.
 |---|---|
 | Filename | `claude-liam-walker-jumpman-walkthrough.mp4` |
 | Format | 3840 × 2160 · H.264 · 30 fps · AAC stereo |
-| Runtime | 3:38 (218.4 s) |
-| SHA-256 | `c6bfa3802a204e7f37277ae4e49082a07e0c232383cb383c1385e57bed3eacec` |
+| Runtime | 5:11 (311.3 s) |
+| SHA-256 | `ad3cb5aaf265373eef34cd8a98ad3a3e454ec2e44e690ec1417fdd90221e779d` |
 | Game source shown | commit `c898a4b` |
 | URL | *pending — course media storage; see [SUBMISSION.md](SUBMISSION.md)* |
 

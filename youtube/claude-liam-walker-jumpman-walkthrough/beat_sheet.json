@@ -12,10 +12,10 @@
     "game_source_commit": "8041bc0",
     "note": "Walker-mode Godot walkthrough. B00 is a labelled reconstruction, never a transcript. All gameplay is native 3840x2160 captured from the running game; see CAPTURE.md. Claims are indexed in FACTCHECK.md.",
     "build": {
-      "at": "2026-09-24T18:52:03",
+      "at": "2026-09-24T19:36:34",
       "cut": "master",
-      "filled": 15,
-      "of": 15,
+      "filled": 17,
+      "of": 17,
       "slates": [],
       "skin_warnings": []
     }
@@ -26,13 +26,13 @@
       "act": "cold open",
       "kind": "ClaudeComposerAsk",
       "label": "The ask",
-      "narration_text": "Please use Walker to convert my game design document about a world where gravity has failed, where debris falls upward instead of down, and where the player finds an object that lets them fall upward too, into a playable Godot project. The chapter should run on one rule: the world shows you what you expect, not what is actually there. Some floors exist but are never drawn. Some are drawn but are not there. The player checks by turning gravity upside down.",
+      "narration_text": "Please use Walker to convert my game design document into a playable Godot project. The premise: a world where gravity has failed and debris falls upward. The player finds an object that lets them fall upward too. And one rule underneath all of it - the world shows you what you expect, not what is actually there. Some floors exist but are never drawn. Some are drawn but are not there. The player checks by turning gravity upside down.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 31.5,
+      "estimated_duration_s": 30.4,
       "reconstruction": true,
       "reconstruction_label": "Illustrative reconstruction of the design ask - not a historical transcript.",
-      "actual_duration_s": 21.97,
+      "actual_duration_s": 21.42,
       "audio_file": "mp3/beat-B00.mp3",
       "shot": {
         "type": "REMOTION",
@@ -54,12 +54,12 @@
           }
         }
       },
-      "render_duration_s": 22.0,
+      "render_duration_s": 21.433333333333334,
       "build": {
         "status": "VIDEO",
         "src": "media/B00.mp4",
         "filled_by": "remotion:ClaudeComposerAsk",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       }
     },
     {
@@ -67,11 +67,11 @@
       "act": "setup",
       "kind": "what-was-built",
       "label": "What was built",
-      "narration_text": "This is walker-jumpman, the course starter by Nik Bear Brown. The original is one short level: a few gaps, a spike, a finish flag, and a character drawn as four stacked rectangles. What you are about to see is that project extended. The character is now the Runner, whose trail length is its speed. The level is about five times longer and ends in a tower you cannot enter the normal way up. One chapter is built. Four more are written down in the design document and are not built, and I will not pretend otherwise.",
+      "narration_text": "This is walker-jumpman, the course starter by Nik Bear Brown - one short level, a few gaps, a spike, a finish flag, and a character drawn as four stacked rectangles. What you are about to see is that project extended by Narasimha Reddy Valam into something with an idea at the centre of it. The revision on screen throughout is commit c898a4b. The character is the Runner. The level is five times longer. And the mechanic is not a jump - it is a question the player has to keep asking about everything they can see.",
       "voice": "am_onyx",
       "engine": "kokoro",
       "estimated_duration_s": 36.9,
-      "actual_duration_s": 28.0,
+      "actual_duration_s": 29.88,
       "audio_file": "mp3/beat-B01.mp3",
       "shot": {
         "type": "REMOTION",
@@ -80,28 +80,28 @@
           "pattern": "ClaudeVerdictArtifact",
           "props": {
             "artifactTitle": "What was built",
-            "artifactHeading": "Starter -> extension",
+            "artifactHeading": "walker-jumpman-narasimha-v",
             "artifactLines": [
-              "STARTER  nikbearbrown/walker-jumpman @ 9387542",
-              "         four stacked rectangles, one short level",
-              "CHARACTER  the Runner - trail length is horizontal speed",
-              "           collider and tuning.gd unchanged",
-              "LEVEL  960 -> 4980 px, finish moved into a tower shaft",
-              "SCOPE  one chapter built; four designed and NOT built"
+              "STUDENT   Narasimha Reddy Valam",
+              "REVISION  c898a4b - the build shown throughout this film",
+              "STARTER   nikbearbrown/walker-jumpman @ 9387542",
+              "CHARACTER the Runner - trail length is horizontal speed",
+              "LEVEL     960 -> 4980 px; finish moved into a tower shaft",
+              "SCOPE     one chapter built; four designed and NOT built"
             ]
           },
           "rendered": {
             "out": "media/B01.mp4",
-            "at": "2026-09-24T21:57:23.529671+00:00"
+            "at": "2026-09-24T23:11:13.363782+00:00"
           }
         }
       },
-      "render_duration_s": 28.0,
+      "render_duration_s": 29.9,
       "build": {
         "status": "VIDEO",
         "src": "media/B01.mp4",
         "filled_by": "remotion:ClaudeVerdictArtifact",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       },
       "qc": {
         "sparse_by_design": true,
@@ -113,11 +113,11 @@
       "act": "body",
       "kind": "gameplay",
       "label": "The world falls up",
-      "narration_text": "This is the starter, extended. Debris falls upward. A sign says run right, reach the tower. The controls are unchanged, and the Runner's trail is its own speed.",
+      "narration_text": "It tells you something is wrong and trusts you to notice. Rubble falls upward. And the trail behind the Runner is its own speed, so the character reports its state before the level has to.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 10.8,
-      "actual_duration_s": 9.32,
+      "estimated_duration_s": 13.5,
+      "actual_duration_s": 10.13,
       "audio_file": "mp3/beat-B02.mp3",
       "shot": {
         "type": "VIDEO",
@@ -125,12 +125,12 @@
         "media": "media/B02.mp4",
         "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
       },
-      "render_duration_s": 9.333333333333334,
+      "render_duration_s": 10.133333333333333,
       "build": {
         "status": "VIDEO",
         "src": "media/B02.mp4",
         "filled_by": "media",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       },
       "qc": {
         "full_bleed": true,
@@ -180,11 +180,11 @@
       "act": "body",
       "kind": "gameplay",
       "label": "The ground stops holding",
-      "narration_text": "Ledges give way a moment after they are touched, so the section is about not stopping. Then it forks - two roads, both survivable.",
+      "narration_text": "The ground stops holding a moment after you touch it - momentum taught without instruction. Then two roads open. Both work. Neither is the punished one.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 9.2,
-      "actual_duration_s": 7.53,
+      "estimated_duration_s": 10.0,
+      "actual_duration_s": 8.73,
       "audio_file": "mp3/beat-B03.mp3",
       "shot": {
         "type": "VIDEO",
@@ -192,12 +192,12 @@
         "media": "media/B03.mp4",
         "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
       },
-      "render_duration_s": 7.533333333333333,
+      "render_duration_s": 8.733333333333333,
       "build": {
         "status": "VIDEO",
         "src": "media/B03.mp4",
         "filled_by": "media",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       },
       "qc": {
         "full_bleed": true,
@@ -247,11 +247,11 @@
       "act": "body",
       "kind": "gameplay",
       "label": "The feather",
-      "narration_text": "The feather. One charge, back two and a half seconds after you spend it, so checking is nearly free.",
+      "narration_text": "The object it all turns on. An ability, not a consumable - one charge, back in two and a half seconds. That is what makes the rest a puzzle instead of a gamble.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 7.3,
-      "actual_duration_s": 5.57,
+      "estimated_duration_s": 12.7,
+      "actual_duration_s": 9.09,
       "audio_file": "mp3/beat-B04.mp3",
       "shot": {
         "type": "VIDEO",
@@ -259,12 +259,12 @@
         "media": "media/B04.mp4",
         "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
       },
-      "render_duration_s": 5.6,
+      "render_duration_s": 9.1,
       "build": {
         "status": "VIDEO",
         "src": "media/B04.mp4",
         "filled_by": "media",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       },
       "qc": {
         "full_bleed": true,
@@ -314,11 +314,11 @@
       "act": "body",
       "kind": "gameplay",
       "label": "Falling upward",
-      "narration_text": "F inverts gravity. The trail goes cyan and the whole world goes dark. Light is the comfortable lie; dark is what is actually there.",
+      "narration_text": "Gravity inverts. The trail goes cyan and the world goes black. Not a filter - in this chapter light is the comfortable lie and dark is what is actually there.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 9.2,
-      "actual_duration_s": 8.11,
+      "estimated_duration_s": 11.5,
+      "actual_duration_s": 8.9,
       "audio_file": "mp3/beat-B05.mp3",
       "shot": {
         "type": "VIDEO",
@@ -326,12 +326,12 @@
         "media": "media/B05.mp4",
         "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
       },
-      "render_duration_s": 8.133333333333333,
+      "render_duration_s": 8.9,
       "build": {
         "status": "VIDEO",
         "src": "media/B05.mp4",
         "filled_by": "media",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       },
       "qc": {
         "full_bleed": true,
@@ -381,11 +381,11 @@
       "act": "body",
       "kind": "gameplay",
       "label": "A floor that is not drawn",
-      "narration_text": "No floor is drawn across this gap. Walking forward is not a fall - the floor is real and was never painted. Inverted, it renders.",
+      "narration_text": "The idea at full strength. No floor is drawn here. Everything says walking forward is a fall. It is not. Invert, and the floor renders under your feet - it was always there.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 9.6,
-      "actual_duration_s": 7.87,
+      "estimated_duration_s": 12.7,
+      "actual_duration_s": 9.92,
       "audio_file": "mp3/beat-B06.mp3",
       "shot": {
         "type": "VIDEO",
@@ -393,12 +393,12 @@
         "media": "media/B06.mp4",
         "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
       },
-      "render_duration_s": 7.9,
+      "render_duration_s": 9.933333333333334,
       "build": {
         "status": "VIDEO",
         "src": "media/B06.mp4",
         "filled_by": "media",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       },
       "qc": {
         "full_bleed": true,
@@ -448,11 +448,11 @@
       "act": "body",
       "kind": "gameplay",
       "label": "The same gap, empty",
-      "narration_text": "The same gap again. This one is genuinely empty. The lesson was never that hidden floors exist - it was to check.",
+      "narration_text": "Then it turns its own lesson over. Identical gap. Genuinely empty. The rule was never that hidden floors exist - it was to check.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 8.5,
-      "actual_duration_s": 6.95,
+      "estimated_duration_s": 9.2,
+      "actual_duration_s": 7.7,
       "audio_file": "mp3/beat-B07.mp3",
       "shot": {
         "type": "VIDEO",
@@ -460,12 +460,12 @@
         "media": "media/B07.mp4",
         "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
       },
-      "render_duration_s": 6.966666666666667,
+      "render_duration_s": 7.7,
       "build": {
         "status": "VIDEO",
         "src": "media/B07.mp4",
         "filled_by": "media",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       },
       "qc": {
         "full_bleed": true,
@@ -515,11 +515,11 @@
       "act": "body",
       "kind": "gameplay",
       "label": "Signs that lie",
-      "narration_text": "Now it lies in both directions. A drawn platform that holds nothing. A locked door that is not solid. Spikes that cannot hurt you, and under a sign reading safe, spikes that are never drawn at all.",
+      "narration_text": "And it lies in both directions, each with a rule behind it. A drawn platform holding nothing. A locked door you walk through. Spikes that cannot hurt you - and under a sign reading safe, spikes never drawn at all.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 14.2,
-      "actual_duration_s": 11.46,
+      "estimated_duration_s": 15.4,
+      "actual_duration_s": 11.95,
       "audio_file": "mp3/beat-B08.mp3",
       "shot": {
         "type": "VIDEO",
@@ -527,12 +527,12 @@
         "media": "media/B08.mp4",
         "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
       },
-      "render_duration_s": 11.466666666666667,
+      "render_duration_s": 11.966666666666667,
       "build": {
         "status": "VIDEO",
         "src": "media/B08.mp4",
         "filled_by": "media",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       },
       "qc": {
         "full_bleed": true,
@@ -582,11 +582,11 @@
       "act": "body",
       "kind": "cause-and-effect",
       "label": "Why a floor can be invisible",
-      "narration_text": "Here is the source change behind all of that. The starter already walked its level data twice - once in ready, to build a collider for every solid, and once in draw, to paint them. Those two loops were always separate. Hidden geometry now joins only the first loop, so it collides without ever being painted. Phantom geometry joins neither, so it is painted and holds nothing. No new node types, no physics change, and not one collision check removed. The mechanic is the difference between two loops that already existed.",
+      "narration_text": "And here is the part worth stealing. None of that needed a new system. The starter already walked its level data twice - once to build a collider for every solid, once to paint them. Two loops that were always separate. Hidden geometry joins only the first, so it collides without ever being drawn. Phantom geometry joins neither, so it is drawn and holds nothing. No new node types, no physics change, not one collision check removed. The entire mechanic is the gap between two loops that were already there.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 35.0,
-      "actual_duration_s": 28.94,
+      "estimated_duration_s": 34.6,
+      "actual_duration_s": 28.05,
       "audio_file": "mp3/beat-B09.mp3",
       "shot": {
         "type": "REMOTION",
@@ -611,12 +611,12 @@
           }
         }
       },
-      "render_duration_s": 28.966666666666665,
+      "render_duration_s": 28.066666666666666,
       "build": {
         "status": "VIDEO",
         "src": "media/B09.mp4",
         "filled_by": "remotion:ClaudeVerdictArtifact",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       },
       "qc": {
         "sparse_by_design": true,
@@ -628,11 +628,11 @@
       "act": "body",
       "kind": "gameplay",
       "label": "Failure and recovery",
-      "narration_text": "A real death, and the starter's retry - unchanged, unlimited, everything reset with the attempt.",
+      "narration_text": "A real death, and the starter's own retry underneath it - unchanged, unlimited, everything reset with the attempt.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 5.8,
-      "actual_duration_s": 5.85,
+      "estimated_duration_s": 6.9,
+      "actual_duration_s": 6.76,
       "audio_file": "mp3/beat-B10.mp3",
       "shot": {
         "type": "VIDEO",
@@ -640,12 +640,12 @@
         "media": "media/B10.mp4",
         "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
       },
-      "render_duration_s": 5.866666666666666,
+      "render_duration_s": 6.766666666666667,
       "build": {
         "status": "VIDEO",
         "src": "media/B10.mp4",
         "filled_by": "media",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       },
       "qc": {
         "full_bleed": true,
@@ -695,11 +695,11 @@
       "act": "body",
       "kind": "gameplay",
       "label": "The tower",
-      "narration_text": "The finish sits above the floor. A normal jump cannot reach it; only falling upward gets in. Then Enter replays it.",
+      "narration_text": "The finish sits in a shaft above the floor. A test asserts a normal jump cannot reach it, so the mechanic is load-bearing. You get in by falling upward. Then Enter replays it clean.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 8.1,
-      "actual_duration_s": 6.93,
+      "estimated_duration_s": 13.1,
+      "actual_duration_s": 10.3,
       "audio_file": "mp3/beat-B11.mp3",
       "shot": {
         "type": "VIDEO",
@@ -707,12 +707,12 @@
         "media": "media/B11.mp4",
         "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
       },
-      "render_duration_s": 6.933333333333334,
+      "render_duration_s": 10.3,
       "build": {
         "status": "VIDEO",
         "src": "media/B11.mp4",
         "filled_by": "media",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       },
       "qc": {
         "full_bleed": true,
@@ -762,11 +762,11 @@
       "act": "verdict",
       "kind": "verdict",
       "label": "Verdict",
-      "narration_text": "What is demonstrably working: the character reads correctly facing both ways, standing, jumping and inverted, against a collider that was never changed. Twenty-two landings past the original section. A relocated finish that the mechanic is required to reach. Seventy mechanics checks and nine keyboard checks passing, including all twenty-five the starter shipped with, none of them weakened. What is not settled: whether the Betrayal reads as fair or as cheap, and whether the environmental clues are legible at speed. The human playtest found three comprehension defects that every automated check had passed straight over - including a chapter that depended on a key it never taught the player. And one honest limitation: the light palette was the third attempt at the debris alone, and the design of those environmental clues is still being argued about.",
+      "narration_text": "So what is here. A platformer whose central mechanic is not a jump but a question - is what I am looking at real. Twenty-two landings past the original section. A finish the mechanic is required to reach. Seven distinct ways the world misleads you, every one of them with a learnable rule. Seventy mechanics checks and nine keyboard checks passing, including all twenty-five the starter shipped with, none weakened - and the movement tuning byte-identical to the original, which is the constraint the whole design had to fit inside. Two questions stay open by design: whether the Betrayal reads as fair or as cheap, and whether the environmental clues are legible at speed. Both are questions only a player can answer, and the playtest that produced this build already proved the point - it found three things every automated check had passed straight over.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 51.9,
-      "actual_duration_s": 43.07,
+      "estimated_duration_s": 55.8,
+      "actual_duration_s": 46.37,
       "audio_file": "mp3/beat-B12.mp3",
       "shot": {
         "type": "REMOTION",
@@ -777,26 +777,27 @@
             "artifactTitle": "The World Is Falling - Extending Walker Jumpman",
             "artifactHeading": "Verdict",
             "artifactLines": [
-              "WORKS - 22 landings, relocated finish, 70 + 9 checks, 0 failures",
-              "WORKS - collider and tuning.gd byte-identical to the starter",
-              "UNSETTLED - is the Betrayal fair, or cheap?",
-              "UNSETTLED - are the environmental clues readable at speed?",
-              "LIMIT - 3 rows of the human playtest remain unverified",
-              "LIMIT - Chapters Two to Five are design text only"
+              "WORKS  the mechanic IS the theme - checking what is real",
+              "WORKS  22 landings; finish unreachable without the feather",
+              "WORKS  7 kinds of lie: hidden, phantom, mirror, spikes, doors",
+              "WORKS  70 + 9 checks pass; tuning.gd byte-identical",
+              "OPEN   is the Betrayal fair, or cheap?",
+              "OPEN   are the environmental clues legible at speed?",
+              "LIMIT  3 rows of the human playtest still unverified"
             ]
           },
           "rendered": {
             "out": "media/B12.mp4",
-            "at": "2026-09-24T21:52:58.034919+00:00"
+            "at": "2026-09-24T23:12:44.779444+00:00"
           }
         }
       },
-      "render_duration_s": 43.1,
+      "render_duration_s": 46.4,
       "build": {
         "status": "VIDEO",
         "src": "media/B12.mp4",
         "filled_by": "remotion:ClaudeVerdictArtifact",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       },
       "qc": {
         "sparse_by_design": true,
@@ -804,15 +805,108 @@
       }
     },
     {
+      "beat_id": "B12B",
+      "act": "verdict",
+      "kind": "planned-work",
+      "label": "Where this goes",
+      "narration_text": "And it is one chapter of five. The design document carries four more, each inverting something different. The Forest Below, where the world stays upside down and objects exist only while you are not looking at them. The City That Doesn't Exist, where districts render differently depending on which way you approach. The Memory, where you start finding your own handwriting in a place you have never been. And The Other Side, where the inversion turns out not to have been an accident at all. Those are designed, not built, and this film will not pretend otherwise. The next concrete step is smaller and already specified - a room where the environmental clues contradict each other, and the player has to work out which to trust. The rule is designed: heavy things fall where gravity puts them and cannot lie. Paper and dust can be blown anywhere.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 56.5,
+      "shot": {
+        "type": "REMOTION",
+        "source": "own",
+        "remotion": {
+          "pattern": "ClaudeVerdictArtifact",
+          "props": {
+            "artifactTitle": "Designed, not built",
+            "artifactHeading": "Chapters Two to Five",
+            "artifactLines": [
+              "TWO    The Forest Below - objects exist while unobserved",
+              "THREE  The City That Doesn't Exist - perception inverts",
+              "FOUR   The Memory - you recognise a place you never visited",
+              "FIVE   The Other Side - the inversion was deliberate",
+              "NEXT   a room where the clues contradict each other, and",
+              "       heavy objects are the ones that cannot lie"
+            ]
+          },
+          "rendered": {
+            "out": "media/B12B.mp4",
+            "at": "2026-09-24T23:33:43.614862+00:00"
+          }
+        }
+      },
+      "qc": {
+        "sparse_by_design": true,
+        "sparse_reason": "A reference card read aloud. Seven short lines the viewer is meant to read along with; decoration would compete with them."
+      },
+      "actual_duration_s": 40.19,
+      "audio_file": "mp3/beat-B12B.mp3",
+      "render_duration_s": 40.2,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B12B.mp4",
+        "filled_by": "remotion:ClaudeVerdictArtifact",
+        "at": "2026-09-24T19:36:34"
+      }
+    },
+    {
+      "beat_id": "B12C",
+      "act": "verdict",
+      "kind": "credits",
+      "label": "Who did what",
+      "narration_text": "Credit where it is owed. Narasimha Reddy Valam set the direction and made every design call that matters here - rejecting a costume-swap character for one built out of the mechanic, rejecting five thin levels for one chapter done properly, insisting the world teach through objects rather than instructions, and looking at an early build that passed every test to say it had no idea in it. That note is what produced the game you have just watched. Claude Code wrote the implementation, the tests, the capture harness and this narration - and got things wrong on the way, which are logged rather than hidden. The revision demonstrated throughout is commit c898a4b.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 43.1,
+      "shot": {
+        "type": "REMOTION",
+        "source": "own",
+        "remotion": {
+          "pattern": "ClaudeVerdictArtifact",
+          "props": {
+            "artifactTitle": "Human and AI",
+            "artifactHeading": "walker-jumpman-narasimha-v @ c898a4b",
+            "artifactLines": [
+              "NARASIMHA REDDY VALAM - direction and every design call",
+              "  rejected the costume-swap character",
+              "  rejected five thin levels for one honest chapter",
+              "  called the first build out as having no idea in it",
+              "CLAUDE CODE - implementation, tests, capture, narration",
+              "  got the charge economy wrong; 3 tries at the debris",
+              "  twice misdiagnosed a capture bug before measuring it"
+            ]
+          },
+          "rendered": {
+            "out": "media/B12C.mp4",
+            "at": "2026-09-24T23:15:51.851700+00:00"
+          }
+        }
+      },
+      "qc": {
+        "sparse_by_design": true,
+        "sparse_reason": "A credits card. The split between human and AI work is the content; padding the frame would make it harder to read, not easier."
+      },
+      "actual_duration_s": 35.92,
+      "audio_file": "mp3/beat-B12C.mp3",
+      "render_duration_s": 35.93333333333333,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B12C.mp4",
+        "filled_by": "remotion:ClaudeVerdictArtifact",
+        "at": "2026-09-24T19:36:34"
+      }
+    },
+    {
       "beat_id": "B13",
       "act": "your turn",
       "kind": "your-turn",
       "label": "Your turn",
-      "narration_text": "Here is the experiment worth running. Take the starter, and before you add anything, find the two places it walks its level data - the loop that builds colliders and the loop that draws. Then add one array that joins only the first. You will have a floor a player can stand on and cannot see, in about twenty lines, and every existing test will still pass. Ask Walker for that, then go and find out whether your players read it as clever or as a trick. That answer is not in the code.",
+      "narration_text": "Your turn, and it is a cheap experiment with a large payoff. Open your own starter and find the two places it walks its level data - the loop that builds colliders, and the loop that draws. Add one array that joins only the first. You will have a floor a player can stand on and cannot see, in about twenty lines, with every existing test still passing. Then go and find out whether your players read it as clever or as a trick. That answer is not in the code.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 36.2,
-      "actual_duration_s": 22.12,
+      "estimated_duration_s": 35.0,
+      "actual_duration_s": 21.33,
       "audio_file": "mp3/beat-B13.mp3",
       "shot": {
         "type": "REMOTION",
@@ -834,12 +928,12 @@
           }
         }
       },
-      "render_duration_s": 22.133333333333333,
+      "render_duration_s": 21.333333333333332,
       "build": {
         "status": "VIDEO",
         "src": "media/B13.mp4",
         "filled_by": "remotion:ClaudeComposerAsk",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       }
     },
     {
@@ -873,7 +967,7 @@
         "status": "VIDEO",
         "src": "media/BOUT.mp4",
         "filled_by": "remotion:ClaudeTitleOutro",
-        "at": "2026-09-24T18:52:03"
+        "at": "2026-09-24T19:36:34"
       }
     }
   ]
