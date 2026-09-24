@@ -359,6 +359,7 @@ func _draw() -> void:
 		else:
 			_draw_slab(r)
 	_draw_crumble()
+	_draw_pads(t)
 	_draw_feathers(t)
 
 	# Spikes are drawn from the hazard's own rect. The starter drew every spike
@@ -381,9 +382,16 @@ func _draw() -> void:
 		var pulse: float = 0.25 + 0.22 * sin(t * 0.05 + float(i))
 		draw_line(Vector2(gx, fr.end.y), Vector2(gx, fr.position.y + 6.0), Color(P.cold.r, P.cold.g, P.cold.b, pulse), 1.0)
 
-	_sign(font, Vector2(33, 251), "01 / GET MOVING", 15, P.text_dim)
-	_sign(font, Vector2(33, 273), "Read the landing. Then jump.", 13, P.text_faint)
-	_sign(font, Vector2(474, 227), "02 / MIND THE GAP", 15, P.text_dim)
+	# Opening. Playtest finding: "the story line isnt clear from start" - the
+	# first two signs were still the starter's tutorial text, so the chapter
+	# opened on instructions instead of a premise. Both jobs now happen at once.
+	_sign(font, Vector2(33, 226), "SITE 07  /  DAY 41", 15, P.text_warn)
+	_sign(font, Vector2(33, 246), "The debris stopped falling down.", 13, P.text_dim)
+	_sign(font, Vector2(33, 264), "Nobody left here knows why.", 12, P.text_faint)
+	_sign(font, Vector2(33, 282), "A D  walk      SPACE  jump", 12, P.text_faint)
+	_sign(font, Vector2(474, 206), "EVACUATION ORDER 09", 14, P.text_warn)
+	_sign(font, Vector2(474, 224), "Reach the observatory.", 12, P.text_dim)
+	_sign(font, Vector2(474, 240), "It is the last thing still anchored.", 12, P.text_faint)
 	_sign(font, Vector2(958, 196), "SITE 07 / GRAVITATIONAL RESEARCH", 15, P.text_warn)
 	_sign(font, Vector2(958, 216), "STRUCTURAL COHESION FAILING", 13, P.text_faint)
 	_sign(font, Vector2(1386, 196), "UPPER GANTRY", 13, P.text_warn)
@@ -411,6 +419,26 @@ func inverted() -> bool:
 ## and dark worlds can never disagree with which way up the player is.
 func pal() -> Dictionary:
 	return DARK if inverted() else LIGHT
+
+## Standing on a marked reversal pad. Playtest finding: the chapter never told
+## the player where F was the answer, so they could not finish it. The pads are
+## painted on the floor and are the only place the prompt appears.
+func on_pad() -> bool:
+	if not is_instance_valid(player) or not player.is_on_floor():
+		return false
+	for entry in level.get("pads", []):
+		var r := Rect2(entry[0], entry[1], entry[2], entry[3])
+		if absf(player.position.y - r.position.y) < 4.0 \
+			and player.position.x + 9.0 > r.position.x \
+			and player.position.x - 9.0 < r.end.x:
+			return true
+	return false
+
+## Only true when pressing F would actually do something. A prompt shown with no
+## charge, or while already inverted, would be telling the player a lie - which
+## is the one thing this chapter cannot afford to do by accident.
+func pad_prompt() -> bool:
+	return on_pad() and feather_charges > 0 and reversal_ticks <= 0
 
 ## Slabs that exist only as appearance. The chapter's law is that the world
 ## renders what you believe, not what is there: upright vision draws phantoms
@@ -445,22 +473,65 @@ func _draw_revealed(r: Rect2) -> void:
 		x += 16.0
 
 func _draw_slab(r: Rect2) -> void:
-	# Cold light on the surface the player can stand on. Anything high enough to
-	# be a ceiling is lit underneath instead, so lighting reads as orientation.
+	# Two materials, chosen by thickness, because the level already has exactly
+	# two classes of solid. Thick blocks are rooftops of the district Site 07 was
+	# built through; thin ones are the facility's own service catwalks. So the
+	# material tells the player what a surface is before they stand on it.
+	#
+	# Anything high enough to be a ceiling is detailed on its underside instead,
+	# which keeps the drawing itself a report of which way up the world is.
 	var P := pal()
-	draw_rect(r, P.slab)
 	var ceiling := r.position.y < 200.0
-	var surface: float = r.end.y - 2.0 if ceiling else r.position.y
-	draw_rect(Rect2(r.position.x, surface, r.size.x, 2.0), P.edge)
-	var far_edge: float = r.position.y if ceiling else r.end.y - 1.0
-	draw_rect(Rect2(r.position.x, far_edge, r.size.x, 1.0), Color(P.edge.r, P.edge.g, P.edge.b, 0.22))
-	# Short ticks hugging the standing surface, so a 64px ground block does not
-	# get the same long streaks as a 14px ledge.
+	var surface: float = r.end.y if ceiling else r.position.y
 	var dir: float = -1.0 if ceiling else 1.0
-	for x in range(int(r.position.x) + 12, int(r.end.x) - 6, 24):
-		draw_line(Vector2(x, surface + dir * 4.0), Vector2(x + 4.0, surface + dir * 9.0),
-			Color(P.edge.r, P.edge.g, P.edge.b, 0.35), 1.0)
+	if r.size.y >= 30.0:
+		_draw_rooftop(r, P, surface, dir)
+	else:
+		_draw_gantry(r, P, surface, dir)
 
+func _draw_rooftop(r: Rect2, P: Dictionary, surface: float, dir: float) -> void:
+	# A building you are standing on the roof of. Parapet lip, then a facade a
+	# shade deeper, then windows - some still lit, in a district nobody managed
+	# to finish evacuating.
+	var lip := 7.0
+	draw_rect(r, P.slab)
+	var facade_y: float = r.position.y + lip if dir > 0.0 else r.position.y
+	draw_rect(Rect2(r.position.x, facade_y, r.size.x, r.size.y - lip), P.slab.darkened(0.17))
+	draw_rect(Rect2(r.position.x, surface if dir > 0.0 else surface - 2.0, r.size.x, 2.0), P.edge)
+	for row in range(3):
+		var wy: float = surface + dir * (lip + 5.0 + float(row) * 12.0)
+		if wy < r.position.y + 1.0 or wy + 5.0 > r.end.y - 1.0:
+			continue
+		var wx: float = r.position.x + 8.0
+		var col := 0
+		while wx + 5.0 < r.end.x - 6.0:
+			var lit: bool = (col * 5 + row * 3 + int(r.position.x / 64.0)) % 4 == 0
+			draw_rect(Rect2(wx, wy, 5.0, 6.0), Color(P.cold.r, P.cold.g, P.cold.b, 0.45) if lit
+				else Color(P.crack.r, P.crack.g, P.crack.b, 0.40))
+			wx += 15.0
+			col += 1
+
+func _draw_gantry(r: Rect2, P: Dictionary, surface: float, dir: float) -> void:
+	# A service catwalk bolted across the shaft: struts underneath, grating
+	# deck, and a bolt plate at each anchor. Struts are drawn first so the deck
+	# reads as resting on them.
+	var far: float = surface + dir * r.size.y
+	var strut := Color(P.edge.r, P.edge.g, P.edge.b, 0.45)
+	var sx: float = r.position.x + 11.0
+	while sx < r.end.x - 11.0:
+		draw_line(Vector2(sx, far), Vector2(sx - 7.0, far + dir * 14.0), strut, 1.0)
+		draw_line(Vector2(sx, far), Vector2(sx + 7.0, far + dir * 14.0), strut, 1.0)
+		sx += 36.0
+	draw_rect(r, P.slab)
+	var grate := Color(P.edge.r, P.edge.g, P.edge.b, 0.34)
+	var gx: float = r.position.x + 3.0
+	while gx < r.end.x - 4.0:
+		draw_line(Vector2(gx, r.position.y + 1.0), Vector2(gx + 4.0, r.end.y - 1.0), grate, 1.0)
+		gx += 7.0
+	draw_rect(Rect2(r.position.x, surface if dir > 0.0 else surface - 2.0, r.size.x, 2.0), P.edge)
+	var bolt := Color(P.edge.r, P.edge.g, P.edge.b, 0.75)
+	draw_rect(Rect2(r.position.x, r.position.y, 3.0, r.size.y), bolt)
+	draw_rect(Rect2(r.end.x - 3.0, r.position.y, 3.0, r.size.y), bolt)
 func _draw_strata(cam_x: float, depth: float, tint: Color, peak_y: float, spacing: float, hanging: bool) -> void:
 	# A layer drawn at base + camera.x * depth scrolls at (1 - depth), so a
 	# larger depth reads as further away.
@@ -474,14 +545,71 @@ func _draw_strata(cam_x: float, depth: float, tint: Color, peak_y: float, spacin
 			Vector2(x - 155.0, base_y), Vector2(x, peak_y), Vector2(x + 155.0, base_y)]), tint)
 
 func _draw_debris(cam_x: float, t: float) -> void:
-	# Rubble drifting upward. The first thing the player should notice is that
-	# loose matter is leaving the ground.
-	for i in range(34):
-		var bx: float = cam_x - 400.0 + fmod(float(i) * 211.0, 820.0)
-		var rate: float = 0.22 + fmod(float(i) * 0.41, 0.55)
-		var by: float = fposmod(340.0 - t * rate + float(i) * 47.0, 300.0) + 52.0
-		var s: float = 2.0 + fmod(float(i), 3.0)
-		draw_rect(Rect2(bx, by, s, s), pal().debris)
+	# Fourteen recognisable objects from the site, tumbling as they rise.
+	#
+	# Two playtest rejections got us here. The original was 34 pieces at 2-4px
+	# and 20% alpha - "blocks and all are not falling from up", because nobody
+	# could see it. The first fix added trails and was worse: squares on sticks,
+	# read as pins rather than motion. Rotation is what sells a free fall, so
+	# each piece turns as it climbs and nothing trails behind it.
+	var P := pal()
+	for i in range(14):
+		var bx: float = cam_x - 400.0 + fmod(float(i) * 263.0, 870.0)
+		var rate: float = 0.30 + fmod(float(i) * 0.37, 0.55)
+		var by: float = fposmod(400.0 - t * rate + float(i) * 61.0, 390.0) + 16.0
+		var fade: float = clampf((by - 16.0) / 60.0, 0.0, 1.0) * clampf((406.0 - by) / 70.0, 0.0, 1.0)
+		if fade <= 0.03:
+			continue
+		var spin: float = t * (0.010 + fmod(float(i) * 0.004, 0.018)) * (1.0 if i % 2 == 0 else -1.0)
+		_draw_tumbling(Vector2(bx, by), spin, i % 4, 4.5 + fmod(float(i) * 2.3, 7.0),
+			Color(P.debris.r, P.debris.g, P.debris.b, 0.66 * fade))
+
+func _draw_tumbling(at: Vector2, angle: float, kind: int, s: float, c: Color) -> void:
+	# Four silhouettes: a floor slab, a length of rebar, a torn wall panel and a
+	# chair. Objects, not particles - the point is that the building's contents
+	# are leaving, not that there is dust in the air.
+	var pts: PackedVector2Array
+	match kind:
+		0:
+			pts = PackedVector2Array([Vector2(-s, -s * 0.34), Vector2(s, -s * 0.48),
+				Vector2(s, s * 0.34), Vector2(-s, s * 0.48)])
+		1:
+			pts = PackedVector2Array([Vector2(-s * 1.6, -1.1), Vector2(s * 1.6, -1.1),
+				Vector2(s * 1.6, 1.1), Vector2(-s * 1.6, 1.1)])
+		2:
+			pts = PackedVector2Array([Vector2(-s * 0.72, -s), Vector2(s * 0.68, -s * 0.78),
+				Vector2(s * 0.58, s * 0.95), Vector2(-s * 0.82, s * 0.84)])
+		_:
+			pts = PackedVector2Array([Vector2(-s * 0.58, -s), Vector2(-s * 0.22, -s),
+				Vector2(-s * 0.22, s * 0.18), Vector2(s * 0.62, s * 0.18),
+				Vector2(s * 0.62, s * 0.58), Vector2(-s * 0.58, s * 0.58)])
+	var ca := cos(angle)
+	var sa := sin(angle)
+	var rot := PackedVector2Array()
+	for pt in pts:
+		rot.append(at + Vector2(pt.x * ca - pt.y * sa, pt.x * sa + pt.y * ca))
+	draw_colored_polygon(rot, c)
+func _draw_pads(t: float) -> void:
+	# A reversal pad: the chapter's only piece of instructional furniture. It
+	# marks the floor where gravity is the answer, and pulses brighter when the
+	# player is stood on it holding a charge.
+	var P := pal()
+	var live := pad_prompt()
+	for entry in level.get("pads", []):
+		var r := Rect2(entry[0], entry[1], entry[2], entry[3])
+		var glow: float = 0.45 + 0.3 * sin(t * 0.09)
+		draw_rect(Rect2(r.position.x, r.position.y, r.size.x, r.size.y),
+			Color(P.cold.r, P.cold.g, P.cold.b, glow if live else 0.3))
+		# Three chevrons pointing the way the player is about to travel.
+		for k in range(3):
+			var cx: float = r.position.x + r.size.x * (0.25 + 0.25 * float(k))
+			var lift: float = fposmod(t * 0.6 + float(k) * 7.0, 21.0)
+			var cy: float = r.position.y - 4.0 - lift
+			var a: float = (0.75 if live else 0.32) * (1.0 - lift / 21.0)
+			draw_line(Vector2(cx - 5.0, cy + 5.0), Vector2(cx, cy),
+				Color(P.cold.r, P.cold.g, P.cold.b, a), 1.0)
+			draw_line(Vector2(cx, cy), Vector2(cx + 5.0, cy + 5.0),
+				Color(P.cold.r, P.cold.g, P.cold.b, a), 1.0)
 
 func _draw_feathers(t: float) -> void:
 	var P := pal()

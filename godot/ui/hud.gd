@@ -39,6 +39,24 @@ func _draw() -> void:
 	elif charges > 0:
 		text_at("F", Vector2(104, 44), 10, P.text_faint)
 
+	# Standing on a reversal pad with a charge in hand. Playtest finding: "its
+	# not clear where to click F and invert and play upside down" - the chapter
+	# had no affordance at all, so a player who never guessed F could not finish
+	# it. The prompt is deliberately loud, and appears only where pressing F
+	# actually does something.
+	if game.pad_prompt():
+		var pulse: float = 0.72 + 0.28 * sin(float(game.world_tick) * 0.12)
+		draw_rect(Rect2(196, 296, 248, 22), Color(P.void.r, P.void.g, P.void.b, 0.86))
+		draw_rect(Rect2(196, 296, 248, 1), Color(cold.r, cold.g, cold.b, 0.55))
+		draw_rect(Rect2(196, 317, 248, 1), Color(cold.r, cold.g, cold.b, 0.55))
+		centered("PRESS  F  TO FALL UPWARD", 312, 14, Color(cold.r, cold.g, cold.b, pulse))
+
+	# The rooftops put a grid of windows directly behind the bottom row, and the
+	# controls line stopped being readable the moment platforms stopped being
+	# flat. A backing band costs nothing and keeps the text legible over any
+	# geometry that scrolls past.
+	draw_rect(Rect2(0, 338, 640, 22), Color(P.void.r, P.void.g, P.void.b, 0.85))
+
 	var origin: float = float(game.level.spawn[0])
 	var span_x: float = maxf(float(game.level.finish[0]) - origin, 1.0)
 	var progress: float = clampf((game.player.position.x - origin) / span_x, 0, 1)
@@ -57,8 +75,8 @@ func _draw() -> void:
 	draw_rect(Rect2(0, 0, 640, 360), Color(P.void.r, P.void.g, P.void.b, 0.82))
 	draw_rect(Rect2(96, 112, 448, 194), Color(P.void.r, P.void.g, P.void.b, 0.97))
 	var title := "THE WORLD IS FALLING"
-	var detail := "Something is wrong with the ground."
-	var hint := "Chapter One  /  The Fall"
+	var detail := "The debris is falling upward. Nobody knows why."
+	var hint := "Reach the observatory.      Chapter One  /  The Fall"
 	var button := "ENTER"
 	if game.state == game.State.PAUSED:
 		title = "HELD"

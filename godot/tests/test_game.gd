@@ -428,6 +428,50 @@ func run() -> void:
 			{"upright_void_luminance": up.void.get_luminance(),
 			 "inverted_void_luminance": down.void.get_luminance()})
 
+	# --- Reversal pads: telling the player where F is the answer ---
+	# From playtest: "its not clear where to click F and invert and play upside
+	# down". A pad marks the floor at every reversal the chapter requires.
+	await fresh()
+	var pads: Array = game.level.get("pads", [])
+	if pads.is_empty() or not game.has_method("pad_prompt"):
+		for id in ["pads-mark-every-mandatory-reversal", "pad-prompts-only-with-a-charge",
+			"pad-prompt-clears-once-inverted"]:
+			check(id, false, {"pads": pads.size(), "has_pad_prompt": game.has_method("pad_prompt")})
+	else:
+		# Every x the shipped route spends a charge at must be standing on a pad.
+		var spend_points: Array[float] = [2000.0, 2320.0, 3120.0, 3500.0, 3800.0]
+		var uncovered: Array[float] = []
+		for sx in spend_points:
+			var covered := false
+			for entry in pads:
+				if sx + 9.0 > float(entry[0]) and sx - 9.0 < float(entry[0]) + float(entry[2]):
+					covered = true
+			if not covered:
+				uncovered.append(sx)
+		check("pads-mark-every-mandatory-reversal", uncovered.is_empty(),
+			{"pads": pads.size(), "uncovered_spend_points": uncovered})
+
+		# A prompt that appears without a charge would be a lie.
+		var pad0: Array = pads[0]
+		game.player.position = Vector2(float(pad0[0]) + float(pad0[2]) * 0.5, float(pad0[1]) - 2.0)
+		game.player.velocity = Vector2.ZERO
+		game.feather_charges = 0
+		await steps(3)
+		var without: bool = game.pad_prompt()
+		game.feather_charges = 1
+		await steps(1)
+		var with_charge: bool = game.pad_prompt()
+		check("pad-prompts-only-with-a-charge", with_charge and not without,
+			{"on_floor": game.player.is_on_floor(), "prompt_without_charge": without,
+			 "prompt_with_charge": with_charge})
+
+		# Once the player has acted on it, the prompt has nothing left to say.
+		game.test_feather_pressed = true
+		await steps(2)
+		check("pad-prompt-clears-once-inverted",
+			game.player.gravity_sign < 0.0 and not game.pad_prompt(),
+			{"gravity_sign": game.player.gravity_sign, "prompt": game.pad_prompt()})
+
 	var report := {"scope":"Chapter One: The Fall. Machine checks only; not human playtesting or full GDD acceptance", "engine":Engine.get_version_info().string,"created_at":Time.get_datetime_string_from_system(true),"results":results,"failures":failures}
 	var out := ProjectSettings.globalize_path("res://../evidence")
 	DirAccess.make_dir_recursive_absolute(out)

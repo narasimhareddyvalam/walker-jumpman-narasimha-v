@@ -44,6 +44,10 @@ func run() -> void:
 	# stood on a dissolving ledge: writing a PNG costs physics ticks during which
 	# the fixture cannot feed inputs, and a lost tick there is a death.
 	var shots := {
+		# The opening premise and the reversal-pad prompt, both added after the
+		# playtest reported the story and the F key were unreadable.
+		100.0: "19-the-premise",
+		1985.0: "23b-press-f-here",
 		1120.0: "20-ground-dissolving",
 		1300.0: "21-the-fork",
 		1700.0: "22-raised-hazard",

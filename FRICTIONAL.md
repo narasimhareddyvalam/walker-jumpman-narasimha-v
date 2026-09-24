@@ -210,24 +210,73 @@ at the start: revise the level, never the tuning.
 
 ## 11. Human playtest
 
-**AWAITING PLAYTEST.**
+I played the build myself at revision `4415f78`. What I reported afterwards,
+word for word:
 
-This section will record what I observed playing the build myself: whether the
-charge economy feels scarce or stingy, whether the ceiling run's flip-back moment
-is readable, whether the cyan/amber trail is enough to tell me which way up I am,
-and whether any death felt unfair rather than earned. Open predictions P4–P9 in
-`CHANGE-BRIEF.md` are the specific questions.
+> *"few things, the story line isnt clear from start. blocks and all are not
+> falling from up and also its not clear where to click F and invert and play
+> upside down"*
 
-Results go in `TEST-REPORT.md`; my reactions go here.
+None of the three things I noticed were things we had predicted. We had written
+P10–P13 before I played — whether the Betrayal would feel cheap, whether light
+mode would hurt readability, whether inspecting would feel too expensive,
+whether the two palettes would read as one place. **I never got far enough to
+form an opinion on any of them**, because I could not work out where to press F.
+
+That is the finding. The chapter had a hard dependency on a key it never taught,
+and every automated check passed anyway, because the route fixture is *told*
+where to press it. 54 machine checks and a scripted run that completes with zero
+deaths could not see a defect that stopped a human in about ninety seconds.
+
+The other two were softer but real. The opening still carried the starter's
+tutorial signage (`01 / GET MOVING`), so the game began with instructions rather
+than a premise. And the upward-falling debris — the single image the whole story
+rests on — was drawn at 2–4 px and 20% alpha, which is to say it was not really
+drawn at all.
 
 ---
 
 ## 12. Inspect-and-revise cycle
 
-**AWAITING PLAYTEST.**
+Three observations, three changes, and one of the changes was wrong the first
+time. That failure is the part worth recording.
 
-The required cycle will be driven by something I actually notice while playing,
-not by a scripted run.
+**The F affordance.** A `pads` array now marks the floor at every one of the
+five reversals the chapter requires, drawn as a pulsing strip with chevrons
+rising off it, and the HUD shows `PRESS F TO FALL UPWARD` when I am standing on
+one with a charge in hand. It only appears when pressing F would actually do
+something — a prompt that lied about this, in a chapter about unreliable
+information, would be an own goal. Three checks, all watched failing first.
+
+**The opening.** Replaced the starter's tutorial text with signage that carries
+the premise and the controls at once: `SITE 07 / DAY 41`, *The debris stopped
+falling down*, *Nobody left here knows why*, then the walk and jump keys. The
+title card says what is wrong and what to do about it instead of *"Something is
+wrong with the ground."*
+
+**The debris, twice.** The first fix raised the count to 46, enlarged the
+pieces, and gave each one a trailing line to show direction. I looked at the
+recapture and it was worse than the original: forty-six squares each dragging a
+vertical stick, evenly spaced, reading as pins rather than as falling matter. My
+reaction was *"i dont like the debris"*, which was correct.
+
+The second fix went the other way — **14** pieces, no trails, each one a
+rotating silhouette of something from the site: a floor slab, a length of rebar,
+a torn wall panel, a chair. Rotation is what communicates a free fall. A trailing
+line does not; it communicates a line.
+
+I am keeping the failed version in this log rather than describing only the
+version that worked. Going from invisible to visible-and-wrong to right took
+three attempts, and only the third is in the build.
+
+**One thing led to another.** Asked for platforms that were not plain
+rectangles, we split `_draw_slab` by thickness — thick blocks became building
+rooftops with lit windows, thin ledges became the facility's service catwalks.
+That immediately broke something else: the window grid sits behind the HUD's
+bottom row and the controls line stopped being readable. Found by looking at the
+capture, not by any check, and fixed with a backing band. Changing how the world
+is drawn broke how the interface reads, which is not a connection I would have
+predicted.
 
 ---
 
