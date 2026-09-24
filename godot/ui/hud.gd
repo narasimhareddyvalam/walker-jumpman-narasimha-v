@@ -24,6 +24,7 @@ func _draw() -> void:
 		return
 	var P := p()
 	var cold: Color = P.cold
+	draw_rect(Rect2(0, 0, 640, 54), Color(P.void.r, P.void.g, P.void.b, 0.93))
 	text_at("THE WORLD IS FALLING", Vector2(22, 26), 13, P.text_dim)
 	text_at("CH. 01 / THE FALL", Vector2(500, 26), 11, P.text_faint)
 	# The power's state, named and spelled out. Four small pips said nothing to
@@ -103,15 +104,15 @@ func _draw() -> void:
 	# controls line stopped being readable the moment platforms stopped being
 	# flat. A backing band costs nothing and keeps the text legible over any
 	# geometry that scrolls past.
-	draw_rect(Rect2(0, 338, 640, 22), Color(P.void.r, P.void.g, P.void.b, 0.85))
+	draw_rect(Rect2(0, 336, 640, 24), Color(P.void.r, P.void.g, P.void.b, 0.93))
 
 	var origin: float = float(game.level.spawn[0])
 	var span_x: float = maxf(float(game.level.finish[0]) - origin, 1.0)
 	var progress: float = clampf((game.player.position.x - origin) / span_x, 0, 1)
 	draw_rect(Rect2(22, 331, 596, 1), Color(P.edge.r, P.edge.g, P.edge.b, 0.22))
 	draw_rect(Rect2(22, 331, 596 * progress, 1), Color(P.edge.r, P.edge.g, P.edge.b, 0.7))
-	text_at("%02d  /  %04.1fs" % [game.deaths, game.elapsed], Vector2(538, 349), 11, P.text_faint)
-	text_at("A D  move    SPACE  jump    F  feather    R  retry", Vector2(22, 349), 11, P.text_faint)
+	text_at("%02d  /  %04.1fs" % [game.deaths, game.elapsed], Vector2(538, 349), 11, P.text_dim)
+	text_at("A D  move    SPACE  jump    F  feather    R  retry", Vector2(22, 349), 11, P.text_dim)
 
 	if game.state == game.State.PLAYING:
 		return

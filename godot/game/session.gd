@@ -25,7 +25,7 @@ const RECHARGE_TICKS: int = 150
 const LIGHT := {
 	"void": Color("e8ecf1"), "slab": Color("9fadbd"), "edge": Color("46586b"),
 	"hazard": Color("c0392b"), "cold": Color("17708c"),
-	"text_warn": Color("8a5520"), "text_dim": Color("46586b"), "text_faint": Color("8593a1"),
+	"text_warn": Color("7a4510"), "text_dim": Color("1e2a36"), "text_faint": Color("4a5a6a"),
 	"strata_far": Color("d2d9e2"), "strata_near": Color("c2ccd7"),
 	"fog": Color(0.35, 0.45, 0.55, 0.05), "debris": Color(0.30, 0.40, 0.50, 0.25),
 	"crack": Color(0.35, 0.42, 0.50, 0.9), "accent": Color("b5731a"),
@@ -34,7 +34,7 @@ const LIGHT := {
 const DARK := {
 	"void": Color("080c11"), "slab": Color("161e28"), "edge": Color("4d7283"),
 	"hazard": Color("b8433a"), "cold": Color("8fe3ff"),
-	"text_warn": Color("b8894e"), "text_dim": Color("7e929d"), "text_faint": Color("52646e"),
+	"text_warn": Color("d9a45e"), "text_dim": Color("c2d4de"), "text_faint": Color("8296a2"),
 	"strata_far": Color("0f1620"), "strata_near": Color("131d29"),
 	"fog": Color(0.42, 0.58, 0.68, 0.035), "debris": Color(0.47, 0.64, 0.73, 0.20),
 	"crack": Color(0.10, 0.14, 0.19, 0.9), "accent": Color("e0a04a"),

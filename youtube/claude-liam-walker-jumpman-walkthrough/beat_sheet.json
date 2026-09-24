@@ -1,96 +1,880 @@
 {
-  "schema_version": 1,
-  "reel": "claude-liam-walker-jumpman-walkthrough",
-  "mode": "walker",
-  "title": "The World Is Falling - Extending Walker Jumpman",
-  "game": "walker-jumpman-narasimha-v",
-  "voice": "am_onyx",
+  "metadata": {
+    "title": "The World Is Falling - Extending Walker Jumpman",
+    "slug": "claude-liam-walker-jumpman-walkthrough",
+    "topic": "GODOT WALKTHROUGH / WALKER",
+    "register": "walkthrough",
+    "engine": "kokoro",
+    "voice_kokoro": "am_onyx",
+    "aspect": "16:9",
+    "mode": "walker",
+    "game": "walker-jumpman-narasimha-v",
+    "game_source_commit": "8041bc0",
+    "note": "Walker-mode Godot walkthrough. B00 is a labelled reconstruction, never a transcript. All gameplay is native 3840x2160 captured from the running game; see CAPTURE.md. Claims are indexed in FACTCHECK.md.",
+    "build": {
+      "at": "2026-09-24T18:52:03",
+      "cut": "master",
+      "filled": 15,
+      "of": 15,
+      "slates": [],
+      "skin_warnings": []
+    }
+  },
   "beats": [
     {
       "beat_id": "B00",
+      "act": "cold open",
       "kind": "ClaudeComposerAsk",
       "label": "The ask",
+      "narration_text": "Please use Walker to convert my game design document about a world where gravity has failed, where debris falls upward instead of down, and where the player finds an object that lets them fall upward too, into a playable Godot project. The chapter should run on one rule: the world shows you what you expect, not what is actually there. Some floors exist but are never drawn. Some are drawn but are not there. The player checks by turning gravity upside down.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 31.5,
       "reconstruction": true,
       "reconstruction_label": "Illustrative reconstruction of the design ask - not a historical transcript.",
-      "narration_text": "Please use Walker to convert my game design document about a world where gravity has failed, where debris falls upward instead of down, and where the player finds an object that lets them fall upward too, into a playable Godot project. The chapter should run on one rule: the world shows you what you expect, not what is actually there. Some floors exist but are never drawn. Some are drawn but are not there. The player checks by turning gravity upside down."
+      "actual_duration_s": 21.97,
+      "audio_file": "mp3/beat-B00.mp3",
+      "shot": {
+        "type": "REMOTION",
+        "source": "own",
+        "remotion": {
+          "pattern": "ClaudeComposerAsk",
+          "props": {
+            "greeting": "Liam",
+            "topic": "RECONSTRUCTION - the design ask, not a transcript",
+            "segment": "The World Is Falling",
+            "command": "Please use Walker to convert my game design document about a world where gravity has failed into a playable Godot project.",
+            "runningText": "illustrative reconstruction - no historical prompt log is claimed...",
+            "output": [],
+            "folderLabel": "@claude-liam"
+          },
+          "rendered": {
+            "out": "media/B00.mp4",
+            "at": "2026-09-24T21:51:17.104823+00:00"
+          }
+        }
+      },
+      "render_duration_s": 22.0,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B00.mp4",
+        "filled_by": "remotion:ClaudeComposerAsk",
+        "at": "2026-09-24T18:52:03"
+      }
     },
     {
       "beat_id": "B01",
+      "act": "setup",
       "kind": "what-was-built",
       "label": "What was built",
-      "narration_text": "This is walker-jumpman, the course starter by Nik Bear Brown. The original is one short level: a few gaps, a spike, a finish flag, and a character drawn as four stacked rectangles. What you are about to see is that project extended. The character is now the Runner, whose trail length is its speed. The level is about five times longer and ends in a tower you cannot enter the normal way up. One chapter is built. Four more are written down in the design document and are not built, and I will not pretend otherwise."
+      "narration_text": "This is walker-jumpman, the course starter by Nik Bear Brown. The original is one short level: a few gaps, a spike, a finish flag, and a character drawn as four stacked rectangles. What you are about to see is that project extended. The character is now the Runner, whose trail length is its speed. The level is about five times longer and ends in a tower you cannot enter the normal way up. One chapter is built. Four more are written down in the design document and are not built, and I will not pretend otherwise.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 36.9,
+      "actual_duration_s": 28.0,
+      "audio_file": "mp3/beat-B01.mp3",
+      "shot": {
+        "type": "REMOTION",
+        "source": "own",
+        "remotion": {
+          "pattern": "ClaudeVerdictArtifact",
+          "props": {
+            "artifactTitle": "What was built",
+            "artifactHeading": "Starter -> extension",
+            "artifactLines": [
+              "STARTER  nikbearbrown/walker-jumpman @ 9387542",
+              "         four stacked rectangles, one short level",
+              "CHARACTER  the Runner - trail length is horizontal speed",
+              "           collider and tuning.gd unchanged",
+              "LEVEL  960 -> 4980 px, finish moved into a tower shaft",
+              "SCOPE  one chapter built; four designed and NOT built"
+            ]
+          },
+          "rendered": {
+            "out": "media/B01.mp4",
+            "at": "2026-09-24T21:57:23.529671+00:00"
+          }
+        }
+      },
+      "render_duration_s": 28.0,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B01.mp4",
+        "filled_by": "remotion:ClaudeVerdictArtifact",
+        "at": "2026-09-24T18:52:03"
+      },
+      "qc": {
+        "sparse_by_design": true,
+        "sparse_reason": "A reference card read aloud, not a busy graphic. Six short lines on a dark plate is the point - the viewer is meant to read them while Liam speaks, and filling the safe area with decoration would make them harder to read, not easier."
+      }
     },
     {
       "beat_id": "B02",
+      "act": "body",
       "kind": "gameplay",
       "label": "The world falls up",
-      "narration_text": "The premise is stated in the first screen and never explained again. Rubble tumbles upward past the camera. A sign reads: the world falls up. Run right, reach the tower. The controls are the starter's - A and D to walk, space to jump - and they have not been changed. Watch the trail behind the Runner. Its length is horizontal speed, so standing still puts the character out."
+      "narration_text": "This is the starter, extended. Debris falls upward. A sign says run right, reach the tower. The controls are unchanged, and the Runner's trail is its own speed.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 10.8,
+      "actual_duration_s": 9.32,
+      "audio_file": "mp3/beat-B02.mp3",
+      "shot": {
+        "type": "VIDEO",
+        "source": "gameplay",
+        "media": "media/B02.mp4",
+        "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
+      },
+      "render_duration_s": 9.333333333333334,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B02.mp4",
+        "filled_by": "media",
+        "at": "2026-09-24T18:52:03"
+      },
+      "qc": {
+        "full_bleed": true,
+        "contrast_regions": [
+          {
+            "label": "HUD title",
+            "box": [
+              0.034,
+              0.042,
+              0.5,
+              0.086
+            ]
+          },
+          {
+            "label": "HUD chapter and logs",
+            "box": [
+              0.78,
+              0.042,
+              0.96,
+              0.13
+            ]
+          },
+          {
+            "label": "HUD controls row",
+            "box": [
+              0.034,
+              0.936,
+              0.395,
+              0.982
+            ]
+          },
+          {
+            "label": "HUD deaths and timer",
+            "box": [
+              0.835,
+              0.936,
+              0.97,
+              0.982
+            ]
+          }
+        ],
+        "contrast_reason": "Gameplay plate, not a card, and two heuristics mis-fire on it.\nfull_bleed: the game renders edge to edge at 3840x2160. The world IS the frame, so crossing title-safe is the composition rather than overflow, and the HUD stays inside its own reserved bands.\ncontrast_regions: the whole-frame average is low because the upright palette is deliberately pale - light is the comfortable lie and dark is the truth, which is this chapter's mechanic rather than a rendering fault. The essential text is the PERSISTENT HUD, measured where hud.gd draws it: title, chapter and log count, controls row, and deaths/timer. Each must pass on its own.\nThe feather readout is deliberately NOT declared. It only exists after the player picks the feather up, so before that the region is legitimately empty - an earlier revision declared it and the gate correctly reported nine empty-region defects. Declaring a conditional element as persistent text would have been a false claim about the frame."
+      }
     },
     {
       "beat_id": "B03",
+      "act": "body",
       "kind": "gameplay",
       "label": "The ground stops holding",
-      "narration_text": "Ledges here give way a moment after they are touched. The sign says keep moving, and the sign is telling the truth - this one is. The section then forks into a high road and a low road, both survivable. That is the first decision the extension asks for, and neither branch is the punished one."
+      "narration_text": "Ledges give way a moment after they are touched, so the section is about not stopping. Then it forks - two roads, both survivable.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 9.2,
+      "actual_duration_s": 7.53,
+      "audio_file": "mp3/beat-B03.mp3",
+      "shot": {
+        "type": "VIDEO",
+        "source": "gameplay",
+        "media": "media/B03.mp4",
+        "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
+      },
+      "render_duration_s": 7.533333333333333,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B03.mp4",
+        "filled_by": "media",
+        "at": "2026-09-24T18:52:03"
+      },
+      "qc": {
+        "full_bleed": true,
+        "contrast_regions": [
+          {
+            "label": "HUD title",
+            "box": [
+              0.034,
+              0.042,
+              0.5,
+              0.086
+            ]
+          },
+          {
+            "label": "HUD chapter and logs",
+            "box": [
+              0.78,
+              0.042,
+              0.96,
+              0.13
+            ]
+          },
+          {
+            "label": "HUD controls row",
+            "box": [
+              0.034,
+              0.936,
+              0.395,
+              0.982
+            ]
+          },
+          {
+            "label": "HUD deaths and timer",
+            "box": [
+              0.835,
+              0.936,
+              0.97,
+              0.982
+            ]
+          }
+        ],
+        "contrast_reason": "Gameplay plate, not a card, and two heuristics mis-fire on it.\nfull_bleed: the game renders edge to edge at 3840x2160. The world IS the frame, so crossing title-safe is the composition rather than overflow, and the HUD stays inside its own reserved bands.\ncontrast_regions: the whole-frame average is low because the upright palette is deliberately pale - light is the comfortable lie and dark is the truth, which is this chapter's mechanic rather than a rendering fault. The essential text is the PERSISTENT HUD, measured where hud.gd draws it: title, chapter and log count, controls row, and deaths/timer. Each must pass on its own.\nThe feather readout is deliberately NOT declared. It only exists after the player picks the feather up, so before that the region is legitimately empty - an earlier revision declared it and the gate correctly reported nine empty-region defects. Declaring a conditional element as persistent text would have been a false claim about the frame."
+      }
     },
     {
       "beat_id": "B04",
+      "act": "body",
       "kind": "gameplay",
       "label": "The feather",
-      "narration_text": "This is the object the chapter is built around. Picking it up grants an ability rather than a consumable: one charge that returns two and a half seconds after it is spent. An earlier build rationed these across three pickups, and that was a mistake I will come back to in the verdict."
+      "narration_text": "The feather. One charge, back two and a half seconds after you spend it, so checking is nearly free.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 7.3,
+      "actual_duration_s": 5.57,
+      "audio_file": "mp3/beat-B04.mp3",
+      "shot": {
+        "type": "VIDEO",
+        "source": "gameplay",
+        "media": "media/B04.mp4",
+        "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
+      },
+      "render_duration_s": 5.6,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B04.mp4",
+        "filled_by": "media",
+        "at": "2026-09-24T18:52:03"
+      },
+      "qc": {
+        "full_bleed": true,
+        "contrast_regions": [
+          {
+            "label": "HUD title",
+            "box": [
+              0.034,
+              0.042,
+              0.5,
+              0.086
+            ]
+          },
+          {
+            "label": "HUD chapter and logs",
+            "box": [
+              0.78,
+              0.042,
+              0.96,
+              0.13
+            ]
+          },
+          {
+            "label": "HUD controls row",
+            "box": [
+              0.034,
+              0.936,
+              0.395,
+              0.982
+            ]
+          },
+          {
+            "label": "HUD deaths and timer",
+            "box": [
+              0.835,
+              0.936,
+              0.97,
+              0.982
+            ]
+          }
+        ],
+        "contrast_reason": "Gameplay plate, not a card, and two heuristics mis-fire on it.\nfull_bleed: the game renders edge to edge at 3840x2160. The world IS the frame, so crossing title-safe is the composition rather than overflow, and the HUD stays inside its own reserved bands.\ncontrast_regions: the whole-frame average is low because the upright palette is deliberately pale - light is the comfortable lie and dark is the truth, which is this chapter's mechanic rather than a rendering fault. The essential text is the PERSISTENT HUD, measured where hud.gd draws it: title, chapter and log count, controls row, and deaths/timer. Each must pass on its own.\nThe feather readout is deliberately NOT declared. It only exists after the player picks the feather up, so before that the region is legitimately empty - an earlier revision declared it and the gate correctly reported nine empty-region defects. Declaring a conditional element as persistent text would have been a false claim about the frame."
+      }
     },
     {
       "beat_id": "B05",
+      "act": "body",
       "kind": "gameplay",
       "label": "Falling upward",
-      "narration_text": "Pressing F inverts gravity and the Runner falls up onto the ceiling. Two things change with it. The trail turns from amber to cyan, and the whole world switches from a pale daylight palette to near black. That is not decoration. In this chapter, light is the comfortable lie and dark is what is actually there."
+      "narration_text": "F inverts gravity. The trail goes cyan and the whole world goes dark. Light is the comfortable lie; dark is what is actually there.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 9.2,
+      "actual_duration_s": 8.11,
+      "audio_file": "mp3/beat-B05.mp3",
+      "shot": {
+        "type": "VIDEO",
+        "source": "gameplay",
+        "media": "media/B05.mp4",
+        "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
+      },
+      "render_duration_s": 8.133333333333333,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B05.mp4",
+        "filled_by": "media",
+        "at": "2026-09-24T18:52:03"
+      },
+      "qc": {
+        "full_bleed": true,
+        "contrast_regions": [
+          {
+            "label": "HUD title",
+            "box": [
+              0.034,
+              0.042,
+              0.5,
+              0.086
+            ]
+          },
+          {
+            "label": "HUD chapter and logs",
+            "box": [
+              0.78,
+              0.042,
+              0.96,
+              0.13
+            ]
+          },
+          {
+            "label": "HUD controls row",
+            "box": [
+              0.034,
+              0.936,
+              0.395,
+              0.982
+            ]
+          },
+          {
+            "label": "HUD deaths and timer",
+            "box": [
+              0.835,
+              0.936,
+              0.97,
+              0.982
+            ]
+          }
+        ],
+        "contrast_reason": "Gameplay plate, not a card, and two heuristics mis-fire on it.\nfull_bleed: the game renders edge to edge at 3840x2160. The world IS the frame, so crossing title-safe is the composition rather than overflow, and the HUD stays inside its own reserved bands.\ncontrast_regions: the whole-frame average is low because the upright palette is deliberately pale - light is the comfortable lie and dark is the truth, which is this chapter's mechanic rather than a rendering fault. The essential text is the PERSISTENT HUD, measured where hud.gd draws it: title, chapter and log count, controls row, and deaths/timer. Each must pass on its own.\nThe feather readout is deliberately NOT declared. It only exists after the player picks the feather up, so before that the region is legitimately empty - an earlier revision declared it and the gate correctly reported nine empty-region defects. Declaring a conditional element as persistent text would have been a false claim about the frame."
+      }
     },
     {
       "beat_id": "B06",
+      "act": "body",
       "kind": "gameplay",
       "label": "A floor that is not drawn",
-      "narration_text": "Now the chapter's actual idea. There is no floor visible across this gap. Everything on screen says that walking forward is a fall. Walking forward is not a fall - the floor is real, it has simply never been drawn. Invert here and the same floor renders as a lattice under the Runner's feet. It was always there. The player could not see it."
+      "narration_text": "No floor is drawn across this gap. Walking forward is not a fall - the floor is real and was never painted. Inverted, it renders.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 9.6,
+      "actual_duration_s": 7.87,
+      "audio_file": "mp3/beat-B06.mp3",
+      "shot": {
+        "type": "VIDEO",
+        "source": "gameplay",
+        "media": "media/B06.mp4",
+        "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
+      },
+      "render_duration_s": 7.9,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B06.mp4",
+        "filled_by": "media",
+        "at": "2026-09-24T18:52:03"
+      },
+      "qc": {
+        "full_bleed": true,
+        "contrast_regions": [
+          {
+            "label": "HUD title",
+            "box": [
+              0.034,
+              0.042,
+              0.5,
+              0.086
+            ]
+          },
+          {
+            "label": "HUD chapter and logs",
+            "box": [
+              0.78,
+              0.042,
+              0.96,
+              0.13
+            ]
+          },
+          {
+            "label": "HUD controls row",
+            "box": [
+              0.034,
+              0.936,
+              0.395,
+              0.982
+            ]
+          },
+          {
+            "label": "HUD deaths and timer",
+            "box": [
+              0.835,
+              0.936,
+              0.97,
+              0.982
+            ]
+          }
+        ],
+        "contrast_reason": "Gameplay plate, not a card, and two heuristics mis-fire on it.\nfull_bleed: the game renders edge to edge at 3840x2160. The world IS the frame, so crossing title-safe is the composition rather than overflow, and the HUD stays inside its own reserved bands.\ncontrast_regions: the whole-frame average is low because the upright palette is deliberately pale - light is the comfortable lie and dark is the truth, which is this chapter's mechanic rather than a rendering fault. The essential text is the PERSISTENT HUD, measured where hud.gd draws it: title, chapter and log count, controls row, and deaths/timer. Each must pass on its own.\nThe feather readout is deliberately NOT declared. It only exists after the player picks the feather up, so before that the region is legitimately empty - an earlier revision declared it and the gate correctly reported nine empty-region defects. Declaring a conditional element as persistent text would have been a false claim about the frame."
+      }
     },
     {
       "beat_id": "B07",
+      "act": "body",
       "kind": "gameplay",
       "label": "The same gap, empty",
-      "narration_text": "And here is the second half of the lesson. This gap looks identical to the one that just caught the player. It is empty. The rule the game taught one screen ago is the wrong rule - the lesson is not that hidden floors exist, it is to check instead of assume. Three things keep that fair: the sign above the gap says this gap is empty, the ceiling route across it is visible from the approach, and checking costs a charge that comes back on its own."
+      "narration_text": "The same gap again. This one is genuinely empty. The lesson was never that hidden floors exist - it was to check.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 8.5,
+      "actual_duration_s": 6.95,
+      "audio_file": "mp3/beat-B07.mp3",
+      "shot": {
+        "type": "VIDEO",
+        "source": "gameplay",
+        "media": "media/B07.mp4",
+        "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
+      },
+      "render_duration_s": 6.966666666666667,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B07.mp4",
+        "filled_by": "media",
+        "at": "2026-09-24T18:52:03"
+      },
+      "qc": {
+        "full_bleed": true,
+        "contrast_regions": [
+          {
+            "label": "HUD title",
+            "box": [
+              0.034,
+              0.042,
+              0.5,
+              0.086
+            ]
+          },
+          {
+            "label": "HUD chapter and logs",
+            "box": [
+              0.78,
+              0.042,
+              0.96,
+              0.13
+            ]
+          },
+          {
+            "label": "HUD controls row",
+            "box": [
+              0.034,
+              0.936,
+              0.395,
+              0.982
+            ]
+          },
+          {
+            "label": "HUD deaths and timer",
+            "box": [
+              0.835,
+              0.936,
+              0.97,
+              0.982
+            ]
+          }
+        ],
+        "contrast_reason": "Gameplay plate, not a card, and two heuristics mis-fire on it.\nfull_bleed: the game renders edge to edge at 3840x2160. The world IS the frame, so crossing title-safe is the composition rather than overflow, and the HUD stays inside its own reserved bands.\ncontrast_regions: the whole-frame average is low because the upright palette is deliberately pale - light is the comfortable lie and dark is the truth, which is this chapter's mechanic rather than a rendering fault. The essential text is the PERSISTENT HUD, measured where hud.gd draws it: title, chapter and log count, controls row, and deaths/timer. Each must pass on its own.\nThe feather readout is deliberately NOT declared. It only exists after the player picks the feather up, so before that the region is legitimately empty - an earlier revision declared it and the gate correctly reported nine empty-region defects. Declaring a conditional element as persistent text would have been a false claim about the frame."
+      }
     },
     {
       "beat_id": "B08",
+      "act": "body",
       "kind": "gameplay",
       "label": "Signs that lie",
-      "narration_text": "From here the world lies in both directions. A platform drawn exactly like solid ground holds nothing. A bulkhead marked door locked is not solid and the player walks straight through it. A field of spikes drawn in full detail cannot hurt anyone. And a clear stretch of floor beneath a sign reading safe is filled with spikes that are never drawn at all. Every one of those is the same rule: what is drawn and what is solid are independent, and inverting shows which is which."
+      "narration_text": "Now it lies in both directions. A drawn platform that holds nothing. A locked door that is not solid. Spikes that cannot hurt you, and under a sign reading safe, spikes that are never drawn at all.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 14.2,
+      "actual_duration_s": 11.46,
+      "audio_file": "mp3/beat-B08.mp3",
+      "shot": {
+        "type": "VIDEO",
+        "source": "gameplay",
+        "media": "media/B08.mp4",
+        "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
+      },
+      "render_duration_s": 11.466666666666667,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B08.mp4",
+        "filled_by": "media",
+        "at": "2026-09-24T18:52:03"
+      },
+      "qc": {
+        "full_bleed": true,
+        "contrast_regions": [
+          {
+            "label": "HUD title",
+            "box": [
+              0.034,
+              0.042,
+              0.5,
+              0.086
+            ]
+          },
+          {
+            "label": "HUD chapter and logs",
+            "box": [
+              0.78,
+              0.042,
+              0.96,
+              0.13
+            ]
+          },
+          {
+            "label": "HUD controls row",
+            "box": [
+              0.034,
+              0.936,
+              0.395,
+              0.982
+            ]
+          },
+          {
+            "label": "HUD deaths and timer",
+            "box": [
+              0.835,
+              0.936,
+              0.97,
+              0.982
+            ]
+          }
+        ],
+        "contrast_reason": "Gameplay plate, not a card, and two heuristics mis-fire on it.\nfull_bleed: the game renders edge to edge at 3840x2160. The world IS the frame, so crossing title-safe is the composition rather than overflow, and the HUD stays inside its own reserved bands.\ncontrast_regions: the whole-frame average is low because the upright palette is deliberately pale - light is the comfortable lie and dark is the truth, which is this chapter's mechanic rather than a rendering fault. The essential text is the PERSISTENT HUD, measured where hud.gd draws it: title, chapter and log count, controls row, and deaths/timer. Each must pass on its own.\nThe feather readout is deliberately NOT declared. It only exists after the player picks the feather up, so before that the region is legitimately empty - an earlier revision declared it and the gate correctly reported nine empty-region defects. Declaring a conditional element as persistent text would have been a false claim about the frame."
+      }
     },
     {
       "beat_id": "B09",
+      "act": "body",
       "kind": "cause-and-effect",
       "label": "Why a floor can be invisible",
-      "narration_text": "Here is the source change behind all of that. The starter already walked its level data twice - once in ready, to build a collider for every solid, and once in draw, to paint them. Those two loops were always separate. Hidden geometry now joins only the first loop, so it collides without ever being painted. Phantom geometry joins neither, so it is painted and holds nothing. No new node types, no physics change, and not one collision check removed. The mechanic is the difference between two loops that already existed."
+      "narration_text": "Here is the source change behind all of that. The starter already walked its level data twice - once in ready, to build a collider for every solid, and once in draw, to paint them. Those two loops were always separate. Hidden geometry now joins only the first loop, so it collides without ever being painted. Phantom geometry joins neither, so it is painted and holds nothing. No new node types, no physics change, and not one collision check removed. The mechanic is the difference between two loops that already existed.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 35.0,
+      "actual_duration_s": 28.94,
+      "audio_file": "mp3/beat-B09.mp3",
+      "shot": {
+        "type": "REMOTION",
+        "source": "own",
+        "remotion": {
+          "pattern": "ClaudeVerdictArtifact",
+          "props": {
+            "artifactTitle": "Why a floor can be invisible",
+            "artifactHeading": "session.gd",
+            "artifactLines": [
+              "The starter already walked its level data twice:",
+              "  _ready()  builds a collider for every solid",
+              "  _draw()   paints them",
+              "hidden  joins only the build loop  -> collides, never painted",
+              "phantom joins neither              -> painted, holds nothing",
+              "No new node types. No collision check removed."
+            ]
+          },
+          "rendered": {
+            "out": "media/B09.mp4",
+            "at": "2026-09-24T21:58:50.926002+00:00"
+          }
+        }
+      },
+      "render_duration_s": 28.966666666666665,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B09.mp4",
+        "filled_by": "remotion:ClaudeVerdictArtifact",
+        "at": "2026-09-24T18:52:03"
+      },
+      "qc": {
+        "sparse_by_design": true,
+        "sparse_reason": "A reference card read aloud, not a busy graphic. Six short lines on a dark plate is the point - the viewer is meant to read them while Liam speaks, and filling the safe area with decoration would make them harder to read, not easier."
+      }
     },
     {
       "beat_id": "B10",
+      "act": "body",
       "kind": "gameplay",
       "label": "Failure and recovery",
-      "narration_text": "This is a real death, not a staged one. The player walks into the Betrayal exactly as the previous gap taught them to, and falls. The retry is the starter's, unchanged: a short pause, then back to the spawn point with the death counted. Retries are unlimited, and the feather, the charge, the collapsed ledges and the collected logs all reset with the attempt."
+      "narration_text": "A real death, and the starter's retry - unchanged, unlimited, everything reset with the attempt.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 5.8,
+      "actual_duration_s": 5.85,
+      "audio_file": "mp3/beat-B10.mp3",
+      "shot": {
+        "type": "VIDEO",
+        "source": "gameplay",
+        "media": "media/B10.mp4",
+        "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
+      },
+      "render_duration_s": 5.866666666666666,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B10.mp4",
+        "filled_by": "media",
+        "at": "2026-09-24T18:52:03"
+      },
+      "qc": {
+        "full_bleed": true,
+        "contrast_regions": [
+          {
+            "label": "HUD title",
+            "box": [
+              0.034,
+              0.042,
+              0.5,
+              0.086
+            ]
+          },
+          {
+            "label": "HUD chapter and logs",
+            "box": [
+              0.78,
+              0.042,
+              0.96,
+              0.13
+            ]
+          },
+          {
+            "label": "HUD controls row",
+            "box": [
+              0.034,
+              0.936,
+              0.395,
+              0.982
+            ]
+          },
+          {
+            "label": "HUD deaths and timer",
+            "box": [
+              0.835,
+              0.936,
+              0.97,
+              0.982
+            ]
+          }
+        ],
+        "contrast_reason": "Gameplay plate, not a card, and two heuristics mis-fire on it.\nfull_bleed: the game renders edge to edge at 3840x2160. The world IS the frame, so crossing title-safe is the composition rather than overflow, and the HUD stays inside its own reserved bands.\ncontrast_regions: the whole-frame average is low because the upright palette is deliberately pale - light is the comfortable lie and dark is the truth, which is this chapter's mechanic rather than a rendering fault. The essential text is the PERSISTENT HUD, measured where hud.gd draws it: title, chapter and log count, controls row, and deaths/timer. Each must pass on its own.\nThe feather readout is deliberately NOT declared. It only exists after the player picks the feather up, so before that the region is legitimately empty - an earlier revision declared it and the gate correctly reported nine empty-region defects. Declaring a conditional element as persistent text would have been a false claim about the frame."
+      }
     },
     {
       "beat_id": "B11",
+      "act": "body",
       "kind": "gameplay",
       "label": "The tower",
-      "narration_text": "The finish was moved from x nine hundred and sixteen to x four thousand seven hundred and fifty, and lifted into a shaft above the floor. A normal jump cannot reach it - there is an automated check that asserts exactly that. The only way in is to fall upward. The chapter ends on the line the story has been building to: you built this."
+      "narration_text": "The finish sits above the floor. A normal jump cannot reach it; only falling upward gets in. Then Enter replays it.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 8.1,
+      "actual_duration_s": 6.93,
+      "audio_file": "mp3/beat-B11.mp3",
+      "shot": {
+        "type": "VIDEO",
+        "source": "gameplay",
+        "media": "media/B11.mp4",
+        "note": "Native 3840x2160 capture from the running game; see CAPTURE.md."
+      },
+      "render_duration_s": 6.933333333333334,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B11.mp4",
+        "filled_by": "media",
+        "at": "2026-09-24T18:52:03"
+      },
+      "qc": {
+        "full_bleed": true,
+        "contrast_regions": [
+          {
+            "label": "HUD title",
+            "box": [
+              0.034,
+              0.042,
+              0.5,
+              0.086
+            ]
+          },
+          {
+            "label": "HUD chapter and logs",
+            "box": [
+              0.78,
+              0.042,
+              0.96,
+              0.13
+            ]
+          },
+          {
+            "label": "HUD controls row",
+            "box": [
+              0.034,
+              0.936,
+              0.395,
+              0.982
+            ]
+          },
+          {
+            "label": "HUD deaths and timer",
+            "box": [
+              0.835,
+              0.936,
+              0.97,
+              0.982
+            ]
+          }
+        ],
+        "contrast_reason": "Gameplay plate, not a card, and two heuristics mis-fire on it.\nfull_bleed: the game renders edge to edge at 3840x2160. The world IS the frame, so crossing title-safe is the composition rather than overflow, and the HUD stays inside its own reserved bands.\ncontrast_regions: the whole-frame average is low because the upright palette is deliberately pale - light is the comfortable lie and dark is the truth, which is this chapter's mechanic rather than a rendering fault. The essential text is the PERSISTENT HUD, measured where hud.gd draws it: title, chapter and log count, controls row, and deaths/timer. Each must pass on its own.\nThe feather readout is deliberately NOT declared. It only exists after the player picks the feather up, so before that the region is legitimately empty - an earlier revision declared it and the gate correctly reported nine empty-region defects. Declaring a conditional element as persistent text would have been a false claim about the frame."
+      }
     },
     {
       "beat_id": "B12",
+      "act": "verdict",
       "kind": "verdict",
       "label": "Verdict",
-      "narration_text": "What is demonstrably working: the character reads correctly facing both ways, standing, jumping and inverted, against a collider that was never changed. Twenty-two landings past the original section. A relocated finish that the mechanic is required to reach. Seventy mechanics checks and nine keyboard checks passing, including all twenty-five the starter shipped with, none of them weakened. What is not settled: whether the Betrayal reads as fair or as cheap, and whether the environmental clues are legible at speed. The human playtest found three comprehension defects that every automated check had passed straight over - including a chapter that depended on a key it never taught the player. And one honest limitation: the light palette was the third attempt at the debris alone, and the design of those environmental clues is still being argued about."
+      "narration_text": "What is demonstrably working: the character reads correctly facing both ways, standing, jumping and inverted, against a collider that was never changed. Twenty-two landings past the original section. A relocated finish that the mechanic is required to reach. Seventy mechanics checks and nine keyboard checks passing, including all twenty-five the starter shipped with, none of them weakened. What is not settled: whether the Betrayal reads as fair or as cheap, and whether the environmental clues are legible at speed. The human playtest found three comprehension defects that every automated check had passed straight over - including a chapter that depended on a key it never taught the player. And one honest limitation: the light palette was the third attempt at the debris alone, and the design of those environmental clues is still being argued about.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 51.9,
+      "actual_duration_s": 43.07,
+      "audio_file": "mp3/beat-B12.mp3",
+      "shot": {
+        "type": "REMOTION",
+        "source": "own",
+        "remotion": {
+          "pattern": "ClaudeVerdictArtifact",
+          "props": {
+            "artifactTitle": "The World Is Falling - Extending Walker Jumpman",
+            "artifactHeading": "Verdict",
+            "artifactLines": [
+              "WORKS - 22 landings, relocated finish, 70 + 9 checks, 0 failures",
+              "WORKS - collider and tuning.gd byte-identical to the starter",
+              "UNSETTLED - is the Betrayal fair, or cheap?",
+              "UNSETTLED - are the environmental clues readable at speed?",
+              "LIMIT - 3 rows of the human playtest remain unverified",
+              "LIMIT - Chapters Two to Five are design text only"
+            ]
+          },
+          "rendered": {
+            "out": "media/B12.mp4",
+            "at": "2026-09-24T21:52:58.034919+00:00"
+          }
+        }
+      },
+      "render_duration_s": 43.1,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B12.mp4",
+        "filled_by": "remotion:ClaudeVerdictArtifact",
+        "at": "2026-09-24T18:52:03"
+      },
+      "qc": {
+        "sparse_by_design": true,
+        "sparse_reason": "The verdict is six short lines that separate what works from what is unsettled. They are read aloud and meant to be read along with; padding the safe area with decoration would compete with the only thing on the card that matters."
+      }
     },
     {
       "beat_id": "B13",
+      "act": "your turn",
       "kind": "your-turn",
       "label": "Your turn",
-      "narration_text": "Here is the experiment worth running. Take the starter, and before you add anything, find the two places it walks its level data - the loop that builds colliders and the loop that draws. Then add one array that joins only the first. You will have a floor a player can stand on and cannot see, in about twenty lines, and every existing test will still pass. Ask Walker for that, then go and find out whether your players read it as clever or as a trick. That answer is not in the code."
+      "narration_text": "Here is the experiment worth running. Take the starter, and before you add anything, find the two places it walks its level data - the loop that builds colliders and the loop that draws. Then add one array that joins only the first. You will have a floor a player can stand on and cannot see, in about twenty lines, and every existing test will still pass. Ask Walker for that, then go and find out whether your players read it as clever or as a trick. That answer is not in the code.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 36.2,
+      "actual_duration_s": 22.12,
+      "audio_file": "mp3/beat-B13.mp3",
+      "shot": {
+        "type": "REMOTION",
+        "source": "own",
+        "remotion": {
+          "pattern": "ClaudeComposerAsk",
+          "props": {
+            "greeting": "Your turn.",
+            "topic": "YOUR TURN - find the two loops in your own starter",
+            "segment": "The World Is Falling - Extending Walker Jumpman",
+            "command": "Find where your game builds colliders and where it draws them. Add one array that joins only the first. You now have a floor the player can stand on and cannot see.",
+            "runningText": "about twenty lines - every existing test still passes...",
+            "output": [],
+            "folderLabel": "@claude-liam"
+          },
+          "rendered": {
+            "out": "media/B13.mp4",
+            "at": "2026-09-24T21:54:12.874900+00:00"
+          }
+        }
+      },
+      "render_duration_s": 22.133333333333333,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B13.mp4",
+        "filled_by": "remotion:ClaudeComposerAsk",
+        "at": "2026-09-24T18:52:03"
+      }
+    },
+    {
+      "beat_id": "BOUT",
+      "act": "outro",
+      "kind": "outro",
+      "label": "Regular outro",
+      "narration_text": "The World Is Falling - Extending Walker Jumpman. At Nik Bear Brown.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 5.0,
+      "shot": {
+        "type": "REMOTION",
+        "source": "own",
+        "remotion": {
+          "pattern": "ClaudeTitleOutro",
+          "props": {
+            "title": "The World Is Falling - Extending Walker Jumpman",
+            "slug": "claude-liam-walker-jumpman-walkthrough"
+          },
+          "rendered": {
+            "out": "media/BOUT.mp4",
+            "at": "2026-09-24T21:54:30.536467+00:00"
+          }
+        }
+      },
+      "actual_duration_s": 4.44,
+      "audio_file": "mp3/beat-BOUT.mp3",
+      "render_duration_s": 4.466666666666667,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/BOUT.mp4",
+        "filled_by": "remotion:ClaudeTitleOutro",
+        "at": "2026-09-24T18:52:03"
+      }
     }
   ]
 }

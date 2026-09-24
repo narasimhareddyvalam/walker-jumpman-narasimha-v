@@ -28,3 +28,14 @@ evidence/mechanics-*.json
 evidence/keyboard-*.json
 
 # Git cannot ignore by size: inspect staged files before committing (>25 MB).
+
+# Film reel: keep the text evidence (beat sheet, coverage, QC, input logs),
+# leave the media out. MP4 and MP3 are already excluded above; these are the
+# compositor's intermediates and the 4K master, which live in course media
+# storage and are identified in SUBMISSION.md by filename and SHA-256.
+youtube/*/clips/
+youtube/*/media/
+youtube/*/exports/
+youtube/*/mp3/
+youtube/*/qc-sheet.png
+youtube/*/_qc/frames/
