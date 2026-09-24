@@ -92,7 +92,9 @@ func _draw() -> void:
 	# drawing stays inside the same unchanged 18x28 box while reading upside down.
 	if gravity_sign < 0.0:
 		draw_set_transform(Vector2(0.0, -28.0), 0.0, Vector2(1.0, -1.0))
-	var ink := Color("25354a")
+	# Lifted off the starter's near-black navy so the figure still reads against
+	# the dark facility rather than disappearing into it.
+	var ink := Color("3d5568")
 	# The trail reports gravity state: warm while normal, cold while inverted.
 	# This is the only readout of the Feather's effect; there is no UI for it.
 	var amber := Color("ef875f") if gravity_sign > 0.0 else Color("7fd8f0")
