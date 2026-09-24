@@ -96,7 +96,7 @@ byte-identical; only the **sign** applied to gravity, the jump impulse and
 normal jump rises **56.00 px**.
 
 ### Level — roughly three times longer
-Eight new landings past the original section, crumbling ledges, a route fork, an
+Twenty-two new landings past the original section, crumbling ledges, a fork, an
 inverted ceiling run, and the finish relocated into a shaft that cannot be
 entered without the mechanic. All geometry was sized against a **measured** jump
 envelope (`godot/tests/probe_reach.gd`), not arithmetic. No jump strength was
