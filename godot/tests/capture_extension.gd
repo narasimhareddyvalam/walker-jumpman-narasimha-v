@@ -1,16 +1,12 @@
 extends SceneTree
-## Captures the 03 / DON'T STOP extension from real play: both branches of the
-## fork, a ledge mid-collapse, the raised hazard, and an actual fall death.
-## Scripted input only - these are not human playtest evidence.
-## Added for walker-jumpman-narasimha-v.
+## Captures Chapter One from real play: the anomaly, the Feather, inverted
+## traversal, the observatory door, and genuine deaths in both directions.
+## Scripted input only - no teleporting, no forced completion, no disabled
+## collision. These are NOT human playtest evidence.
 const Game = preload("res://game/session.gd")
+const Route = preload("res://tests/route_driver.gd")
 var game: Node2D
 var output: String
-
-# HIGH / FAST branch: the shipped route fixture.
-const UPPER := [138.0, 292.0, 424.0, 548.0, 712.0, 944.0, 1072.0, 1200.0, 1352.0, 1468.0, 1580.0]
-# LOW / SAFE branch: no jump at the junction, so the player walks off into the drop.
-const LOWER := [138.0, 292.0, 424.0, 548.0, 712.0, 944.0, 1072.0, 1200.0, 1490.0, 1640.0]
 
 func step() -> void:
 	await physics_frame
@@ -34,17 +30,6 @@ func fresh() -> void:
 	await step()
 	await step()
 
-func drive(marks: Array, next: int) -> int:
-	# One tick of forward input, jumping at the next mark once grounded.
-	var p: CharacterBody2D = game.player
-	p.test_control = true
-	p.test_axis = 1.0
-	p.test_jump_held = false
-	if next < marks.size() and p.position.x >= marks[next] and p.is_on_floor():
-		p.test_jump_pressed = true
-		next += 1
-	return next
-
 func _initialize() -> void:
 	call_deferred("run")
 
@@ -52,14 +37,39 @@ func run() -> void:
 	output = ProjectSettings.globalize_path("res://../evidence/extension")
 	DirAccess.make_dir_recursive_absolute(output)
 
-	# --- HIGH / FAST branch ---
+	# --- Full chapter on the shipped route fixture ---
 	await fresh()
-	var next := 0
-	var shots := {1035.0: "20-crumble-shaking", 1180.0: "21-second-ledge",
-		1300.0: "22-the-fork", 1440.0: "23-high-road", 1590.0: "24-raised-hazard"}
+	var route = Route.new()
+	# Capture points sit in mid-air or on solid ground, never while the player is
+	# stood on a dissolving ledge: writing a PNG costs physics ticks during which
+	# the fixture cannot feed inputs, and a lost tick there is a death.
+	var shots := {
+		1120.0: "20-ground-dissolving",
+		1300.0: "21-the-fork",
+		1700.0: "22-raised-hazard",
+		1935.0: "23-the-feather",
+		2100.0: "24-inverted-ceiling",
+		2420.0: "25-second-reversal",
+		2690.0: "26-second-feather",
+		# The INVERSION corridor. 29 is the one that matters: inverted, with the
+		# hidden floor rendered behind the player and the Betrayal gap ahead of
+		# them still empty.
+		2850.0: "27-void-gap-holding",
+		3020.0: "28-you-were-never-falling",
+		3180.0: "29-truth-vision",
+		3400.0: "30-the-phantom",
+		3560.0: "31-phantom-omitted",
+		3760.0: "32-observatory-door",
+	}
 	var taken := {}
-	for i in range(900):
-		next = drive(UPPER, next)
+	var deaths_seen: int = 0
+	for i in range(3200):
+		# A fixture that has already consumed its early marks cannot replay the
+		# level, so restart it with the attempt rather than looping forever.
+		if game.deaths > deaths_seen:
+			deaths_seen = game.deaths
+			route = Route.new()
+		route.step(game.player, game)
 		await step()
 		for mark in shots:
 			if not taken.has(mark) and game.player.position.x >= mark:
@@ -67,65 +77,98 @@ func run() -> void:
 				await capture(shots[mark])
 		if game.state != Game.State.PLAYING:
 			break
-	assert(game.state == Game.State.COMPLETE, "upper branch did not complete")
-	await capture("25-upper-complete")
-	print("UPPER: complete, %d deaths" % game.deaths)
+	assert(game.state == Game.State.COMPLETE, "chapter route did not complete")
+	await capture("33-chapter-ends")
+	print("CHAPTER: complete, %d deaths, charges left %d" % [game.deaths, game.feather_charges])
 
-	# --- LOW / SAFE branch ---
+	# --- The Reveal, captured on purpose. On the main route the player flips at
+	# x=3120, by which point the hidden floor has scrolled off the left of the
+	# screen. Here the route is stopped while still standing on it and the
+	# Feather is spent there instead, so one frame shows the floor that was
+	# underfoot the whole time. The charge is the one the second Feather really
+	# granted - nothing is added and nothing is teleported.
 	await fresh()
-	next = 0
-	var low_taken := false
-	for i in range(900):
-		next = drive(LOWER, next)
+	route = Route.new()
+	deaths_seen = game.deaths
+	for i in range(3200):
+		if game.deaths > deaths_seen:
+			deaths_seen = game.deaths
+			route = Route.new()
+		route.step(game.player, game)
 		await step()
-		if not low_taken and game.player.position.x >= 1430.0:
-			low_taken = true
-			await capture("26-low-road")
+		if game.player.position.x > 2890.0 and game.player.is_on_floor():
+			break
+	game.player.test_axis = 0.0
+	await step()
+	await capture("37-standing-on-nothing")
+	assert(game.feather_charges >= 1, "no charge in hand on the hidden floor")
+	game.test_feather_pressed = true
+	await step()
+	await step()
+	await capture("38-the-floor-was-always-there")
+	print("REVEAL: x=%.0f gravity_sign=%.1f" % [game.player.position.x, game.player.gravity_sign])
+
+	# --- Falling into the sky: the failure the new mechanic introduces ---
+	await fresh()
+	route = Route.new()
+	deaths_seen = game.deaths
+	for i in range(3200):
+		if game.deaths > deaths_seen:
+			deaths_seen = game.deaths
+			route = Route.new()
+		route.step(game.player, game)
+		await step()
+		# Never cancel the first reversal, so the player runs off the end of the
+		# ceiling still inverted.
+		if route.next_feather >= 1:
+			route.feather_marks.clear()
+		if game.player.position.x > 2270.0 and game.player.gravity_sign < 0.0:
+			break
 		if game.state != Game.State.PLAYING:
 			break
-	assert(game.state == Game.State.COMPLETE, "lower branch did not complete")
-	await capture("27-lower-complete")
-	print("LOWER: complete, %d deaths" % game.deaths)
+	await capture("34-rising-off-the-ceiling")
+	var sky_deaths: int = game.deaths
+	var died := false
+	for i in range(240):
+		game.player.test_axis = 1.0
+		await step()
+		if game.state == Game.State.DYING:
+			died = true
+			await capture("35-fell-into-the-sky")
+			break
+		if game.deaths > sky_deaths:
+			died = true
+			break
+	assert(died, "running off the ceiling inverted did not kill")
+	print("SKY: died as expected, reason=%s" % game.death_reason)
 
-	# --- Standing still on a crumbling ledge: the failure the section is about ---
+	# --- Standing still on dissolving ground ---
 	await fresh()
-	next = 0
-	for i in range(900):
-		next = drive(UPPER, next)
+	route = Route.new()
+	deaths_seen = game.deaths
+	for i in range(3200):
+		if game.deaths > deaths_seen:
+			deaths_seen = game.deaths
+			route = Route.new()
+		route.step(game.player, game)
 		await step()
 		if game.player.position.x > 1030.0 and game.player.is_on_floor():
 			break
-	assert(game.player.is_on_floor(), "never landed on the first crumbling ledge")
-	await capture("28-standing-on-cracks")
 	game.player.test_axis = 0.0
-	for i in range(28):
-		await step()
-	await capture("29-about-to-give-way")
-	# Count deaths rather than sampling for the DYING state: writing a PNG can
-	# outlast the ~34-tick retry window and miss it entirely.
-	var deaths_before: int = game.deaths
+	var pit_deaths: int = game.deaths
 	var fell := false
-	var died := false
 	for i in range(300):
 		game.player.test_axis = 0.0
 		await step()
-		if not fell and game.player.position.y > 340.0:
-			fell = true
-			print("  falling at i=%d y=%.1f" % [i, game.player.position.y])
-			await capture("30-ledge-gave-way")
 		if game.state == Game.State.DYING:
-			died = true
-			await capture("31-death-and-retry")
+			fell = true
+			await capture("36-ground-gave-way")
 			break
-		if game.deaths > deaths_before:
-			died = true
+		if game.deaths > pit_deaths:
+			fell = true
 			break
-		if i % 40 == 0:
-			print("  i=%d pos=(%.1f,%.1f) state=%d ledge0=%d/%d" % [
-				i, game.player.position.x, game.player.position.y, game.state,
-				int(game.crumble_ledges[0].state), int(game.crumble_ledges[0].timer)])
-	assert(died, "standing on a crumbling ledge did not kill")
-	print("STALL: died as expected, deaths=%d" % game.deaths)
+	assert(fell, "standing on dissolving ground did not kill")
+	print("PIT: died as expected, reason=%s" % game.death_reason)
 
 	game.queue_free()
 	await process_frame

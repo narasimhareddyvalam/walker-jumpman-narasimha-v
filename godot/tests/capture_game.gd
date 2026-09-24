@@ -39,8 +39,8 @@ func run() -> void:
 	game.start_session()
 	var route = Route.new()
 	var gap_captured := false
-	for i in range(900):
-		route.step(game.player)
+	for i in range(2400):
+		route.step(game.player, game)
 		await step()
 		if not gap_captured and game.player.position.x > 463 and game.player.position.y < 300:
 			await capture("03-jump")

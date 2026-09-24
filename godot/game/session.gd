@@ -378,12 +378,14 @@ func _draw() -> void:
 	_sign(font, Vector2(2042, 250), "THE FLOOR IS NOT THE ONLY FLOOR", 13, TEXT_FAINT)
 	# The INVERSION corridor. Every warning the player needs is written down:
 	# the Betrayal punishes assuming, not reading.
+	# Staggered in y as well as x: at 13px these strings run ~7px per character
+	# and neighbouring signs overlapped when they shared a baseline.
 	_sign(font, Vector2(2806, 236), "WALK. DO NOT JUMP.", 13, TEXT_WARN)
-	_sign(font, Vector2(3002, 236), "YOU WERE NEVER FALLING", 13, TEXT_FAINT)
-	_sign(font, Vector2(3148, 236), "IT IS NOT THE SAME GAP", 13, TEXT_WARN)
-	_sign(font, Vector2(3362, 236), "BELIEF RENDERS. TRUTH DOES NOT.", 12, TEXT_FAINT)
-	_sign(font, Vector2(3480, 232), "OBSERVATORY", 15, TEXT_WARN)
-	_sign(font, Vector2(3420, 252), "ONLY THOSE WHO CAN FALL UPWARD MAY ENTER", 13, COLD)
+	_sign(font, Vector2(3002, 212), "YOU WERE NEVER FALLING", 13, TEXT_FAINT)
+	_sign(font, Vector2(3160, 236), "IT IS NOT THE SAME GAP", 13, TEXT_WARN)
+	_sign(font, Vector2(3352, 212), "BELIEF RENDERS. TRUTH DOES NOT.", 12, TEXT_FAINT)
+	_sign(font, Vector2(3690, 232), "OBSERVATORY", 15, TEXT_WARN)
+	_sign(font, Vector2(3540, 252), "ONLY THOSE WHO CAN FALL UPWARD MAY ENTER", 13, COLD)
 
 func _sign(font: Font, at: Vector2, text: String, size: int, tint: Color) -> void:
 	draw_string(font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, tint)

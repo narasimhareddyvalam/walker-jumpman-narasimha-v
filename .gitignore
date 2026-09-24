@@ -21,4 +21,10 @@ credentials/
 *.p12
 *.pfx
 
+# Every test run writes a timestamped report into evidence/. Only the run at
+# HEAD is worth keeping as the record, so ignore them by default and add the
+# one being recorded with `git add -f`.
+evidence/mechanics-*.json
+evidence/keyboard-*.json
+
 # Git cannot ignore by size: inspect staged files before committing (>25 MB).

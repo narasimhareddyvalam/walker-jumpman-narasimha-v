@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-09-23T23:16:03",
+  "created_at": "2026-09-24T01:08:52",
   "engine": "4.7.2-stable (official)",
   "failures": 0,
   "results": [
@@ -181,26 +181,26 @@
       "id": "complete-real-route",
       "observed": {
         "deaths": 0,
-        "jump_marks_used": 11,
-        "position": "(1728.877, 279.9253)",
+        "jump_marks_used": 12,
+        "position": "(3870.177, 201.2586)",
         "state": 4,
-        "ticks": 625
+        "ticks": 1434
       },
       "status": "PASS"
     },
     {
       "id": "route-reaches-new-landings",
       "observed": {
-        "landed_on": 6,
-        "new_landings_available": 8
+        "landed_on": 12,
+        "new_landings_available": 22
       },
       "status": "PASS"
     },
     {
       "id": "finish-past-original-section",
       "observed": {
-        "finish_x": 1730.0,
-        "width": 1840.0
+        "finish_x": 3750.0,
+        "width": 3980.0
       },
       "status": "PASS"
     },
@@ -253,7 +253,148 @@
         "state": 0
       },
       "status": "PASS"
+    },
+    {
+      "id": "feather-starts-empty",
+      "observed": {
+        "charges": 0,
+        "gravity_sign": 1.0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "feather-without-charge-does-nothing",
+      "observed": {
+        "charges": 0,
+        "gravity_sign": 1.0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "feather-grants-charges-once",
+      "observed": {
+        "after": 2,
+        "granted": 2
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "feather-inverts-and-spends",
+      "observed": {
+        "charges": 0,
+        "gravity_sign": -1.0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "inverted-grounds-on-ceiling",
+      "observed": {
+        "ticks": 22,
+        "y": 194.026031494141
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "inverted-jump-matches-normal-rise",
+      "observed": {
+        "inverted_displacement": 56.0491333007812,
+        "normal_rise": 56.0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "feather-cancel-restores-without-refund",
+      "observed": {
+        "charges": 1,
+        "gravity_sign": 1.0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "reversal-expires-on-its-own",
+      "observed": {
+        "gravity_sign": 1.0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sky-is-fatal",
+      "observed": {
+        "reason": "You fell into the sky",
+        "state": 3
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "retry-resets-gravity-and-charges",
+      "observed": {
+        "charges": 0,
+        "feather_taken": false,
+        "gravity_sign": 1.0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "finish-unreachable-without-feather",
+      "observed": {
+        "highest_y": 287.979156494141,
+        "state": 1
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "hidden-supports-but-is-not-drawn",
+      "observed": {
+        "drawn_upright": false,
+        "on_floor": true,
+        "rect": "[P: (2800.0, 288.0), S: (200.0, 16.0)]",
+        "y": 287.989044189453
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "hidden-revealed-when-inverted",
+      "observed": {
+        "drawn_inverted": true,
+        "gravity_sign": -1.0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "phantom-is-drawn",
+      "observed": {
+        "rect": "[P: (3540.0, 288.0), S: (130.0, 16.0)]"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "phantom-is-drawn-but-not-solid",
+      "observed": {
+        "drawn": true,
+        "fell_through": true,
+        "phantom_bottom": 304.0,
+        "ticks": 19
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "phantom-omitted-when-inverted",
+      "observed": {
+        "drawn_inverted": false,
+        "gravity_sign": -1.0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "betrayal-gap-is-fatal",
+      "observed": {
+        "probe_x": 3100.0,
+        "reason": "Missed the landing",
+        "state": 3,
+        "ticks": 55
+      },
+      "status": "PASS"
     }
   ],
-  "scope": "First Steps slice plus the 03 / DON'T STOP extension; not full GDD acceptance or human playtesting"
+  "scope": "Chapter One: The Fall. Machine checks only; not human playtesting or full GDD acceptance"
 }
