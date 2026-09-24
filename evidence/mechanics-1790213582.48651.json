@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-09-24T01:08:52",
+  "created_at": "2026-09-24T01:33:02",
   "engine": "4.7.2-stable (official)",
   "failures": 0,
   "results": [
@@ -392,6 +392,23 @@
         "reason": "Missed the landing",
         "state": 3,
         "ticks": 55
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "palette-inverts-with-gravity",
+      "observed": {
+        "every_key_changes": true,
+        "gravity_sign": -1.0,
+        "keys": 16
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "palette-upright-is-the-lighter-one",
+      "observed": {
+        "inverted_void_luminance": 0.0451396070420742,
+        "upright_void_luminance": 0.923570930957794
       },
       "status": "PASS"
     }

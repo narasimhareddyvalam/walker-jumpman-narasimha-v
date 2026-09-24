@@ -300,3 +300,86 @@ The route fixture's tick budget rose from 900 to 2400 because the level is
 roughly three times longer; the observed run is **1130 ticks with 0 deaths**, and
 that figure is reported in the check so the margin stays visible. No assertion
 was relaxed and no expected value was changed to obtain a pass.
+
+---
+
+## Revision 3 — 2026-09-23, night: INVERSION
+
+The chapter had a mechanic (gravity reversal) but not yet a *theme*. This
+revision supplies one, and it is a single law rather than a bag of tricks:
+
+> **The world renders what you believe, not what is there.**
+
+Everything below follows from it. Upright vision draws phantom geometry and
+withholds hidden geometry; inverted vision does the exact reverse. Collision is
+never consulted by either, which is what keeps this a deduction rather than a
+gotcha — the player can always check by flipping, and the check is free apart
+from the charge it costs.
+
+### What this added
+
+| Element | Behaviour |
+|---|---|
+| **Hidden geometry** | Built as a normal collider, simply not drawn. Rendered as a cyan lattice while inverted. |
+| **Phantom geometry** | Drawn exactly like real ground, never built as a collider at all. Absent while inverted. |
+| **The Void Gap** (x 2800–3000) | Apparent chasm; a hidden floor catches a player who keeps walking. |
+| **The Betrayal** (x 3140–3360) | Visually identical gap with nothing in it. The lesson from the Void Gap is the wrong lesson. |
+| **The Phantom** (x 3540–3670) | A drawn platform that holds nothing. |
+| **Light / dark palette** | Upright the facility is pale daylight; inverted it is near-black. Gravity chooses, so colour can never disagree with orientation. |
+
+The observatory moved right to make room; level width 3120 → 3980. A third
+Feather at x=3060 funds the corridor's three mandatory reversals, and the route
+now finishes with **0 charges spare** — the economy is exactly tight.
+
+### Why this is not a gotcha
+
+The Betrayal kills a player using the rule the previous screen taught them.
+That is deliberate, and three things keep it fair: a sign over the gap reads
+`IT IS NOT THE SAME GAP`; flipping reveals the truth before committing; and the
+ceiling above the gap is visible from the approach, so the alternative route is
+never hidden. The punishment is for assuming, not for failing to read minds.
+**Whether that distinction survives contact with a real player is exactly what
+the playtest has to answer** — see P10.
+
+### New predictions
+
+**P10 — The Betrayal will read as cheap rather than clever.** *Prediction:* the
+first death there will feel unfair, and the sign will turn out to be too easy to
+run past at full speed. *Check:* human playtest. If confirmed, the fix is to
+slow the approach or make the sign impossible to miss — **not** to put a floor
+in the gap, which would destroy the lesson.
+
+**P11 — Light mode will hurt readability.** The starter and the whole chapter
+were designed against a near-black background. *Prediction:* the parallax
+strata and fog bands will wash out at low contrast, and something that mattered
+will become hard to see. *Check:* the recaptured evidence and the playtest.
+
+**P12 — Flipping purely to inspect will feel wasteful.** A charge spent checking
+is a charge not spent travelling. *Prediction:* players will avoid checking
+precisely when checking matters most. *Check:* human playtest; if confirmed,
+consider a free inspection that does not move the player.
+
+**P13 — The two worlds will not read as one place.** *Prediction:* the palette
+flip will feel like a different game rather than the same room seen truthfully.
+*Check:* compare captures 30 and 31, which frame the same geometry in both
+schemes.
+
+### What still did not change
+
+`tuning.gd` is byte-identical. The 18x28 collider is untouched. Move, jump,
+retry, pause, confirm, menu keep the starter's bindings; `F` remains the single
+added key. No collision check was removed — hidden geometry *adds* colliders and
+phantom geometry adds none.
+
+### Automated coverage after INVERSION
+
+**51 mechanics checks / 0 failures** and **9 keyboard checks / 0 failures**, on
+Godot 4.7.2.stable. All 25 starter checks and all 43 pre-INVERSION checks are
+retained unmodified. The eight new checks were each written and **watched
+failing** before the implementing code existed; the RED run reported
+`hidden_entries: 0, has_rendered_slabs: false` and `has_pal: false`.
+
+Two fixture updates, neither of them a weakening: the route's jump at x=2780 was
+removed so it *walks* the Void Gap rather than jumping the question, and
+`finish-unreachable-without-feather` moved from x=2950 to x=3800 because its old
+coordinate now sits on the hidden floor. Both assertions are unchanged.

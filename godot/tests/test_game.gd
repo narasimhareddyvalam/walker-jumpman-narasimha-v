@@ -401,6 +401,33 @@ func run() -> void:
 			betrayal_x > 0.0 and game.state == Game.State.DYING and game.death_reason == "Missed the landing",
 			{"probe_x": betrayal_x, "state": game.state, "reason": game.death_reason, "ticks": walk_ticks})
 
+	# --- The palette is the theme: light is the lie, dark is the truth ---
+	await fresh()
+	if not game.has_method("pal"):
+		check("palette-inverts-with-gravity", false, {"has_pal": false})
+		check("palette-upright-is-the-lighter-one", false, {"has_pal": false})
+	else:
+		var up: Dictionary = game.pal().duplicate()
+		game.player.position = Vector2(2100, 260)
+		game.feather_charges = 1
+		game.test_feather_pressed = true
+		await steps(2)
+		var down: Dictionary = game.pal().duplicate()
+		var every_key_changes := true
+		for key in up:
+			if up[key] == down[key]:
+				every_key_changes = false
+		check("palette-inverts-with-gravity",
+			game.player.gravity_sign < 0.0 and every_key_changes,
+			{"gravity_sign": game.player.gravity_sign, "keys": up.size(),
+			 "every_key_changes": every_key_changes})
+		# Upright must read as daylight and inverted as near-black, not merely
+		# differ: the direction of the change is the whole idea.
+		check("palette-upright-is-the-lighter-one",
+			up.void.get_luminance() > 0.5 and down.void.get_luminance() < 0.1,
+			{"upright_void_luminance": up.void.get_luminance(),
+			 "inverted_void_luminance": down.void.get_luminance()})
+
 	var report := {"scope":"Chapter One: The Fall. Machine checks only; not human playtesting or full GDD acceptance", "engine":Engine.get_version_info().string,"created_at":Time.get_datetime_string_from_system(true),"results":results,"failures":failures}
 	var out := ProjectSettings.globalize_path("res://../evidence")
 	DirAccess.make_dir_recursive_absolute(out)

@@ -12,16 +12,29 @@ const DEBRIS_TICKS: int = 40
 enum Crumble { INTACT, SHAKING, COLLAPSED }
 ## Ticks a single Feather charge holds gravity inverted before it snaps back.
 const REVERSAL_TICKS: int = 180
-# Palette. The starter's cream-and-teal scheme was replaced outright: this
-# chapter is meant to read as an abandoned facility, not a bright tutorial.
-const VOID := Color("080c11")
-const SLAB := Color("161e28")
-const EDGE := Color("4d7283")
-const HAZARD := Color("b8433a")
-const COLD := Color("8fe3ff")
-const TEXT_WARN := Color("b8894e")
-const TEXT_DIM := Color("7e929d")
-const TEXT_FAINT := Color("52646e")
+# Palette. The starter's cream-and-teal scheme was replaced outright, and the
+# two schemes below are the theme rather than decoration: upright, the facility
+# is pale, flat and legible - the comfortable lie the world renders for you.
+# Inverted, it is the near-black place the Feather reveals. Gravity chooses,
+# so the player never has to be told which world they are standing in.
+const LIGHT := {
+	"void": Color("e8ecf1"), "slab": Color("9fadbd"), "edge": Color("46586b"),
+	"hazard": Color("c0392b"), "cold": Color("17708c"),
+	"text_warn": Color("8a5520"), "text_dim": Color("46586b"), "text_faint": Color("8593a1"),
+	"strata_far": Color("d2d9e2"), "strata_near": Color("c2ccd7"),
+	"fog": Color(0.35, 0.45, 0.55, 0.05), "debris": Color(0.30, 0.40, 0.50, 0.25),
+	"crack": Color(0.35, 0.42, 0.50, 0.9), "accent": Color("b5731a"),
+	"shard": Color("0d4a5e"), "shard_line": Color("2a8fad"),
+}
+const DARK := {
+	"void": Color("080c11"), "slab": Color("161e28"), "edge": Color("4d7283"),
+	"hazard": Color("b8433a"), "cold": Color("8fe3ff"),
+	"text_warn": Color("b8894e"), "text_dim": Color("7e929d"), "text_faint": Color("52646e"),
+	"strata_far": Color("0f1620"), "strata_near": Color("131d29"),
+	"fog": Color(0.42, 0.58, 0.68, 0.035), "debris": Color(0.47, 0.64, 0.73, 0.20),
+	"crack": Color(0.10, 0.14, 0.19, 0.9), "accent": Color("e0a04a"),
+	"shard": Color("cdefff"), "shard_line": Color("5fa8c4"),
+}
 var state: State = State.MENU
 ## Free-running clock for drifting debris and the Feather's idle motion. Not
 ## gameplay state: it keeps running while paused so the world never looks frozen.
@@ -321,19 +334,20 @@ func _draw() -> void:
 	# All artwork is original Godot vector drawing; no imported or purchased art.
 	# Every extent derives from level data - the starter hard-coded 960.
 	var font := ThemeDB.fallback_font
+	var P := pal()
 	var w: float = float(level.width)
 	var cam_x: float = camera.position.x if is_instance_valid(camera) else 320.0
 	var t := float(world_tick)
 
-	draw_rect(Rect2(-600, -600, w + 1200, 1600), VOID)
+	draw_rect(Rect2(-600, -600, w + 1200, 1600), P.void)
 	# Two parallax strata. The far layer hangs from the ceiling rather than
 	# rising from the ground: the skyline is already inverted before the player
 	# is told anything is wrong.
-	_draw_strata(cam_x, 0.74, Color("0f1620"), 142.0, 300.0, true)
-	_draw_strata(cam_x, 0.48, Color("131d29"), 168.0, 430.0, false)
+	_draw_strata(cam_x, 0.74, P.strata_far, 142.0, 300.0, true)
+	_draw_strata(cam_x, 0.48, P.strata_near, 168.0, 430.0, false)
 	_draw_debris(cam_x, t)
 	for i in range(3):
-		draw_rect(Rect2(cam_x - 380.0, 96.0 + float(i) * 86.0, 760.0, 40.0), Color(0.42, 0.58, 0.68, 0.035))
+		draw_rect(Rect2(cam_x - 380.0, 96.0 + float(i) * 86.0, 760.0, 40.0), P.fog)
 
 	for entry in level.solids:
 		_draw_slab(Rect2(entry[0], entry[1], entry[2], entry[3]))
@@ -355,43 +369,48 @@ func _draw() -> void:
 		for i in range(3):
 			var hx: float = hr.position.x + float(i) * hr.size.x / 3.0
 			draw_colored_polygon(PackedVector2Array([
-				Vector2(hx, hr.end.y), Vector2(hx + 4, hr.position.y), Vector2(hx + 8, hr.end.y)]), HAZARD)
+				Vector2(hx, hr.end.y), Vector2(hx + 4, hr.position.y), Vector2(hx + 8, hr.end.y)]), P.hazard)
 
 	# The observatory doorway, drawn on its own trigger rect rather than on the
 	# ground, so what the player reads is where the level actually ends.
 	var fr := Rect2(level.finish[0], level.finish[1], level.finish[2], level.finish[3])
-	draw_rect(fr, Color(0.40, 0.78, 0.92, 0.06))
-	draw_rect(Rect2(fr.position.x, fr.end.y - 2.0, fr.size.x, 2.0), Color(0.44, 0.83, 0.96, 0.55))
+	draw_rect(fr, Color(P.cold.r, P.cold.g, P.cold.b, 0.10))
+	draw_rect(Rect2(fr.position.x, fr.end.y - 2.0, fr.size.x, 2.0), Color(P.cold.r, P.cold.g, P.cold.b, 0.65))
 	for i in range(5):
 		var gx: float = fr.position.x + fr.size.x * (0.1 + 0.2 * float(i))
 		var pulse: float = 0.25 + 0.22 * sin(t * 0.05 + float(i))
-		draw_line(Vector2(gx, fr.end.y), Vector2(gx, fr.position.y + 6.0), Color(0.44, 0.83, 0.96, pulse), 1.0)
+		draw_line(Vector2(gx, fr.end.y), Vector2(gx, fr.position.y + 6.0), Color(P.cold.r, P.cold.g, P.cold.b, pulse), 1.0)
 
-	_sign(font, Vector2(33, 251), "01 / GET MOVING", 15, TEXT_DIM)
-	_sign(font, Vector2(33, 273), "Read the landing. Then jump.", 13, TEXT_FAINT)
-	_sign(font, Vector2(474, 227), "02 / MIND THE GAP", 15, TEXT_DIM)
-	_sign(font, Vector2(958, 196), "SITE 07 / GRAVITATIONAL RESEARCH", 15, TEXT_WARN)
-	_sign(font, Vector2(958, 216), "STRUCTURAL COHESION FAILING", 13, TEXT_FAINT)
-	_sign(font, Vector2(1386, 196), "UPPER GANTRY", 13, TEXT_WARN)
-	_sign(font, Vector2(1376, 308), "LOWER DECK", 13, TEXT_DIM)
-	_sign(font, Vector2(1878, 236), "ANOMALY RECOVERED HERE", 12, TEXT_FAINT)
-	_sign(font, Vector2(2042, 250), "THE FLOOR IS NOT THE ONLY FLOOR", 13, TEXT_FAINT)
+	_sign(font, Vector2(33, 251), "01 / GET MOVING", 15, P.text_dim)
+	_sign(font, Vector2(33, 273), "Read the landing. Then jump.", 13, P.text_faint)
+	_sign(font, Vector2(474, 227), "02 / MIND THE GAP", 15, P.text_dim)
+	_sign(font, Vector2(958, 196), "SITE 07 / GRAVITATIONAL RESEARCH", 15, P.text_warn)
+	_sign(font, Vector2(958, 216), "STRUCTURAL COHESION FAILING", 13, P.text_faint)
+	_sign(font, Vector2(1386, 196), "UPPER GANTRY", 13, P.text_warn)
+	_sign(font, Vector2(1376, 308), "LOWER DECK", 13, P.text_dim)
+	_sign(font, Vector2(1878, 236), "ANOMALY RECOVERED HERE", 12, P.text_faint)
+	_sign(font, Vector2(2042, 250), "THE FLOOR IS NOT THE ONLY FLOOR", 13, P.text_faint)
 	# The INVERSION corridor. Every warning the player needs is written down:
 	# the Betrayal punishes assuming, not reading.
 	# Staggered in y as well as x: at 13px these strings run ~7px per character
 	# and neighbouring signs overlapped when they shared a baseline.
-	_sign(font, Vector2(2806, 236), "WALK. DO NOT JUMP.", 13, TEXT_WARN)
-	_sign(font, Vector2(3002, 212), "YOU WERE NEVER FALLING", 13, TEXT_FAINT)
-	_sign(font, Vector2(3160, 236), "IT IS NOT THE SAME GAP", 13, TEXT_WARN)
-	_sign(font, Vector2(3352, 212), "BELIEF RENDERS. TRUTH DOES NOT.", 12, TEXT_FAINT)
-	_sign(font, Vector2(3690, 232), "OBSERVATORY", 15, TEXT_WARN)
-	_sign(font, Vector2(3540, 252), "ONLY THOSE WHO CAN FALL UPWARD MAY ENTER", 13, COLD)
+	_sign(font, Vector2(2806, 236), "WALK. DO NOT JUMP.", 13, P.text_warn)
+	_sign(font, Vector2(3002, 212), "YOU WERE NEVER FALLING", 13, P.text_faint)
+	_sign(font, Vector2(3160, 236), "IT IS NOT THE SAME GAP", 13, P.text_warn)
+	_sign(font, Vector2(3352, 212), "BELIEF RENDERS. TRUTH DOES NOT.", 12, P.text_faint)
+	_sign(font, Vector2(3690, 232), "OBSERVATORY", 15, P.text_warn)
+	_sign(font, Vector2(3540, 252), "ONLY THOSE WHO CAN FALL UPWARD MAY ENTER", 13, P.cold)
 
 func _sign(font: Font, at: Vector2, text: String, size: int, tint: Color) -> void:
 	draw_string(font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, tint)
 
 func inverted() -> bool:
 	return is_instance_valid(player) and player.gravity_sign < 0.0
+
+## The active scheme. Reading the world's colour from gravity means the light
+## and dark worlds can never disagree with which way up the player is.
+func pal() -> Dictionary:
+	return DARK if inverted() else LIGHT
 
 ## Slabs that exist only as appearance. The chapter's law is that the world
 ## renders what you believe, not what is there: upright vision draws phantoms
@@ -417,28 +436,30 @@ func _draw_revealed(r: Rect2) -> void:
 	# Hidden geometry showing through under inverted gravity. Drawn unlike a
 	# solid on purpose: this is the world admitting to something that was
 	# always there, not a platform arriving.
-	draw_rect(r, Color(COLD.r, COLD.g, COLD.b, 0.05))
-	draw_rect(Rect2(r.position.x, r.position.y, r.size.x, 1.0), Color(COLD.r, COLD.g, COLD.b, 0.5))
+	var c: Color = pal().cold
+	draw_rect(r, Color(c.r, c.g, c.b, 0.05))
+	draw_rect(Rect2(r.position.x, r.position.y, r.size.x, 1.0), Color(c.r, c.g, c.b, 0.5))
 	var x: float = r.position.x
 	while x < r.end.x:
-		draw_line(Vector2(x, r.position.y), Vector2(x + 6.0, r.end.y), Color(COLD.r, COLD.g, COLD.b, 0.22), 1.0)
+		draw_line(Vector2(x, r.position.y), Vector2(x + 6.0, r.end.y), Color(c.r, c.g, c.b, 0.22), 1.0)
 		x += 16.0
 
 func _draw_slab(r: Rect2) -> void:
 	# Cold light on the surface the player can stand on. Anything high enough to
 	# be a ceiling is lit underneath instead, so lighting reads as orientation.
-	draw_rect(r, SLAB)
+	var P := pal()
+	draw_rect(r, P.slab)
 	var ceiling := r.position.y < 200.0
 	var surface: float = r.end.y - 2.0 if ceiling else r.position.y
-	draw_rect(Rect2(r.position.x, surface, r.size.x, 2.0), EDGE)
+	draw_rect(Rect2(r.position.x, surface, r.size.x, 2.0), P.edge)
 	var far_edge: float = r.position.y if ceiling else r.end.y - 1.0
-	draw_rect(Rect2(r.position.x, far_edge, r.size.x, 1.0), Color(EDGE.r, EDGE.g, EDGE.b, 0.22))
+	draw_rect(Rect2(r.position.x, far_edge, r.size.x, 1.0), Color(P.edge.r, P.edge.g, P.edge.b, 0.22))
 	# Short ticks hugging the standing surface, so a 64px ground block does not
 	# get the same long streaks as a 14px ledge.
 	var dir: float = -1.0 if ceiling else 1.0
 	for x in range(int(r.position.x) + 12, int(r.end.x) - 6, 24):
 		draw_line(Vector2(x, surface + dir * 4.0), Vector2(x + 4.0, surface + dir * 9.0),
-			Color(0.29, 0.40, 0.47, 0.35), 1.0)
+			Color(P.edge.r, P.edge.g, P.edge.b, 0.35), 1.0)
 
 func _draw_strata(cam_x: float, depth: float, tint: Color, peak_y: float, spacing: float, hanging: bool) -> void:
 	# A layer drawn at base + camera.x * depth scrolls at (1 - depth), so a
@@ -460,28 +481,30 @@ func _draw_debris(cam_x: float, t: float) -> void:
 		var rate: float = 0.22 + fmod(float(i) * 0.41, 0.55)
 		var by: float = fposmod(340.0 - t * rate + float(i) * 47.0, 300.0) + 52.0
 		var s: float = 2.0 + fmod(float(i), 3.0)
-		draw_rect(Rect2(bx, by, s, s), Color(0.47, 0.64, 0.73, 0.20))
+		draw_rect(Rect2(bx, by, s, s), pal().debris)
 
 func _draw_feathers(t: float) -> void:
+	var P := pal()
 	for f in feathers:
 		if f.taken:
 			continue
 		var c: Vector2 = Vector2(f.pos.x, f.pos.y + sin(t * 0.05) * 2.5)
-		draw_circle(c, 10.0, Color(COLD.r, COLD.g, COLD.b, 0.07))
-		draw_circle(c, 5.5, Color(COLD.r, COLD.g, COLD.b, 0.13))
+		draw_circle(c, 10.0, Color(P.cold.r, P.cold.g, P.cold.b, 0.07))
+		draw_circle(c, 5.5, Color(P.cold.r, P.cold.g, P.cold.b, 0.13))
 		# A machined shard, not a plume: this object belongs to the facility.
 		draw_colored_polygon(PackedVector2Array([
 			Vector2(c.x, c.y - 8.0), Vector2(c.x + 3.0, c.y - 2.0),
 			Vector2(c.x + 2.0, c.y + 7.0), Vector2(c.x - 2.0, c.y + 7.0),
-			Vector2(c.x - 3.0, c.y - 2.0)]), Color("cdefff"))
-		draw_line(Vector2(c.x, c.y - 6.0), Vector2(c.x, c.y + 5.0), Color("5fa8c4"), 1.0)
+			Vector2(c.x - 3.0, c.y - 2.0)]), P.shard)
+		draw_line(Vector2(c.x, c.y - 6.0), Vector2(c.x, c.y + 5.0), P.shard_line, 1.0)
 		# It falls upward in place, which is the only hint of what it does.
 		for k in range(3):
 			var m: float = fposmod(t * 0.7 + float(k) * 9.0, 27.0)
 			draw_rect(Rect2(c.x - 1.0, c.y + 9.0 - m, 2.0, 2.0),
-				Color(COLD.r, COLD.g, COLD.b, 0.30 * (1.0 - m / 27.0)))
+				Color(P.cold.r, P.cold.g, P.cold.b, 0.30 * (1.0 - m / 27.0)))
 
 func _draw_crumble() -> void:
+	var P := pal()
 	for ledge in crumble_ledges:
 		var r: Rect2 = ledge.rect
 		if int(ledge.state) == Crumble.COLLAPSED:
@@ -492,19 +515,19 @@ func _draw_crumble() -> void:
 				var cw: float = r.size.x / 3.0
 				draw_rect(Rect2(r.position.x + float(i) * cw + (float(i) - 1.0) * f * 0.35,
 					r.position.y + f * f * 0.11, cw - 2.0, r.size.y),
-					Color(SLAB.r, SLAB.g, SLAB.b, 1.0 - f / float(DEBRIS_TICKS)))
+					Color(P.slab.r, P.slab.g, P.slab.b, 1.0 - f / float(DEBRIS_TICKS)))
 			continue
 		var shake: float = sin(float(ledge.timer) * 1.1) * 1.6 if int(ledge.state) == Crumble.SHAKING else 0.0
 		var dr := Rect2(r.position + Vector2(shake, 0.0), r.size)
-		draw_rect(dr, SLAB)
+		draw_rect(dr, P.slab)
 		# A broken cap, where solid ground gets an unbroken one, marks these as
 		# unreliable before the player ever touches them.
-		var accent := Color(EDGE.r, EDGE.g, EDGE.b, 0.55)
+		var accent := Color(P.edge.r, P.edge.g, P.edge.b, 0.55)
 		if int(ledge.state) == Crumble.SHAKING:
-			accent = HAZARD.lerp(Color("e0a04a"), float(ledge.timer) / float(CRUMBLE_TICKS))
+			accent = P.hazard.lerp(P.accent, float(ledge.timer) / float(CRUMBLE_TICKS))
 		var seg: float = dr.size.x / 5.0
 		for i in range(3):
 			draw_rect(Rect2(dr.position.x + float(i) * seg * 2.0, dr.position.y, seg, 2.0), accent)
 		for i in range(2):
 			var cx: float = dr.position.x + dr.size.x * (0.34 + 0.32 * float(i))
-			draw_line(Vector2(cx, dr.position.y + 2.0), Vector2(cx + 2.0, dr.end.y), Color(0.10, 0.14, 0.19, 0.9), 1.0)
+			draw_line(Vector2(cx, dr.position.y + 2.0), Vector2(cx + 2.0, dr.end.y), P.crack, 1.0)
