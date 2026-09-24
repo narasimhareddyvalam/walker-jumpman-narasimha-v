@@ -240,7 +240,7 @@ Made with the Brutalist `godot-waikthrough` skill, walker modifier.
 | Game source shown | commit `c898a4b` |
 | URL | *pending — course media storage; see [SUBMISSION.md](SUBMISSION.md)* |
 
-The 37 MB master is kept out of this repository per the assignment. Everything
+The 37 MB master is kept out of this repository. Everything
 else about the film is committed under
 [`youtube/claude-liam-walker-jumpman-walkthrough/`](youtube/claude-liam-walker-jumpman-walkthrough/):
 the beat sheet with the full narration, the `coverage.json` evidence contract,

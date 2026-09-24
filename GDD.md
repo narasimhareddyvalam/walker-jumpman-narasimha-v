@@ -268,5 +268,5 @@ sometimes wrong.
 Chapter One runs 960 -> 4980 px, roughly five times the starter's route, and is the
 only part that exists. The chapter list above is a design sketch: it has no
 level data, no assets, no prototypes, and no schedule. It is included because
-the assignment asks what the extension *is*, and Chapter One's ending only makes
+Chapter One's ending only makes
 sense if you can see what it opens onto — not to imply more was built than was.

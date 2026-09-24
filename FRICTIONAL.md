@@ -122,9 +122,9 @@ cause, or whether it was something else.* It is recorded here and in
 
 **What I was told.** That the starter's tuning is in pixels — gravity 960 px/s²,
 jump −320 px/s, an 18×28 px collider — and that these cannot survive the unit
-change to a 3D world. Preserving the movement tuning is a graded requirement, so
-3D would have meant failing it. Claude also pointed out the rubric awards nothing
-for 3D.
+change to a 3D world. Every value would have had to be rescaled, and the jump
+arc, coyote timing and buffer windows would all have changed feel — which meant
+abandoning the one constraint the whole project was built to respect.
 
 **What I decided.** I accepted the reasoning and asked for visual depth within 2D
 instead, which became the parallax strata. **[author]** *Add your own view: was
@@ -146,7 +146,7 @@ gravity, environmental storytelling over dialogue, the Feather as an anomalous
 technological object rather than a magic item, the observatory, the door line, and
 a chapter ending on questions it refuses to answer. I also specified the scope:
 **one polished chapter**, with the remaining four documented as design rather than
-half-built, because five thin levels would have cost the parts that are graded.
+half-built, because five thin levels would have cost the depth of any one.
 
 **What did not get thrown away.** The crumbling ledges were kept and reframed.
 They are no longer a platformer device; they are matter losing cohesion, which is
@@ -156,7 +156,7 @@ the premise. Nothing built before the pivot was discarded.
 
 ## 8. Gravity reversal without changing the jump
 
-**The problem.** The assignment forbids changing jump strength. The Feather
+**The problem.** Jump strength must not change. The Feather
 inverts gravity. Those look like they conflict.
 
 **What was done.** Gravity direction was made **world state** rather than a tuning

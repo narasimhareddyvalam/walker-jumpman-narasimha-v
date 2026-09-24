@@ -10,6 +10,25 @@ even where a later change superseded them.
 
 ---
 
+## 0. Summary
+
+**Source revision:** `c898a4b` · **Engine:** Godot 4.7.2.stable.official.ed1daf0bf
+**Platform:** macOS 26.5 (Darwin 25.6.0), Apple silicon
+
+| Area | State | Where the evidence is |
+|---|---|---|
+| Startup and controls | ✅ move, jump, pause/resume, restart all work; bindings are the starter's, `F` is the only addition | 9 keyboard checks; `run-03` drives pause, resume and manual retry through real key events — §1, §8 |
+| Character appearance | ✅ reads correctly left, right, standing, jumping **and inverted**, against an unchanged collider | `evidence/character/` (10 captures); collider 18×28 and `tuning.gd` byte-identical — §1 |
+| Extended route | ✅ an input-only route reaches 12 of 22 new landings and the finish at x=4750 | `complete-real-route` (0 deaths), `route-reaches-new-landings`, `finish-unreachable-without-feather` — §1. **Human confirmation outstanding, §10** |
+| Failure and recovery | ✅ a real death at the Betrayal retries correctly; replay works after completion | `run-02` death + retry, `run-01` replay with counters reset, `twenty-retries`, `sky-is-fatal` — §1, §8. **Human confirmation outstanding, §10** |
+| Camera and presentation | ✅ landings and finish stay readable; HUD legible in both palettes after a contrast fix | Gate V 0 blockers / 0 majors after a real defect was corrected — §8. **Human readability judgement outstanding, §10** |
+| Automated checks | ✅ **70 mechanics + 9 keyboard, 0 failures**, re-run from a fresh clone | commands and full progression — §1, §9 |
+
+Three rows carry an outstanding human confirmation. That is said here rather
+than left to be found in §10.
+
+---
+
 ## 1. Automated checks
 
 Run from the repository root:
@@ -146,7 +165,7 @@ program does.
 dependency on a key the game never taught, and the automated route passed
 anyway because the fixture is *told* where to press it. This is precisely the
 class of defect a scripted route cannot find and a human finds in ninety
-seconds — the reason the assignment requires a human playtest at all.
+seconds. A fixture is told where to press the key; a person has to work it out.
 
 None of P10–P13 (the predictions written before this session) were what the
 player actually noticed first. P11 predicted light mode would hurt readability;

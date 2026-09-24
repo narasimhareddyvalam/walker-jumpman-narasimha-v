@@ -250,7 +250,7 @@ earlier design and are left exactly as written.
 **1. Gravity direction is now world state.** `tuning.gd` is byte-identical:
 gravity 960, terminal 480, jump -320, speed 160, coyote 6, buffer 6. What the
 Feather changes is the **sign** applied to gravity, to the jump impulse and to
-`up_direction`. The assignment forbids changing jump strength to make a jump
+`up_direction`. The rule I set was never to change jump strength to make a jump
 possible; this does not change it. **Measured proof:** an inverted jump
 displaces **56.05 px** where a normal jump rises **56.00 px** — mirrored, not
 strengthened. Asserted by `inverted-jump-matches-normal-rise`.

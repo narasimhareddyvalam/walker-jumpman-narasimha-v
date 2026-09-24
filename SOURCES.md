@@ -124,7 +124,6 @@ screen as a reconstruction because that is what it is.
 
 ## Human and AI contributions
 
-The assignment requires this to be specific, so it is.
 
 ### What I decided
 
@@ -152,7 +151,8 @@ The assignment requires this to be specific, so it is.
 
 - **A 3D version with selectable camera POV.** I asked for it; Claude showed
   that the pixel-space tuning could not survive the unit change and that the
-  rubric awards nothing for 3D. I accepted that and chose parallax depth in 2D.
+  cost would have been the entire movement feel. I accepted that and chose
+  parallax depth in 2D instead.
 - **An earlier "inheritance" storyline** Claude pitched (a level about someone
   who went before you). I judged it too close to an ordinary jumper game and
   asked for something that changed how the game *plays*.
@@ -175,7 +175,7 @@ The assignment requires this to be specific, so it is.
 
 ### What Claude got wrong, and how it was caught
 
-Recorded because the assignment asks for honesty about verification, and because
+Recorded because an unverified claim is worth less than a stated gap, and because
 these were caught by checking rather than by inspection:
 
 - Predicted (P3) that the route fixture would break and need a larger tick
