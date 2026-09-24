@@ -335,6 +335,119 @@ and by the `sky-is-fatal` check.
 
 ---
 
+## 15. Teaching the world to speak without words
+
+**What I asked for.** I said the game should stop telling the player what to do
+and let the environment communicate through visual language — a chair resting
+on a ceiling, rubble pooled on the wrong side, objects that only one gravity
+could have put there.
+
+**First attempt, rejected.** Claude built nineteen scattered props and I said
+they looked like decorative items, not gameplay, and that the whole thing felt
+clumsy. I was right, and the diagnosis that came back was sharper than my
+complaint: objects sitting *on* a surface are scenery, because they mark
+nothing you can stand on and have no edges. At 640×360 nineteen of them are
+just noise.
+
+**What I had also missed.** The glowing pads were still at every reversal point
+with animated chevrons. So the props were decoration layered on top of a system
+that was still doing all the telling — the player never had to read anything.
+
+**Where it landed.** Props kept, but the pads lost their text everywhere except
+the **first** one. That first prompt stays deliberately. My own round-one
+playtest ended with me unable to find `F`, so removing every prompt would have
+reintroduced the exact failure we already hit. The verb is taught once, in
+words, then the environment carries it.
+
+**Unresolved.** A stricter version with no pads at all is the better expression
+of the idea and is not built. I am not confident it would be playable, and
+there was no time left to find out.
+
+---
+
+## 16. A tool found a defect I had defended as a design choice
+
+**What happened.** The Brutalist render pipeline has a visual QC gate. It
+refused the film and reported the HUD text at 0.03–0.30 luminance separation
+against a 0.3 minimum.
+
+**My first instinct was that it was wrong** — a minimal HUD was a deliberate
+choice, and the gate was applying card heuristics to full-frame gameplay.
+
+**Two of the three complaints really were mis-fires**, and the skill has a
+sanctioned way to say so: declaring the beat full-bleed, because the game does
+render edge to edge, and declaring which regions carry the essential text,
+because the pale palette is the mechanic rather than a rendering fault.
+
+**The third was real.** Minimal had drifted into faint. The HUD is the one thing
+on screen a player cannot work out by looking at the world, and in light mode
+the controls row was grey on grey. That got fixed in the game — opaque bands,
+stronger text tones in both palettes — and every capture was re-made from the
+corrected build.
+
+**And I got one of my own declarations wrong.** I had named the feather readout
+as essential text. The gate returned nine "empty region" defects, correctly,
+because that element does not exist until the player picks the feather up. I
+removed the declaration rather than working around it. Claiming a conditional
+element as persistent text would have been a false statement about the frame,
+which is exactly the kind of thing the gate exists to stop.
+
+**What I take from it.** The gate cannot judge whether an explanation is true.
+But on the one thing it *can* measure it was right, and my instinct to defend
+the design was wrong.
+
+---
+
+## 17. Four capture bugs, and two pieces of evidence that lied
+
+Recording these because two of them produced footage that looked completely
+fine and was wrong, which is worse than a crash.
+
+1. **The game would not start.** `Input.action_press` sets polling state but
+   synthesizes no event, so `_unhandled_input` — which handles Enter, Escape and
+   R — never saw it. Real `InputEventKey` objects fixed it.
+2. **The player froze for 2.5 s after every flip.** The driver held the walk key
+   released until a charge was available, which is never true immediately after
+   spending one. On a ceiling that was long enough for the reversal to expire
+   underneath them. The game was correct; the driver was wrong.
+3. **A held key stopped arriving.** Godot flushes pressed input when the window
+   loses focus, so an unattended capture recorded the player standing still at
+   x=213 for ninety-seven seconds. Held keys are now re-asserted every tick.
+4. **Every clip ran past its own window.** I passed `-t` twice as an ffmpeg
+   output option and the second silently won, so each clip played about twelve
+   seconds of continuous footage instead of its intended span. One beat ended on
+   the spawn screen while the narration described the endgame. The "held frames"
+   the build script had been reporting were never produced at all.
+
+The first three were caught by assertions the driver makes about its own run.
+The fourth was caught by looking at a frame — no assertion covered it, because
+the clip was valid video of real gameplay, just the wrong part of it.
+
+**The lesson I actually take from this:** a green check and a correct artifact
+are different claims. Three of these four passed every automated gate.
+
+---
+
+## 18. Making the film say what the work was
+
+**What I noticed.** I watched the first finished cut and my name was nowhere in
+it, and it spent far more time on limitations than on what the game actually
+does. Both were wrong in different directions — one omits a stated requirement,
+the other misrepresents the work by undersell.
+
+**What changed.** A credit on the "what was built" card and a dedicated credits
+beat naming the design calls, alongside what Claude contributed and what it got
+wrong. The verdict reordered to lead with four things that demonstrably work
+before the two open questions. A new beat on where the design goes next.
+
+**What deliberately did not change.** The open questions stayed in. "What
+remains uncertain" is a required element of the film and the honest answer is
+that whether the Betrayal is fair and whether the clues are legible are things
+only a player can settle. Leading with the achievement and being straight about
+the limits is not a compromise between the two — it is just the accurate order.
+
+---
+
 ## Traceability
 
 | Entry | Where to check it |
@@ -348,6 +461,11 @@ and by the `sky-is-fatal` check.
 | Gravity as a sign flip | commit `6c7c210`, `probe_gravity.gd` |
 | Tests fixed, not weakened | commit `5cd69aa` |
 | Enclosed tower | commit `953fc21` |
+| Environmental props, first-pad-only prompt | commit `c55bb9b` |
+| Plain-language rewrite | commit `dc93f27` |
+| HUD contrast defect found by Gate V | commit `c898a4b`, `_qc/REPORT.md` |
+| Clip-trim bug; author credit and verdict | commit `fc5d2ac` |
+| Fresh-clone verification | commit `6154f56`, `SUBMISSION.md` |
 | INVERSION rule and the Betrayal | commit `83685d3` |
 | Evidence that photographed the wrong moment | commit `3233366` |
 | Two wrong diagnoses, then a probe | `CHANGE-BRIEF.md` Revision 5 |

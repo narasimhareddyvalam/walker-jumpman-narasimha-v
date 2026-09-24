@@ -112,7 +112,7 @@ byte-identical; only the **sign** applied to gravity, the jump impulse and
 `up_direction` flips. Measured: an inverted jump displaces **56.05 px** where a
 normal jump rises **56.00 px**.
 
-### Level — roughly five times longer
+### Level — 960 → 4980 px, roughly five times longer
 Twenty-two new landings past the original section, crumbling ledges, a fork, an
 inverted ceiling run, and the finish relocated into a shaft that cannot be
 entered without the mechanic. All geometry was sized against a **measured** jump
@@ -146,6 +146,26 @@ but only while gravity is reversed.
 Story arrives as **six collectible log fragments**, one line each, written in
 plain words and escalating to the chapter's turn: you built this.
 
+### The environment tells you which way up to be
+
+Objects carry an allegiance to one gravity or the other, readable from where
+they rest. A chair standing on a floor fell normally. A chair pressed against
+the underside of a gantry could only have got there under inverted gravity — so
+a space full of those is saying *come in here inverted*. Flip, and the meaning
+reverses: the objects that looked impossible read as ordinary, and the upright
+ones start looking wrong.
+
+Nineteen props cover all seven ceilings the route uses. Two hang at the mirror
+ledge's height, where nothing is drawn while upright — a chair and a heap of
+rubble resting against apparently nothing, which is the only warning that an
+invisible platform is above.
+
+The worded `F` prompt survives on the **first** reversal only. That is a
+deliberate compromise: the first playtest ended with the player unable to find
+`F` at all, so the verb is taught once on safe ground and the environment
+carries it after that. A stricter version with no prompts is designed and not
+built — see [GDD.md](GDD.md).
+
 ### Presentation
 The starter drew hazards and the finish marker at hard-coded coordinates while
 building their triggers from level data — so anything above ground level
@@ -163,7 +183,7 @@ HUD throughout.
 
 ## Verification
 
-**66 mechanics checks and 9 keyboard checks, 0 failures.** All 25 of the
+**70 mechanics checks and 9 keyboard checks, 0 failures**, verified again from a fresh clone of this repository. All 25 of the
 starter's original mechanics checks are retained and still pass; none were
 deleted, relaxed, or had an expected value changed. Every check added for the
 Feather and for INVERSION was written and **watched failing** before the code

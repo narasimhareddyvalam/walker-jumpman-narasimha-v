@@ -37,7 +37,10 @@ G=/Applications/Godot.app/Contents/MacOS/Godot
 | After the light/dark palette | 51 mechanics + 9 keyboard, **0 failures** | `a6e24d4` |
 | After the playtest fixes | 54 mechanics + 9 keyboard, **0 failures** | `ba24a9c` |
 | After the rechargeable feather and the lying-world section | 65 mechanics + 9 keyboard, **0 failures**, route 1867 ticks | `d8e2336` |
-| After plain-language rewrite and the unlock card | **66 mechanics + 9 keyboard, 0 failures** | `1aff6b4` + |
+| After plain-language rewrite and the unlock card | 66 mechanics + 9 keyboard, **0 failures** | `1aff6b4` |
+| After the environmental props and first-pad-only prompt | 70 mechanics + 9 keyboard, **0 failures** | `c55bb9b` |
+| After the HUD contrast fix found by the film's QC gate | **70 mechanics + 9 keyboard, 0 failures** | `c898a4b` |
+| Re-run from a **fresh clone** of the published repository | **70 mechanics + 9 keyboard, 0 failures** | `6154f56` |
 
 All **25 of the starter's original mechanics checks are retained and still
 pass.** None was deleted, relaxed, or had an expected value changed.
@@ -311,3 +314,99 @@ for that are in, but a fix for a comprehension defect is only proven by someone
 who did not previously understand it.
 
 This is recorded as unverified rather than claimed.
+
+---
+
+## 8. The film pipeline as a second verification path
+
+Producing the Brutalist explainer put the game through checks the unit suites do
+not perform. Recorded here because two of them found real problems.
+
+### Gate V — visual QC
+
+| Run | Result |
+|---|---|
+| First | BLOCKER 18 · MAJOR 19 |
+| After declaring full-bleed and contrast regions | BLOCKER 0 · MAJOR 15 |
+| After **fixing the HUD in the game** | BLOCKER 0 · MAJOR 9 |
+| After removing a wrong region declaration | **BLOCKER 0 · MAJOR 0** |
+
+The middle step is the one that matters. Gate V measured the HUD's persistent
+text at **0.03–0.30 luminance separation** against a 0.3 minimum. That was not a
+false positive: in light mode the controls row was grey on grey. "Minimal HUD"
+was a deliberate goal but had drifted into faint, and the readout is the one
+thing on screen a player cannot deduce by looking at the world.
+
+**Fixed in the game, not in the measurement.** Both HUD bands became opaque
+strips; text tones in both palettes were pushed clear of their backing plate.
+All gameplay was recaptured from the corrected build and all `evidence/`
+screenshots regenerated to match.
+
+One declaration of mine was also wrong: I named the feather readout as
+persistent essential text, and the gate correctly returned nine empty-region
+defects because that element does not exist before the pickup. Removed rather
+than worked around.
+
+### The evidence contract
+
+`./art godot-waikthrough --check` validates the coverage contract: capture
+hashes, dimensions, time ranges, input-log presence and beat references.
+
+**PASS** — 22 implemented features with measured gameplay intervals, 6 declared
+planned with reasons, all three captures verified at 3840×2160 with matching
+content hashes.
+
+### Capture defects found by the driver's own assertions
+
+Four, all of them mine rather than the game's, detailed in
+`youtube/.../CAPTURE.md`. Three were caught by assertions. The fourth — every
+clip running ~12 s past its intended window because `-t` was passed twice as an
+ffmpeg output option — was caught only by **looking at a frame**, because the
+clip was valid video of real gameplay, just the wrong part of it.
+
+That is the honest summary of this whole section: a green check and a correct
+artifact are different claims.
+
+---
+
+## 9. Fresh-copy verification
+
+Run against a clean clone of the published repository, not the working folder.
+
+```bash
+git clone https://github.com/narasimhareddyvalam/walker-jumpman-narasimha-v.git
+cd walker-jumpman-narasimha-v
+godot --headless --path godot --script res://tests/test_game.gd
+godot --headless --path godot --script res://tests/test_keyboard.gd
+```
+
+| Check | Result |
+|---|---|
+| Required documents and full `godot/` project present | ✅ |
+| No caches, credentials or keys committed | ✅ |
+| Nothing over 25 MB | ✅ |
+| Mechanics checks from the clone | ✅ **70 / 0 failures** |
+| Keyboard checks from the clone | ✅ **9 / 0 failures** |
+| Clone `build_id` matches the film's recorded `build_id` | ✅ identical |
+
+The last row is the useful one. `coverage.json` records a SHA-256 over every
+game source file, taken when the footage was recorded. Recomputing it from the
+fresh clone yields the same 64 characters, so *the film depicts the submitted
+source* is a hash a reviewer can recompute rather than a claim in a document.
+
+---
+
+## 10. What is still not verified by a human
+
+Stated plainly rather than buried.
+
+- **Three rows of the required table.** The extended route reaching both new
+  landings and the relocated finish, failure and recovery plus replay, and
+  camera/presentation readability. The automated route covers all three and the
+  film shows all three, but a scripted route is not a playtest.
+- **Whether the environmental props read as instruction** rather than
+  decoration (P17), and whether one worded prompt teaches the verb well enough
+  for six unworded reversal points (P18).
+- **Whether the Betrayal reads as fair or cheap** (P10).
+- **Narration intelligibility.** The film's audio was verified present and at
+  sane levels by measurement, not by listening.

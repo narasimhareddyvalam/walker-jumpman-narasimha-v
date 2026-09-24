@@ -60,9 +60,14 @@ instructor's source.
 - **Two palettes chosen by gravity** — light upright, dark inverted — plus
   building-rooftop and service-catwalk platform art, parallax strata, tumbling
   debris and a minimal HUD.
-- 41 new automated checks, the extended route fixture, and four new harnesses:
+- **The environmental visual language**: nineteen props whose allegiance to one
+  gravity or the other tells the player which way up a space is meant to be
+  entered, with the worded prompt reduced to the first reversal only.
+- 45 new automated checks, the extended route fixture, and four new harnesses:
   `probe_reach.gd`, `probe_gravity.gd`, `capture_character.gd`,
   `capture_extension.gd`.
+- The film: an input-only 4K capture driver, the beat sheet and narration, the
+  coverage contract, and the QC record.
 
 ---
 
@@ -84,10 +89,36 @@ No paid service, no API credits, and no asset-generation service was used.
 
 | Tool | Used for |
 |---|---|
-| Godot 4.7.2.stable.official.ed1daf0bf | engine, editor, headless test runs, viewport capture |
+| Godot 4.7.2.stable.official.ed1daf0bf | engine, editor, headless test runs, Movie Maker 4K capture |
 | Claude Code (Opus 5) | pair programming, measurement harnesses, documentation drafting |
 | git / GitHub CLI | version control |
 | macOS 26.5 (Darwin 25.6.0), Apple Silicon | development machine |
+
+### Film pipeline
+
+The course-provided **Brutalist** toolkit, `godot-waikthrough` skill with the
+`walker` modifier, cloned from
+[nikbearbrown/brutalist.art](https://github.com/nikbearbrown/brutalist.art).
+The clone's `origin` remote was **deleted immediately** so nothing could ever be
+pushed back to it, matching the rule applied to the starter.
+
+| Component | Used for | Cost |
+|---|---|---|
+| Kokoro-82M ONNX, voice `am_onyx` | Liam narration, generated locally | free |
+| Manim 0.18 | the toolkit's animation chassis | free |
+| Remotion (Node) | the bookend cards — ClaudeComposerAsk, verdict, outro | free |
+| faster-whisper 1.2 | forced alignment, local | free |
+| ffmpeg | transcode, trim, and the held final frames | free |
+| Python 3.12 in an isolated venv | pipeline runtime | free |
+
+**No purchased API credits, no paid asset generation, and no cloud voice
+service.** Everything ran locally. The one system dependency that had to be
+installed was `pkg-config`, without which `pycairo` could not find cairo.
+
+**Nothing in the film is AI-generated imagery.** Every frame is either real
+gameplay captured from the running game, or a Brutalist bookend component
+rendered by the toolkit's own chassis. The opening prompt card is labelled on
+screen as a reconstruction because that is what it is.
 
 ---
 
@@ -159,6 +190,34 @@ these were caught by checking rather than by inspection:
   game.
 - Built the tower as an open ledge, so the automated route drifted past
   the doorway while rising and died in the sky. The room was enclosed.
+
+### What Claude contributed to the film specifically
+
+The capture driver, the beat sheet and narration draft, the coverage inventory,
+the QC declarations, the render pipeline work, and the reel documentation.
+
+**What Claude got wrong during the film, and where it is recorded:**
+
+- Rationed the feather's charges, in a chapter about checking things — the exact
+  failure it had itself predicted as P12. `CHANGE-BRIEF.md` Revision 4.
+- Three attempts at the falling debris: invisible, then visible-and-wrong, then
+  right. `FRICTIONAL.md` §12.
+- Two confidently wrong diagnoses of a capture bug before measuring it, one of
+  which was committed as a comment explaining a false reason. Corrected in place;
+  `FRICTIONAL.md` §14.
+- Passed `-t` twice as an ffmpeg output option, so every clip ran past its
+  window and one beat ended on the wrong screen. `FRICTIONAL.md` §17.
+- Built the first environmental props as scattered decoration that marked
+  nothing, which Narasimha rejected. `FRICTIONAL.md` §15.
+- Shipped a first cut of the film with no author credit and a verdict weighted
+  toward limitations. `FRICTIONAL.md` §18.
+
+### What Narasimha decided about the film
+
+That it should exist in the required workflow rather than be improvised; that
+the reconstruction be labelled rather than passed off as a transcript; that the
+film credit the author and lead with what the work achieves rather than with its
+caveats; and that the open questions stay in anyway.
 
 ### What has not been verified by a human yet
 

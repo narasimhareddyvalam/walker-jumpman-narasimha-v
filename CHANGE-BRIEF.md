@@ -554,3 +554,73 @@ No assertion was weakened; the only check added this revision extends
 `feather-grants-the-ability-and-one-charge` to cover the unlock announcement,
 and is labelled in the source as written after the state existed rather than
 staged as its own red-green cycle.
+
+---
+
+## Revision 6 — 2026-09-24: the environment speaks, and a tool finds a defect
+
+### The environmental visual language
+
+The brief changed: stop telling the player what to do, let the world
+communicate. Objects now carry an **allegiance** — they fell under normal
+gravity or under inverted gravity — and where an object rests says which.
+
+Nineteen props across the chapter: seven obeying normal gravity to establish
+what "correct" looks like before anything contradicts it, and twelve obeying
+inverted gravity, covering **all seven ceilings** the route uses. Two of them
+hang at the mirror ledge's height, where nothing is drawn while upright — a
+chair and a heap of rubble resting against apparently nothing, which is the only
+warning that an invisible platform is above.
+
+`PRESS F` now appears on the **first pad only**. The rest lose their text. The
+two signs that gave the answer away were deleted, because the objects say it
+better.
+
+**This is a compromise and it is recorded as one.** The brief asked for no
+prompts. Round-one playtest ended with the player unable to find `F`, so the
+chapter had a hard dependency on a key it never taught. The verb is taught once,
+in words, on safe ground.
+
+Four checks, watched failing first (`props: 0, has_prop_agrees: false`): both
+allegiances present, meaning inverts with gravity, every ceiling marked, and the
+prompt on pad 0 but not pad 3.
+
+### A real defect found by the film's QC gate
+
+Gate V measured the HUD text at **0.03–0.30 luminance separation** against a 0.3
+floor. Two of its three complaints were card heuristics mis-firing on full-frame
+gameplay, and the skill has sanctioned declarations for exactly that. **The
+third was a genuine readability defect** — "minimal HUD" had drifted into faint,
+and in light mode the controls row was grey on grey.
+
+Fixed in the game, not in the measurement: both HUD bands became opaque strips
+and the text tones in both palettes were pushed clear of their backing plate.
+Every capture was re-made from the corrected build.
+
+**And one of my own declarations was wrong.** I named the feather readout as
+essential text; the gate correctly returned nine empty-region defects because
+that element does not exist before the pickup. Removed rather than worked
+around.
+
+### New predictions
+
+**P17 — the props will read as decoration rather than instruction.** *Prediction:*
+a player will notice the chair on the ceiling and not connect it to "enter here
+inverted". *Check:* human playtest. The first version of this was already
+rejected for exactly this reason and rebuilt larger; whether the rebuild is
+enough is unverified.
+
+**P18 — the first-pad prompt will be enough to teach the verb.** *Prediction:* one
+worded prompt on safe ground transfers to six unworded reversal points. *Check:*
+human playtest. If it fails the fix is a second worded prompt, not returning
+text to all seven.
+
+**P19 — the opaque HUD bands will feel heavier than the "minimal HUD" intent.**
+*Check:* playtest and the recaptured evidence. The readability gain is measured;
+the aesthetic cost is not.
+
+### Automated coverage after Revision 6
+
+**70 mechanics checks / 0 failures** and **9 keyboard checks / 0 failures**, on
+Godot 4.7.2.stable. All 25 starter checks retained unmodified. Verified again
+from a **fresh clone** of the published repository, not the working folder.

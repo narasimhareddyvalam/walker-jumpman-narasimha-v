@@ -49,6 +49,61 @@ which broke the whole point. Recorded as P12 in `CHANGE-BRIEF.md`.)
 
 ---
 
+## The environmental visual language
+
+The chapter tries to instruct without instructions. Its vocabulary is **objects
+resting where only one gravity could have put them.**
+
+Every prop in the world has an allegiance — it fell under normal gravity, or it
+fell upward. An object's allegiance is readable from where it sits:
+
+| | Obeys normal gravity | Obeys inverted gravity |
+|---|---|---|
+| A chair | stands on a floor | pressed against a ceiling's underside |
+| Rubble | heaped on top of a surface | pooled against the underside of one |
+| Loose papers | lying flat on the ground | stuck flat to a ceiling |
+
+**The meaning reverses with the player.** Upright, an object obeying inverted
+gravity looks impossible — and a space full of them is saying *come in here
+inverted.* Once the player flips, those same objects read as ordinary, and the
+upright ones start looking wrong, which says *flip back.* One vocabulary, two
+readings, no text.
+
+Objects that disagree with the player's current gravity are drawn at higher
+contrast. That is lighting, not a prompt: the information is the object's
+**position**, and the contrast only makes it legible at 640×360.
+
+### Why the pads still exist
+
+Seven reversal points are also marked with a pad on the floor, and the **first
+one only** carries the words `F — reverse gravity`. That is deliberate and it is
+a compromise, recorded honestly: the first human playtest ended with the player
+unable to find `F` at all, so the chapter had a hard dependency on a key it
+never taught. The verb is taught once, in words, on safe ground. After that the
+environment carries it.
+
+A stricter version of this design — no pads at all — is the obvious next step
+and is **not** built. The concern is that it reintroduces exactly the failure
+the playtest already found once.
+
+### The contradiction room — designed, not built
+
+The natural extension is a space where the objects **disagree with each other**,
+so the player must decide which clues to trust. This is designed with a rule
+rather than left as a gotcha:
+
+> **Heavy things cannot lie.** Rubble, crates and machinery fell where gravity
+> put them. Paper and dust can be blown anywhere.
+
+Everywhere earlier in the chapter, heavy and light objects agree, so the player
+absorbs the correlation without noticing it. In the contradiction room the light
+objects point one way and the heavy ones the other, and the heavy ones are
+right. The rule is discoverable by re-reading rooms already crossed.
+
+Not implemented. It is the concrete next improvement named in the film.
+
+---
+
 ## Chapter One: The Fall — **BUILT**
 
 ### What the player does, in order
@@ -156,6 +211,47 @@ puzzle tool, and a piece of the story.
 
 ---
 
+## The story, in more detail
+
+The chapter never states any of this directly. It is carried by six one-line log
+fragments the player walks over, in this order, and by what the world does.
+
+1. *Everything started falling UP. Nobody knows why.* — the premise, stated once
+2. *Everyone ran away. I stayed to find out.* — establishes a narrator who chose
+   to be here
+3. *I found a feather. It falls up, not down.* — the object, found not given
+4. *When I hold it, I can fall up too.* — the mechanic, explained as discovery
+5. *Some floors hide. Some floors are lies.* — the rule, stated only after the
+   player has already met it twice
+6. *The tower knows my name. I built this.* — the turn
+
+### Why the turn works
+
+The chapter is structured so the reveal recontextualises the **mechanic**, not
+just the plot. Across the whole level the player has been asking *why does this
+object obey me?* — and the answer, delivered at the door that only opens for
+someone who can fall upward, is that they are the reason the world is broken.
+
+The three inversions the player experiences, in order:
+
+| They believe | They discover |
+|---|---|
+| The world is broken | The world is inverted — it has a rule, and the rule is learnable |
+| I am escaping this place | I was trying to *reach* this place |
+| I am finding out what happened | I am remembering what I did |
+
+That third one is the chapter's last line and the hook into Chapter Two. It is
+deliberately not resolved.
+
+### Deliberately withheld
+
+The narrator is never named, never seen except as the Runner, and never speaks
+in the present tense. Nothing explains what the facility was for, who else was
+here, or what "building this" means. Those are Chapter Three and Four material
+and the chapter is better for not reaching for them.
+
+---
+
 ## Tone
 
 Dark, quiet, industrial. No enemies, no combat, no dialogue trees. The story is
@@ -169,7 +265,7 @@ sometimes wrong.
 
 ## Honest scope note
 
-Chapter One is roughly five times the length of the starter's route and is the
+Chapter One runs 960 -> 4980 px, roughly five times the starter's route, and is the
 only part that exists. The chapter list above is a design sketch: it has no
 level data, no assets, no prototypes, and no schedule. It is included because
 the assignment asks what the extension *is*, and Chapter One's ending only makes
