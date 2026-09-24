@@ -226,3 +226,77 @@ plus 7 new) and **9 keyboard checks / 0 failures**. New checks:
 `crumble-supports-then-triggers`, `crumble-collapses-after-timer`,
 `crumble-stall-is-fatal`, `crumble-resets-on-retry`,
 `crumble-untouched-stays-solid`.
+
+---
+
+## Revision 2 — 2026-09-23, later: the chapter pivot
+
+The original brief above described a crumbling-ledge section with a
+high-road/low-road fork. That work was built, tested and kept. It is now the
+**middle** of a larger chapter rather than the whole extension.
+
+**Why it changed.** Playing the result, the level worked but carried no idea.
+The decision was made to build the extension as **Chapter One of THE WORLD IS
+FALLING** — a dark sci-fi chapter in which gravity is failing — with a new
+object, **the Feather**, granting scarce gravity-reversal charges. The
+crumbling ledges were kept and reframed as matter losing cohesion, which is the
+premise rather than a platformer device. Nothing built earlier was discarded.
+
+Nothing above this line was edited. The predictions P1-P6 were made against the
+earlier design and are left exactly as written.
+
+### Two departures, declared here rather than discovered later
+
+**1. Gravity direction is now world state.** `tuning.gd` is byte-identical:
+gravity 960, terminal 480, jump -320, speed 160, coyote 6, buffer 6. What the
+Feather changes is the **sign** applied to gravity, to the jump impulse and to
+`up_direction`. The assignment forbids changing jump strength to make a jump
+possible; this does not change it. **Measured proof:** an inverted jump
+displaces **56.05 px** where a normal jump rises **56.00 px** — mirrored, not
+strengthened. Asserted by `inverted-jump-matches-normal-rise`.
+
+**2. One control was added: `F` (or Shift).** Move, jump, retry, pause, confirm
+and menu keep the starter's bindings exactly. This is an addition to the control
+set, not a change to the existing one, and the starter's nine keyboard checks
+still pass untouched.
+
+Two consequences of inverted gravity were handled rather than ignored:
+- **The sky became lethal.** Falling upward out of the level now kills with its
+  own reason. No existing collision check was removed to add it.
+- **The collider was not touched.** Inverted, the figure is mirrored about the
+  collider's centre line, so the drawing stays inside the same 18x28 box.
+
+### New predictions for the chapter
+
+**P7 — The charge economy will be too tight or too loose on the first attempt.**
+Two Feathers grant three charges; two reversals are mandatory and one is an
+optional shortcut. **Prediction:** a human will either run out and feel cheated,
+or never feel the scarcity at all. **Check:** human playtest; the automated
+route deliberately takes the shortcut and finishes with **0 charges left**,
+which proves it is survivable but says nothing about how it feels.
+
+**P8 — The ceiling run's flip-back moment will be unreadable.** The player must
+cancel the reversal before the ceiling ends or run off it into the sky.
+**Prediction:** first-time players will not know where the ceiling ends and will
+die without understanding why. **Check:** human playtest. If confirmed, the fix
+is a visual tell at the ceiling's end or a longer overlap — not a longer timer.
+
+**P9 — Inverted, players will lose track of which way up they are.** The trail
+colour is the only readout. **Prediction:** the cyan/amber distinction is too
+subtle at 640x360 and a second cue will be needed. **Check:** human playtest and
+the inverted collider captures.
+
+### What did not change
+
+Controls for move/jump/retry/pause, all tuning values, the 18x28 collider,
+unlimited retries, focus-loss pause, completion and replay, and the original
+section's route. All 25 starter mechanics checks and all 9 keyboard checks still
+pass, unmodified.
+
+### Automated coverage after the pivot
+
+**43 mechanics checks / 0 failures** and **9 keyboard checks / 0 failures**.
+The route fixture's tick budget rose from 900 to 2400 because the level is
+roughly three times longer; the observed run is **1130 ticks with 0 deaths**, and
+that figure is reported in the check so the margin stays visible. No assertion
+was relaxed and no expected value was changed to obtain a pass.
