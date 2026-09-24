@@ -242,7 +242,7 @@ func _update_feathers() -> void:
 			# objects, not fuel: they top the charge up and nothing more, and
 			# the charge never stacks.
 			if not has_feather:
-				unlock_ticks = 320
+				unlock_ticks = 260
 			has_feather = true
 			feather_charges = 1
 			recharge_ticks = 0

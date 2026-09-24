@@ -51,16 +51,21 @@ func _draw() -> void:
 			Vector2(500, 44), 10, P.text_faint)
 
 	# Picking up a power and reading a note are different events, so they do not
-	# look the same. This one is a card, and it says what the power does.
+	# look the same. Both live in the same slim band at the top, though: the
+	# first version of this was a 340x62 card in the middle of the screen, which
+	# covered the world - including the object the player had just picked up -
+	# at the exact moment they should have been looking at it. An instruction
+	# that hides the thing it is describing is worse than no instruction.
 	if game.unlock_ticks > 0:
 		var fade: float = clampf(float(game.unlock_ticks) / 50.0, 0.0, 1.0)
-		draw_rect(Rect2(150, 120, 340, 62), Color(P.void.r, P.void.g, P.void.b, 0.93 * fade))
-		draw_rect(Rect2(150, 120, 340, 2), Color(cold.r, cold.g, cold.b, 0.85 * fade))
-		draw_rect(Rect2(150, 180, 340, 2), Color(cold.r, cold.g, cold.b, 0.85 * fade))
-		centered("THE FEATHER", 143, 17, Color(cold.r, cold.g, cold.b, fade))
-		centered("You can reverse gravity.", 160, 12, Color(P.text_dim.r, P.text_dim.g, P.text_dim.b, fade))
-		centered("Press  F  on a marked pad to fall upward.", 174, 11,
-			Color(P.text_faint.r, P.text_faint.g, P.text_faint.b, fade))
+		var line := "THE FEATHER      F  reverses gravity"
+		var uw := ThemeDB.fallback_font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
+		var ux: float = (640 - uw) / 2
+		draw_rect(Rect2(ux - 12, 66, uw + 24, 20), Color(P.void.r, P.void.g, P.void.b, 0.9 * fade))
+		draw_rect(Rect2(ux - 12, 66, 2, 20), Color(cold.r, cold.g, cold.b, 0.9 * fade))
+		text_at("THE FEATHER", Vector2(ux, 80), 12, Color(cold.r, cold.g, cold.b, fade))
+		text_at("F  reverses gravity", Vector2(ux + 92, 80), 12,
+			Color(P.text_dim.r, P.text_dim.g, P.text_dim.b, fade))
 
 	# Standing on a reversal pad with a charge in hand. Playtest finding: "its
 	# not clear where to click F and invert and play upside down" - the chapter
@@ -69,20 +74,18 @@ func _draw() -> void:
 	# actually does something.
 	if game.pad_prompt():
 		var pulse: float = 0.74 + 0.26 * sin(float(game.world_tick) * 0.12)
-		# A drawn keycap rather than the word "press": the instruction is the key
-		# itself, then what it does, then what that will feel like.
-		draw_rect(Rect2(178, 292, 284, 36), Color(P.void.r, P.void.g, P.void.b, 0.9))
-		draw_rect(Rect2(178, 292, 284, 2), Color(cold.r, cold.g, cold.b, 0.6))
-		draw_rect(Rect2(178, 326, 284, 2), Color(cold.r, cold.g, cold.b, 0.6))
-		var cap := Rect2(190, 299, 22, 22)
-		draw_rect(cap, Color(cold.r, cold.g, cold.b, 0.15 * pulse))
+		# Tucked into the bottom HUD band, just above the controls line, for the
+		# same reason as the unlock card: the earlier 284x36 box sat across the
+		# platforms and hid the ledge the player was standing on.
+		var cap := Rect2(258, 318, 15, 15)
+		draw_rect(Rect2(250, 314, 148, 23), Color(P.void.r, P.void.g, P.void.b, 0.88))
+		draw_rect(cap, Color(cold.r, cold.g, cold.b, 0.18 * pulse))
 		draw_rect(Rect2(cap.position.x, cap.position.y, cap.size.x, 1), Color(cold.r, cold.g, cold.b, pulse))
 		draw_rect(Rect2(cap.position.x, cap.end.y - 1, cap.size.x, 1), Color(cold.r, cold.g, cold.b, pulse))
 		draw_rect(Rect2(cap.position.x, cap.position.y, 1, cap.size.y), Color(cold.r, cold.g, cold.b, pulse))
 		draw_rect(Rect2(cap.end.x - 1, cap.position.y, 1, cap.size.y), Color(cold.r, cold.g, cold.b, pulse))
-		text_at("F", Vector2(197, 316), 15, Color(cold.r, cold.g, cold.b, pulse))
-		text_at("REVERSE GRAVITY", Vector2(222, 311), 13, Color(cold.r, cold.g, cold.b, pulse))
-		text_at("you will fall upward onto the ceiling", Vector2(222, 323), 9, P.text_faint)
+		text_at("F", Vector2(262, 330), 11, Color(cold.r, cold.g, cold.b, pulse))
+		text_at("reverse gravity", Vector2(281, 330), 12, Color(cold.r, cold.g, cold.b, pulse))
 
 	# A log fragment just picked up. Story arrives as a reward for walking over
 	# to it, rather than as signage the player runs past without reading.

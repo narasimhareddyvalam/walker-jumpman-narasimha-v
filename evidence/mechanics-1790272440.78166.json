@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-09-24T17:28:41",
+  "created_at": "2026-09-24T17:54:00",
   "engine": "4.7.2-stable (official)",
   "failures": 0,
   "results": [
@@ -282,7 +282,7 @@
     {
       "id": "feather-pickup-announces-the-power",
       "observed": {
-        "unlock_ticks": 312
+        "unlock_ticks": 252
       },
       "status": "PASS"
     },
