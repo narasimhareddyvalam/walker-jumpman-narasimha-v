@@ -134,6 +134,7 @@ func run() -> void:
 	# harness sampling the death count after a blocking capture. The ledge here
 	# is a margin improvement, not the fix.
 	route.feather_marks = route.feather_marks.filter(func(m): return m < 2600.0)
+	var sky_shot := false
 	for i in range(3600):
 		if game.deaths > deaths_seen:
 			deaths_seen = game.deaths
@@ -141,46 +142,47 @@ func run() -> void:
 			route.feather_marks = route.feather_marks.filter(func(m): return m < 2600.0)
 		route.step(game.player, game)
 		await step()
+		# Taken while still ON the ceiling, with open sky past its end. Every
+		# previous version took it after the break, which put a ~33-tick render
+		# call directly in front of a death that arrives in ~30 - the death kept
+		# landing inside the screenshot.
+		if not sky_shot and game.player.gravity_sign < 0.0 and game.player.is_on_floor() \
+			and game.player.position.x > 2560.0:
+			sky_shot = true
+			await capture("40-inverted-at-the-edge")
 		if game.player.position.x > 2650.0 and game.player.gravity_sign < 0.0:
 			break
 		if game.state != Game.State.PLAYING:
 			break
+	assert(sky_shot, "never captured the inverted run before the ceiling ended")
 	# Sampled BEFORE the capture. capture() awaits a render frame and the engine
 	# keeps stepping physics through it - measured at roughly 30 ticks, which is
 	# exactly how long this player takes to reach the sky bound. Sampling after
 	# the shot meant the death landed inside the PNG write and the count below
 	# could never see it. The route was right all along; the harness was eating
 	# the event.
-	# A capture costs roughly 33 physics ticks - measured, and the same length as
-	# the whole death-and-retry window. That makes a photograph of the instant of
-	# death impossible to time: the shot either lands before it or after the
-	# respawn. So these two shots are named for what they can actually show, and
-	# the death itself is proved by the assertion below plus the sky-is-fatal
-	# mechanics check. Claiming a picture of the death we cannot reliably take
-	# would be exactly the kind of mislabelled evidence this file already got
-	# wrong once.
+	# No screenshot is attempted between here and the death. A capture costs
+	# about 33 physics ticks - measured - and the player reaches the sky bound in
+	# about 30, so any shot in this window swallows the event it is meant to
+	# record. Shot 40 above is the evidence of the setup; the death itself is
+	# proved by the count below and by sky-is-fatal in the mechanics suite.
+	# Photographing it is simply not possible at this capture cost, and claiming
+	# otherwise is how this file produced a mislabelled image once already.
 	var sky_deaths: int = game.deaths
 	var died := false
 	var sky_reason := ""
-	var sky_shot := false
-	await capture("40-rising-off-the-ceiling")
 	for i in range(240):
 		game.player.test_axis = 1.0
 		await step()
-		if not sky_shot and game.state == Game.State.PLAYING \
-			and game.player.position.y < float(game.level.sky_y) + 90.0:
-			sky_shot = true
-			await capture("41-leaving-the-level-upward")
 		if game.state == Game.State.DYING:
 			died = true
 			sky_reason = game.death_reason
 			break
 		if game.deaths > sky_deaths:
 			died = true
-			sky_reason = "(counted; death landed inside a capture)"
+			sky_reason = "(counted)"
 			break
 	assert(died, "running off the ceiling inverted did not kill")
-	assert(sky_shot, "never captured the player leaving the level upward")
 	print("SKY: died as expected, reason=%s" % sky_reason)
 
 	# --- Standing still on dissolving ground ---

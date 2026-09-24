@@ -633,6 +633,82 @@ func run() -> void:
 		await steps(2)
 		check("logs-reset-on-retry", game.logs_found.is_empty(), {"found": game.logs_found.size()})
 
+	# --- Props: the environment says which way up a space is meant to be ---
+	# Objects rest on whichever surface their own gravity pulls them to. A chair
+	# pressed against a ceiling is impossible under normal gravity, so a space
+	# full of them is telling the player to come in inverted. Flip, and the same
+	# objects read as ordinary while the upright ones start looking wrong.
+	await fresh()
+	var props: Array = game.level.get("props", [])
+	if props.is_empty() or not game.has_method("prop_agrees"):
+		for id in ["props-exist-in-both-allegiances", "prop-meaning-flips-with-gravity",
+			"props-mark-every-inverted-space", "pad-prompt-only-on-the-first-pad"]:
+			check(id, false, {"props": props.size(), "has_prop_agrees": game.has_method("prop_agrees")})
+	else:
+		var upright_props := 0
+		var inverted_props := 0
+		for e in props:
+			if float(e[3]) > 0.0:
+				upright_props += 1
+			else:
+				inverted_props += 1
+		check("props-exist-in-both-allegiances", upright_props >= 3 and inverted_props >= 6,
+			{"obey_normal_gravity": upright_props, "obey_inverted_gravity": inverted_props})
+
+		# The same object means opposite things depending on which way up you are.
+		var sample: Array = []
+		for e in props:
+			if float(e[3]) < 0.0:
+				sample = e
+				break
+		var agreed_upright: bool = game.prop_agrees(float(sample[3]))
+		game.player.position = Vector2(2100, 260)
+		game.has_feather = true
+		game.feather_charges = 1
+		game.test_feather_pressed = true
+		await steps(2)
+		var agreed_inverted: bool = game.prop_agrees(float(sample[3]))
+		check("prop-meaning-flips-with-gravity",
+			game.player.gravity_sign < 0.0 and not agreed_upright and agreed_inverted,
+			{"agrees_upright": agreed_upright, "agrees_inverted": agreed_inverted})
+
+		# Every ceiling the shipped route runs along must carry at least one
+		# object obeying inverted gravity, or the space gives the player nothing
+		# to read and the prompt removal below would be unfair.
+		var ceilings: Array[Rect2] = []
+		for e in game.level.solids:
+			var r := Rect2(e[0], e[1], e[2], e[3])
+			if r.position.y < 200.0 and r.size.x >= 90.0:
+				ceilings.append(r)
+		var unmarked: Array[String] = []
+		for r in ceilings:
+			var marked := false
+			for e in props:
+				if float(e[3]) < 0.0 and float(e[0]) > r.position.x - 20.0 \
+					and float(e[0]) < r.end.x + 20.0 and absf(float(e[1]) - r.end.y) < 60.0:
+					marked = true
+			if not marked:
+				unmarked.append(str(r.position.x))
+		check("props-mark-every-inverted-space", unmarked.is_empty(),
+			{"ceilings": ceilings.size(), "unmarked_at_x": unmarked})
+
+		# Teaching wheels come off after the first pad: the props take over.
+		await fresh()
+		var padlist: Array = game.level.pads
+		game.player.position = Vector2(float(padlist[0][0]) + 27.0, float(padlist[0][1]) - 2.0)
+		game.has_feather = true
+		game.feather_charges = 1
+		await steps(4)
+		var first: bool = game.pad_prompt()
+		await fresh()
+		game.player.position = Vector2(float(padlist[3][0]) + 27.0, float(padlist[3][1]) - 2.0)
+		game.has_feather = true
+		game.feather_charges = 1
+		await steps(4)
+		var later: bool = game.pad_prompt()
+		check("pad-prompt-only-on-the-first-pad", first and not later,
+			{"prompt_on_pad_0": first, "prompt_on_pad_3": later})
+
 	var report := {"scope":"Chapter One: The Fall. Machine checks only; not human playtesting or full GDD acceptance", "engine":Engine.get_version_info().string,"created_at":Time.get_datetime_string_from_system(true),"results":results,"failures":failures}
 	var out := ProjectSettings.globalize_path("res://../evidence")
 	DirAccess.make_dir_recursive_absolute(out)

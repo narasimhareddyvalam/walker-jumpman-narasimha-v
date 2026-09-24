@@ -464,6 +464,7 @@ func _draw() -> void:
 		for entry in level.get("phantom", []):
 			_draw_slab(Rect2(entry[0], entry[1], entry[2], entry[3]))
 	_draw_crumble()
+	_draw_props()
 	_draw_pads(t)
 	_draw_feathers(t)
 	_draw_logs(t)
@@ -507,13 +508,11 @@ func _draw() -> void:
 	_sign(font, Vector2(2806, 236), "WALK. DO NOT JUMP.", 13, P.text_warn)
 	_sign(font, Vector2(3002, 212), "The floor was always there.", 13, P.text_faint)
 	_sign(font, Vector2(3160, 236), "THIS GAP IS EMPTY", 13, P.text_warn)
-	_sign(font, Vector2(3160, 254), "Go up instead.", 12, P.text_faint)
 	_sign(font, Vector2(3390, 212), "NOT EVERY FLOOR IS REAL", 13, P.text_warn)
 	# Three of the next four signs are lying. By now the player checks.
 	_sign(font, Vector2(3752, 212), "DOOR LOCKED", 14, P.text_warn)
 	_sign(font, Vector2(3908, 236), "DANGER", 13, P.text_warn)
 	_sign(font, Vector2(4086, 206), "THE FLOOR WILL KILL YOU", 14, P.text_warn)
-	_sign(font, Vector2(4086, 224), "Go up. Run on the ceiling.", 12, P.text_faint)
 	_sign(font, Vector2(4400, 212), "SAFE", 13, P.text_warn)
 	_sign(font, Vector2(4520, 228), "THE TOWER", 15, P.text_warn)
 	_sign(font, Vector2(4380, 252), "Only those who fall up may enter.", 13, P.cold)
@@ -543,11 +542,31 @@ func on_pad() -> bool:
 			return true
 	return false
 
-## Only true when pressing F would actually do something. A prompt shown with no
-## charge, or while already inverted, would be telling the player a lie - which
-## is the one thing this chapter cannot afford to do by accident.
+## Index of the pad the player is standing on, or -1.
+func pad_index() -> int:
+	if not is_instance_valid(player) or not player.is_on_floor():
+		return -1
+	var pads: Array = level.get("pads", [])
+	for i in range(pads.size()):
+		var r := Rect2(pads[i][0], pads[i][1], pads[i][2], pads[i][3])
+		if absf(player.position.y - r.position.y) < 4.0 \
+			and player.position.x + 9.0 > r.position.x \
+			and player.position.x - 9.0 < r.end.x:
+			return i
+	return -1
+
+## Only true on the FIRST pad, and only when pressing F would actually do
+## something. The first reversal teaches the verb in words; after that the
+## environment carries it, because objects resting on the wrong surface say
+## "this space is entered inverted" better than any instruction can.
 func pad_prompt() -> bool:
-	return on_pad() and feather_charges > 0 and reversal_ticks <= 0
+	return pad_index() == 0 and feather_charges > 0 and reversal_ticks <= 0
+
+## Does an object's own gravity match the player's? Props that agree look
+## ordinary. Props that disagree are resting on a surface they could not
+## possibly have fallen onto, and that impossibility is the instruction.
+func prop_agrees(allegiance: float) -> bool:
+	return (allegiance < 0.0) == inverted()
 
 ## Slabs that exist only as appearance. The chapter's law is that the world
 ## renders what you believe, not what is there: upright vision draws phantoms
@@ -753,6 +772,64 @@ func _draw_feathers(t: float) -> void:
 			var m: float = fposmod(t * 0.7 + float(k) * 9.0, 27.0)
 			draw_rect(Rect2(c.x - 1.0, c.y + 9.0 - m, 2.0, 2.0),
 				Color(P.cold.r, P.cold.g, P.cold.b, 0.30 * (1.0 - m / 27.0)))
+
+func _draw_props() -> void:
+	# The environment's visual language. Every object here fell onto its surface
+	# under one gravity or the other: an upright chair rests on top of a floor,
+	# an inverted one is pressed against the underside of a ceiling. Seeing a
+	# room full of objects obeying the opposite gravity is how the player learns
+	# the space is meant to be entered inverted - and once inverted, the objects
+	# that looked ordinary start looking wrong, which says flip back.
+	#
+	# Objects that contradict the player's current gravity are drawn a little
+	# stronger. That is lighting, not a prompt: the information is the position
+	# of the object, and the contrast only makes it legible at 640x360.
+	var P := pal()
+	for entry in level.get("props", []):
+		var at := Vector2(entry[0], entry[1])
+		var kind: int = int(entry[2])
+		var allegiance: float = float(entry[3])
+		var agrees := prop_agrees(allegiance)
+		# Away from the surface the object rests on.
+		var dir: float = 1.0 if allegiance < 0.0 else -1.0
+		var base: Color = P.slab.darkened(0.3) if agrees else P.edge
+		_draw_prop(at, kind, dir, Color(base.r, base.g, base.b, 0.45 if agrees else 1.0))
+
+func _draw_prop(at: Vector2, kind: int, dir: float, c: Color) -> void:
+	# Sized to be legible at the native 640x360 rather than merely present. At
+	# the first attempt these were ~14px and a playtest-scale look showed them
+	# reading as specks; a chair has to be recognisably a chair for "that chair
+	# is on the ceiling" to land.
+	match kind:
+		0:  # a chair, seat and back
+			var seat: float = at.y + dir * 10.0
+			draw_line(Vector2(at.x - 8.0, seat), Vector2(at.x + 8.0, seat), c, 2.0)
+			draw_line(Vector2(at.x - 7.0, seat), Vector2(at.x - 7.0, at.y), c, 1.5)
+			draw_line(Vector2(at.x + 7.0, seat), Vector2(at.x + 7.0, at.y), c, 1.5)
+			draw_line(Vector2(at.x + 7.5, seat), Vector2(at.x + 7.5, seat + dir * 13.0), c, 1.5)
+			draw_line(Vector2(at.x + 1.0, seat + dir * 13.0), Vector2(at.x + 8.0, seat + dir * 13.0), c, 1.5)
+		1:  # a crate
+			var h := 15.0
+			var top: float = at.y + dir * h
+			draw_line(Vector2(at.x - 9.0, at.y), Vector2(at.x + 9.0, at.y), c, 1.5)
+			draw_line(Vector2(at.x - 9.0, top), Vector2(at.x + 9.0, top), c, 1.5)
+			draw_line(Vector2(at.x - 9.0, at.y), Vector2(at.x - 9.0, top), c, 1.5)
+			draw_line(Vector2(at.x + 9.0, at.y), Vector2(at.x + 9.0, top), c, 1.5)
+			draw_line(Vector2(at.x - 9.0, at.y), Vector2(at.x + 9.0, top), c, 1.0)
+		2:  # a heap of rubble piled against its surface
+			for i in range(5):
+				var w: float = 4.0 + fmod(float(i) * 2.7, 5.0)
+				var lift: float = fmod(float(i) * 3.1, 7.0)
+				var y0: float = at.y + dir * lift
+				var y1: float = y0 + dir * w
+				draw_rect(Rect2(at.x - 12.0 + float(i) * 5.0, minf(y0, y1), w, absf(y1 - y0)), c)
+		_:  # loose papers stuck flat to the surface
+			for i in range(3):
+				var px: float = at.x - 9.0 + float(i) * 8.0
+				var py: float = at.y + dir * (1.0 + float(i) * 3.0)
+				draw_colored_polygon(PackedVector2Array([
+					Vector2(px, py), Vector2(px + 9.0, py - dir * 2.0),
+					Vector2(px + 8.0, py + dir * 5.5), Vector2(px - 1.0, py + dir * 7.0)]), c)
 
 func _draw_logs(t: float) -> void:
 	# A dropped recorder, deliberately mundane next to the Feather: this is

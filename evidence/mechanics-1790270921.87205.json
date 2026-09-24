@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-09-24T16:55:29",
+  "created_at": "2026-09-24T17:28:41",
   "engine": "4.7.2-stable (official)",
   "failures": 0,
   "results": [
@@ -531,6 +531,38 @@
       "id": "logs-reset-on-retry",
       "observed": {
         "found": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "props-exist-in-both-allegiances",
+      "observed": {
+        "obey_inverted_gravity": 12,
+        "obey_normal_gravity": 7
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "prop-meaning-flips-with-gravity",
+      "observed": {
+        "agrees_inverted": true,
+        "agrees_upright": false
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "props-mark-every-inverted-space",
+      "observed": {
+        "ceilings": 7,
+        "unmarked_at_x": []
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "pad-prompt-only-on-the-first-pad",
+      "observed": {
+        "prompt_on_pad_0": true,
+        "prompt_on_pad_3": false
       },
       "status": "PASS"
     }
