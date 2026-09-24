@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "reel": "claude-liam-walker-jumpman-walkthrough",
+  "mode": "walker",
+  "title": "The World Is Falling - Extending Walker Jumpman",
+  "game": "walker-jumpman-narasimha-v",
+  "voice": "am_onyx",
+  "beats": [
+    {
+      "beat_id": "B00",
+      "kind": "ClaudeComposerAsk",
+      "label": "The ask",
+      "reconstruction": true,
+      "reconstruction_label": "Illustrative reconstruction of the design ask - not a historical transcript.",
+      "narration_text": "Please use Walker to convert my game design document about a world where gravity has failed, where debris falls upward instead of down, and where the player finds an object that lets them fall upward too, into a playable Godot project. The chapter should run on one rule: the world shows you what you expect, not what is actually there. Some floors exist but are never drawn. Some are drawn but are not there. The player checks by turning gravity upside down."
+    },
+    {
+      "beat_id": "B01",
+      "kind": "what-was-built",
+      "label": "What was built",
+      "narration_text": "This is walker-jumpman, the course starter by Nik Bear Brown. The original is one short level: a few gaps, a spike, a finish flag, and a character drawn as four stacked rectangles. What you are about to see is that project extended. The character is now the Runner, whose trail length is its speed. The level is about five times longer and ends in a tower you cannot enter the normal way up. One chapter is built. Four more are written down in the design document and are not built, and I will not pretend otherwise."
+    },
+    {
+      "beat_id": "B02",
+      "kind": "gameplay",
+      "label": "The world falls up",
+      "narration_text": "The premise is stated in the first screen and never explained again. Rubble tumbles upward past the camera. A sign reads: the world falls up. Run right, reach the tower. The controls are the starter's - A and D to walk, space to jump - and they have not been changed. Watch the trail behind the Runner. Its length is horizontal speed, so standing still puts the character out."
+    },
+    {
+      "beat_id": "B03",
+      "kind": "gameplay",
+      "label": "The ground stops holding",
+      "narration_text": "Ledges here give way a moment after they are touched. The sign says keep moving, and the sign is telling the truth - this one is. The section then forks into a high road and a low road, both survivable. That is the first decision the extension asks for, and neither branch is the punished one."
+    },
+    {
+      "beat_id": "B04",
+      "kind": "gameplay",
+      "label": "The feather",
+      "narration_text": "This is the object the chapter is built around. Picking it up grants an ability rather than a consumable: one charge that returns two and a half seconds after it is spent. An earlier build rationed these across three pickups, and that was a mistake I will come back to in the verdict."
+    },
+    {
+      "beat_id": "B05",
+      "kind": "gameplay",
+      "label": "Falling upward",
+      "narration_text": "Pressing F inverts gravity and the Runner falls up onto the ceiling. Two things change with it. The trail turns from amber to cyan, and the whole world switches from a pale daylight palette to near black. That is not decoration. In this chapter, light is the comfortable lie and dark is what is actually there."
+    },
+    {
+      "beat_id": "B06",
+      "kind": "gameplay",
+      "label": "A floor that is not drawn",
+      "narration_text": "Now the chapter's actual idea. There is no floor visible across this gap. Everything on screen says that walking forward is a fall. Walking forward is not a fall - the floor is real, it has simply never been drawn. Invert here and the same floor renders as a lattice under the Runner's feet. It was always there. The player could not see it."
+    },
+    {
+      "beat_id": "B07",
+      "kind": "gameplay",
+      "label": "The same gap, empty",
+      "narration_text": "And here is the second half of the lesson. This gap looks identical to the one that just caught the player. It is empty. The rule the game taught one screen ago is the wrong rule - the lesson is not that hidden floors exist, it is to check instead of assume. Three things keep that fair: the sign above the gap says this gap is empty, the ceiling route across it is visible from the approach, and checking costs a charge that comes back on its own."
+    },
+    {
+      "beat_id": "B08",
+      "kind": "gameplay",
+      "label": "Signs that lie",
+      "narration_text": "From here the world lies in both directions. A platform drawn exactly like solid ground holds nothing. A bulkhead marked door locked is not solid and the player walks straight through it. A field of spikes drawn in full detail cannot hurt anyone. And a clear stretch of floor beneath a sign reading safe is filled with spikes that are never drawn at all. Every one of those is the same rule: what is drawn and what is solid are independent, and inverting shows which is which."
+    },
+    {
+      "beat_id": "B09",
+      "kind": "cause-and-effect",
+      "label": "Why a floor can be invisible",
+      "narration_text": "Here is the source change behind all of that. The starter already walked its level data twice - once in ready, to build a collider for every solid, and once in draw, to paint them. Those two loops were always separate. Hidden geometry now joins only the first loop, so it collides without ever being painted. Phantom geometry joins neither, so it is painted and holds nothing. No new node types, no physics change, and not one collision check removed. The mechanic is the difference between two loops that already existed."
+    },
+    {
+      "beat_id": "B10",
+      "kind": "gameplay",
+      "label": "Failure and recovery",
+      "narration_text": "This is a real death, not a staged one. The player walks into the Betrayal exactly as the previous gap taught them to, and falls. The retry is the starter's, unchanged: a short pause, then back to the spawn point with the death counted. Retries are unlimited, and the feather, the charge, the collapsed ledges and the collected logs all reset with the attempt."
+    },
+    {
+      "beat_id": "B11",
+      "kind": "gameplay",
+      "label": "The tower",
+      "narration_text": "The finish was moved from x nine hundred and sixteen to x four thousand seven hundred and fifty, and lifted into a shaft above the floor. A normal jump cannot reach it - there is an automated check that asserts exactly that. The only way in is to fall upward. The chapter ends on the line the story has been building to: you built this."
+    },
+    {
+      "beat_id": "B12",
+      "kind": "verdict",
+      "label": "Verdict",
+      "narration_text": "What is demonstrably working: the character reads correctly facing both ways, standing, jumping and inverted, against a collider that was never changed. Twenty-two landings past the original section. A relocated finish that the mechanic is required to reach. Seventy mechanics checks and nine keyboard checks passing, including all twenty-five the starter shipped with, none of them weakened. What is not settled: whether the Betrayal reads as fair or as cheap, and whether the environmental clues are legible at speed. The human playtest found three comprehension defects that every automated check had passed straight over - including a chapter that depended on a key it never taught the player. And one honest limitation: the light palette was the third attempt at the debris alone, and the design of those environmental clues is still being argued about."
+    },
+    {
+      "beat_id": "B13",
+      "kind": "your-turn",
+      "label": "Your turn",
+      "narration_text": "Here is the experiment worth running. Take the starter, and before you add anything, find the two places it walks its level data - the loop that builds colliders and the loop that draws. Then add one array that joins only the first. You will have a floor a player can stand on and cannot see, in about twenty lines, and every existing test will still pass. Ask Walker for that, then go and find out whether your players read it as clever or as a trick. That answer is not in the code."
+    }
+  ]
+}

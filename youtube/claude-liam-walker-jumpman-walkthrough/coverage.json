@@ -1,0 +1,398 @@
+{
+  "schema_version": 1,
+  "game": {
+    "name": "walker-jumpman-narasimha-v",
+    "build_id": "b7ad71839f87ad99a5c34abc88f3ba87c66000ae74eac53442d1f10f07e76a30"
+  },
+  "captures": {
+    "run-01": {
+      "path": "capture/run-01.mp4",
+      "sha256": "fe81ad0f89372306e4a06e4141dc5d3da7b78e93e4b67c652622ec800e5983fc",
+      "build_id": "b7ad71839f87ad99a5c34abc88f3ba87c66000ae74eac53442d1f10f07e76a30",
+      "method": "scripted-input",
+      "input_log": "capture/run-01-inputs.jsonl"
+    },
+    "run-02": {
+      "path": "capture/run-02.mp4",
+      "sha256": "3fed7b5570f1a54a95d7ce2a7bfba7ea782eb720bf6b693194561dfa4cf7ba5b",
+      "build_id": "b7ad71839f87ad99a5c34abc88f3ba87c66000ae74eac53442d1f10f07e76a30",
+      "method": "scripted-input",
+      "input_log": "capture/run-02-inputs.jsonl"
+    },
+    "run-03": {
+      "path": "capture/run-03.mp4",
+      "sha256": "b8c662f39f2c657004b219e364db159afb5404b0ce3892b1dd6b58df84336efd",
+      "build_id": "b7ad71839f87ad99a5c34abc88f3ba87c66000ae74eac53442d1f10f07e76a30",
+      "method": "scripted-input",
+      "input_log": "capture/run-03-inputs.jsonl"
+    }
+  },
+  "features": [
+    {
+      "id": "start-from-menu",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B02",
+          "start_s": 0.0,
+          "action_s": 0.12,
+          "end_s": 1.2,
+          "observation": "Enter is pressed on the title card and the session begins; the player appears at the spawn point.",
+          "riff": "The menu is the starter's, unchanged - the only thing added to the input map is F."
+        }
+      ]
+    },
+    {
+      "id": "walk-and-jump",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B02",
+          "start_s": 0.4,
+          "action_s": 0.75,
+          "end_s": 3.0,
+          "observation": "A and D walk; Space clears the first step. Movement and jump values are the starter's.",
+          "riff": "Fixed-height jump, no double jump. Everything built later had to fit inside this envelope rather than widen it."
+        }
+      ]
+    },
+    {
+      "id": "speed-trail-readout",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B02",
+          "start_s": 0.5,
+          "action_s": 2.0,
+          "end_s": 4.5,
+          "observation": "The Runner's trail extends as horizontal speed builds and shortens when it drops.",
+          "riff": "The character reports its own state. Standing still visibly puts it out, which the level then punishes."
+        }
+      ]
+    },
+    {
+      "id": "story-log-fragments",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B03",
+          "start_s": 4.6,
+          "action_s": 6.4,
+          "end_s": 8.4,
+          "observation": "Walking over a dropped recorder raises a one-line fragment and the LOG counter advances.",
+          "riff": "Story arrives as a reward for moving over it rather than as signage the player runs past."
+        }
+      ]
+    },
+    {
+      "id": "crumbling-ledges",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B03",
+          "start_s": 5.6,
+          "action_s": 6.6,
+          "end_s": 9.2,
+          "observation": "Ledges shake on contact and fall away a moment later; the player keeps moving across them.",
+          "riff": "Contact-triggered, not timed - an untouched ledge stays solid, which a check asserts."
+        }
+      ]
+    },
+    {
+      "id": "route-fork",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B03",
+          "start_s": 7.2,
+          "action_s": 8.0,
+          "end_s": 9.6,
+          "observation": "The section opens into a high gantry and a lower deck; the route takes the high road.",
+          "riff": "Both branches are survivable. The decision is a route preference, not a trap."
+        }
+      ]
+    },
+    {
+      "id": "feather-pickup",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B04",
+          "start_s": 11.2,
+          "action_s": 12.2,
+          "end_s": 13.0,
+          "observation": "Touching the feather grants the ability; the HUD switches to FEATHER / READY and a card names the power.",
+          "riff": "One pickup, permanent ability. Before it, F does nothing at all."
+        }
+      ]
+    },
+    {
+      "id": "gravity-reversal",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B05",
+          "start_s": 12.8,
+          "action_s": 13.2,
+          "end_s": 16.4,
+          "observation": "F inverts gravity; the Runner falls upward onto the ceiling and runs along its underside.",
+          "riff": "A sign flip, not a tuning change - the measured inverted jump is 56.05 px against a normal 56.00 px rise."
+        }
+      ]
+    },
+    {
+      "id": "palette-inversion",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B05",
+          "start_s": 12.9,
+          "action_s": 13.3,
+          "end_s": 15.6,
+          "observation": "The world switches from pale daylight to near black on the same frame gravity inverts.",
+          "riff": "Light is the comfortable lie; dark is what is actually there. Colour cannot disagree with orientation because gravity chooses it."
+        }
+      ]
+    },
+    {
+      "id": "hidden-floor",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B06",
+          "start_s": 17.2,
+          "action_s": 18.0,
+          "end_s": 19.4,
+          "observation": "The player walks out over a gap with no floor drawn beneath them and is carried across.",
+          "riff": "The collider is ordinary. Only the drawing withholds it - nothing was added to the physics."
+        }
+      ]
+    },
+    {
+      "id": "reveal-when-inverted",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B06",
+          "start_s": 18.3,
+          "action_s": 19.0,
+          "end_s": 20.6,
+          "observation": "Inverted, the hidden floor renders as a cyan lattice where the player has been standing.",
+          "riff": "Inverted sight shows substance. That is the whole rule, stated once in a single frame."
+        }
+      ]
+    },
+    {
+      "id": "betrayal-gap",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-02",
+          "beat_id": "B07",
+          "start_s": 18.6,
+          "action_s": 20.7,
+          "end_s": 21.6,
+          "observation": "A gap identical to the one that caught the player is genuinely empty; walking in is fatal.",
+          "riff": "The lesson is not that hidden floors exist. It is to check instead of assume."
+        }
+      ]
+    },
+    {
+      "id": "phantom-platform",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B08",
+          "start_s": 21.9,
+          "action_s": 22.7,
+          "end_s": 23.9,
+          "observation": "A slab drawn exactly like solid ground is not solid.",
+          "riff": "Drawn and solid are independent properties. Upright vision shows the lie; inverting removes it."
+        }
+      ]
+    },
+    {
+      "id": "locked-door",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B08",
+          "start_s": 24.1,
+          "action_s": 24.8,
+          "end_s": 25.7,
+          "observation": "A bulkhead marked DOOR LOCKED has no collider and the player walks straight through it.",
+          "riff": "A dead end that is the intended path. By now the player has been taught that signs are claims."
+        }
+      ]
+    },
+    {
+      "id": "phantom-hazards",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B08",
+          "start_s": 25.5,
+          "action_s": 26.3,
+          "end_s": 27.3,
+          "observation": "Spikes drawn in full detail do not harm the player passing over them.",
+          "riff": "The opposite lie to the hidden floor: lethal-looking and completely safe."
+        }
+      ]
+    },
+    {
+      "id": "hidden-hazards",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B08",
+          "start_s": 27.8,
+          "action_s": 28.6,
+          "end_s": 29.3,
+          "observation": "A clear stretch of floor under a sign reading SAFE contains spikes that are never drawn.",
+          "riff": "The worst lie in the chapter, and the reason the mirror ledge above it exists."
+        }
+      ]
+    },
+    {
+      "id": "mirror-ledge",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B08",
+          "start_s": 28.8,
+          "action_s": 29.4,
+          "end_s": 30.2,
+          "observation": "A platform absent while upright is solid while inverted, and carries the player over the hidden spikes.",
+          "riff": "Real in one world only. It completes the set: there-but-unseen, seen-but-not-there, real-only-inverted."
+        }
+      ]
+    },
+    {
+      "id": "relocated-finish",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B11",
+          "start_s": 29.8,
+          "action_s": 30.5,
+          "end_s": 31.8,
+          "observation": "The finish sits above the floor inside the tower shaft and is entered by falling upward.",
+          "riff": "A check asserts a normal jump cannot reach it, so the mechanic is load-bearing rather than decorative."
+        }
+      ]
+    },
+    {
+      "id": "death-and-retry",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-02",
+          "beat_id": "B10",
+          "start_s": 20.3,
+          "action_s": 20.8,
+          "end_s": 22.3,
+          "observation": "The death card names the cause, then the player is returned to the spawn point with the death counted.",
+          "riff": "The starter's retry, untouched. Charges, gravity, collapsed ledges and collected logs all reset with the attempt."
+        }
+      ]
+    },
+    {
+      "id": "replay-after-completion",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-01",
+          "beat_id": "B11",
+          "start_s": 31.6,
+          "action_s": 33.2,
+          "end_s": 34.2,
+          "observation": "Enter on the completion card restarts the chapter at the spawn point with the death count reset to zero.",
+          "riff": "Replay is the starter's behaviour and still works after everything added on top of it."
+        }
+      ]
+    },
+    {
+      "id": "pause-and-resume",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-03",
+          "beat_id": "B10",
+          "start_s": 1.2,
+          "action_s": 1.8,
+          "end_s": 3.6,
+          "observation": "Escape freezes the world and the timer; Enter resumes from the same position.",
+          "riff": "Verified by position rather than by eye - the run asserts the player has not moved while paused."
+        }
+      ]
+    },
+    {
+      "id": "manual-retry",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "run-03",
+          "beat_id": "B10",
+          "start_s": 4.4,
+          "action_s": 5.6,
+          "end_s": 6.6,
+          "observation": "R returns the player to the spawn point without incrementing the death counter.",
+          "riff": "A restart is not a death. The counter separates the two, which matters for the route evidence."
+        }
+      ]
+    },
+    {
+      "id": "chapter-two-the-forest-below",
+      "status": "planned",
+      "reason": "Designed in GDD.md. No level data, scripts or assets exist.",
+      "evidence": []
+    },
+    {
+      "id": "the-eye-observation-object",
+      "status": "planned",
+      "reason": "Chapter Two design only. Not implemented.",
+      "evidence": []
+    },
+    {
+      "id": "the-mirror-perception-object",
+      "status": "planned",
+      "reason": "Chapter Three design only. Not implemented.",
+      "evidence": []
+    },
+    {
+      "id": "the-clock-time-object",
+      "status": "planned",
+      "reason": "Chapter Four design only. Not implemented.",
+      "evidence": []
+    },
+    {
+      "id": "contradiction-room",
+      "status": "planned",
+      "reason": "Designed after the final playtest; deliberately not built for this submission.",
+      "evidence": []
+    },
+    {
+      "id": "audio",
+      "status": "planned",
+      "reason": "The game is silent. No sound was written, so none is claimed.",
+      "evidence": []
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{"event":"note","note":"menu shown","t_s":0.0666666666666667,"tick":4}
+{"action":"confirm","event":"press","gravity_sign":1.0,"player_x":64.0,"player_y":320.0,"state":0,"t_s":0.0666666666666667,"tick":4}
+{"action":"confirm","event":"release","gravity_sign":1.0,"player_x":64.0,"player_y":320.0,"state":1,"t_s":0.0833333333333333,"tick":5}
+{"event":"note","note":"walking, then pausing","t_s":0.183333333333333,"tick":11}
+{"action":"move_right","event":"press","gravity_sign":1.0,"player_x":64.0,"player_y":320.0,"state":1,"t_s":0.183333333333333,"tick":11}
+{"action":"move_right","event":"release","gravity_sign":1.0,"player_x":151.0,"player_y":320.0,"state":1,"t_s":1.68333333333333,"tick":101}
+{"action":"pause","event":"press","gravity_sign":1.0,"player_x":151.0,"player_y":320.0,"state":1,"t_s":1.68333333333333,"tick":101}
+{"action":"pause","event":"release","gravity_sign":1.0,"player_x":151.0,"player_y":320.0,"state":2,"t_s":1.7,"tick":102}
+{"event":"note","note":"paused - the world is held","t_s":1.76666666666667,"tick":106}
+{"action":"confirm","event":"press","gravity_sign":1.0,"player_x":151.0,"player_y":320.0,"state":2,"t_s":3.26666666666667,"tick":196}
+{"action":"confirm","event":"release","gravity_sign":1.0,"player_x":151.0,"player_y":320.0,"state":1,"t_s":3.28333333333333,"tick":197}
+{"event":"note","note":"resumed","t_s":3.38333333333333,"tick":203}
+{"action":"move_right","event":"press","gravity_sign":1.0,"player_x":151.0,"player_y":320.0,"state":1,"t_s":3.38333333333333,"tick":203}
+{"action":"move_right","event":"release","gravity_sign":1.0,"player_x":151.0,"player_y":320.0,"state":1,"t_s":5.38333333333333,"tick":323}
+{"action":"restart","event":"press","gravity_sign":1.0,"player_x":151.0,"player_y":320.0,"state":1,"t_s":5.38333333333333,"tick":323}
+{"action":"restart","event":"release","gravity_sign":1.0,"player_x":64.0,"player_y":320.0,"state":1,"t_s":5.4,"tick":324}
+{"event":"note","note":"manual retry returned to spawn, deaths still 0","t_s":5.53333333333333,"tick":332}
