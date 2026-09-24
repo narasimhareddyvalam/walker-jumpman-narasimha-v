@@ -139,18 +139,28 @@ func run() -> void:
 	await capture("40-rising-off-the-ceiling")
 	var sky_deaths: int = game.deaths
 	var died := false
+	var sky_reason := ""
+	var sky_shot := false
 	for i in range(240):
 		game.player.test_axis = 1.0
 		await step()
+		# Captured on the way out, not on the death. capture() awaits a render
+		# frame and the 0.55s retry elapses during it, so a shot taken at the
+		# moment of death arrives after the respawn and shows the spawn point.
+		if not sky_shot and game.state == Game.State.PLAYING \
+			and game.player.position.y < float(game.level.sky_y) + 46.0:
+			sky_shot = true
+			await capture("41-fell-into-the-sky")
 		if game.state == Game.State.DYING:
 			died = true
-			await capture("41-fell-into-the-sky")
+			sky_reason = game.death_reason
 			break
 		if game.deaths > sky_deaths:
 			died = true
 			break
 	assert(died, "running off the ceiling inverted did not kill")
-	print("SKY: died as expected, reason=%s" % game.death_reason)
+	assert(sky_shot, "never got close enough to the sky bound to capture it")
+	print("SKY: died as expected, reason=%s" % sky_reason)
 
 	# --- Standing still on dissolving ground ---
 	await fresh()
@@ -167,18 +177,32 @@ func run() -> void:
 	game.player.test_axis = 0.0
 	var pit_deaths: int = game.deaths
 	var fell := false
+	var pit_reason := ""
+	var pit_shot := false
 	for i in range(300):
 		game.player.test_axis = 0.0
 		await step()
+		# The interesting frame is the ledge already gone and the player falling
+		# through the hole, which is well before the death. Taking it at DYING
+		# produced a picture of the spawn point.
+		if not pit_shot and game.state == Game.State.PLAYING and not game.player.is_on_floor():
+			for ledge in game.crumble_ledges:
+				if int(ledge.state) == Game.Crumble.COLLAPSED \
+					and absf(game.player.position.x - (ledge.rect.position.x + ledge.rect.size.x * 0.5)) < 90.0:
+					pit_shot = true
+					break
+			if pit_shot:
+				await capture("42-ground-gave-way")
 		if game.state == Game.State.DYING:
 			fell = true
-			await capture("42-ground-gave-way")
+			pit_reason = game.death_reason
 			break
 		if game.deaths > pit_deaths:
 			fell = true
 			break
 	assert(fell, "standing on dissolving ground did not kill")
-	print("PIT: died as expected, reason=%s" % game.death_reason)
+	assert(pit_shot, "never saw the ledge collapse under the player")
+	print("PIT: died as expected, reason=%s" % pit_reason)
 
 	game.queue_free()
 	await process_frame
