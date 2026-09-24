@@ -63,7 +63,13 @@ func run() -> void:
 		3180.0: "29-truth-vision",
 		3400.0: "30-the-phantom",
 		3560.0: "31-phantom-omitted",
-		3760.0: "32-observatory-door",
+		3800.0: "32-sector-sealed",
+		3995.0: "33-the-hazard-was-a-lie",
+		4150.0: "34-inverted-over-the-spikes",
+		4350.0: "35-the-gantry-gave-way",
+		4470.0: "36-section-clear-was-a-lie",
+		4620.0: "37-the-mirror-ledge",
+		4760.0: "38-observatory-door",
 	}
 	var taken := {}
 	var deaths_seen: int = 0
@@ -82,7 +88,7 @@ func run() -> void:
 		if game.state != Game.State.PLAYING:
 			break
 	assert(game.state == Game.State.COMPLETE, "chapter route did not complete")
-	await capture("33-chapter-ends")
+	await capture("39-chapter-ends")
 	print("CHAPTER: complete, %d deaths, charges left %d" % [game.deaths, game.feather_charges])
 
 	# --- The Reveal, captured on purpose. On the main route the player flips at
@@ -104,12 +110,12 @@ func run() -> void:
 			break
 	game.player.test_axis = 0.0
 	await step()
-	await capture("37-standing-on-nothing")
+	await capture("43-standing-on-nothing")
 	assert(game.feather_charges >= 1, "no charge in hand on the hidden floor")
 	game.test_feather_pressed = true
 	await step()
 	await step()
-	await capture("38-the-floor-was-always-there")
+	await capture("44-the-floor-was-always-there")
 	print("REVEAL: x=%.0f gravity_sign=%.1f" % [game.player.position.x, game.player.gravity_sign])
 
 	# --- Falling into the sky: the failure the new mechanic introduces ---
@@ -130,7 +136,7 @@ func run() -> void:
 			break
 		if game.state != Game.State.PLAYING:
 			break
-	await capture("34-rising-off-the-ceiling")
+	await capture("40-rising-off-the-ceiling")
 	var sky_deaths: int = game.deaths
 	var died := false
 	for i in range(240):
@@ -138,7 +144,7 @@ func run() -> void:
 		await step()
 		if game.state == Game.State.DYING:
 			died = true
-			await capture("35-fell-into-the-sky")
+			await capture("41-fell-into-the-sky")
 			break
 		if game.deaths > sky_deaths:
 			died = true
@@ -166,7 +172,7 @@ func run() -> void:
 		await step()
 		if game.state == Game.State.DYING:
 			fell = true
-			await capture("36-ground-gave-way")
+			await capture("42-ground-gave-way")
 			break
 		if game.deaths > pit_deaths:
 			fell = true

@@ -36,8 +36,11 @@ func _draw() -> void:
 	if game.reversal_ticks > 0:
 		var span: float = float(game.reversal_ticks) / float(game.REVERSAL_TICKS)
 		draw_rect(Rect2(22, 45, 76 * span, 1), cold)
-	elif charges > 0:
+	elif game.has_feather:
 		text_at("F", Vector2(104, 44), 10, P.text_faint)
+	if not game.logs.is_empty():
+		text_at("LOG  %d / %d" % [game.logs_found.size(), game.logs.size()],
+			Vector2(500, 44), 10, P.text_faint)
 
 	# Standing on a reversal pad with a charge in hand. Playtest finding: "its
 	# not clear where to click F and invert and play upside down" - the chapter
@@ -50,6 +53,18 @@ func _draw() -> void:
 		draw_rect(Rect2(196, 296, 248, 1), Color(cold.r, cold.g, cold.b, 0.55))
 		draw_rect(Rect2(196, 317, 248, 1), Color(cold.r, cold.g, cold.b, 0.55))
 		centered("PRESS  F  TO FALL UPWARD", 312, 14, Color(cold.r, cold.g, cold.b, pulse))
+
+	# A log fragment just picked up. Story arrives as a reward for walking over
+	# to it, rather than as signage the player runs past without reading.
+	if game.log_banner_ticks > 0 and game.log_banner != "":
+		var t: float = clampf(float(game.log_banner_ticks) / 40.0, 0.0, 1.0)
+		var w := ThemeDB.fallback_font.get_string_size(game.log_banner,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
+		draw_rect(Rect2((640 - w) / 2 - 14, 74, w + 28, 22),
+			Color(P.void.r, P.void.g, P.void.b, 0.88 * t))
+		draw_rect(Rect2((640 - w) / 2 - 14, 74, 2, 22),
+			Color(P.text_warn.r, P.text_warn.g, P.text_warn.b, 0.9 * t))
+		centered(game.log_banner, 89, 12, Color(P.text_dim.r, P.text_dim.g, P.text_dim.b, t))
 
 	# The rooftops put a grid of windows directly behind the bottom row, and the
 	# controls line stopped being readable the moment platforms stopped being

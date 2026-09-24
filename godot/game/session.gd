@@ -12,6 +12,11 @@ const DEBRIS_TICKS: int = 40
 enum Crumble { INTACT, SHAKING, COLLAPSED }
 ## Ticks a single Feather charge holds gravity inverted before it snaps back.
 const REVERSAL_TICKS: int = 180
+## Ticks before a spent Feather charge returns. Replaces the original scarce-
+## charge economy: playtest showed that rationing the tool made players avoid
+## inspecting, which is exactly the verb this chapter is about. Cheap to use,
+## so the skill is choosing when and where rather than how many you hoarded.
+const RECHARGE_TICKS: int = 150
 # Palette. The starter's cream-and-teal scheme was replaced outright, and the
 # two schemes below are the theme rather than decoration: upright, the facility
 # is pale, flat and legible - the comfortable lie the world renders for you.
@@ -40,9 +45,19 @@ var state: State = State.MENU
 ## gameplay state: it keeps running while paused so the world never looks frozen.
 var world_tick: int = 0
 var crumble_ledges: Array[Dictionary] = []
+var mirror_ledges: Array[Dictionary] = []
 var feathers: Array[Dictionary] = []
 var feather_charges: int = 0
 var reversal_ticks: int = 0
+## The Feather is an ability once found, not a consumable. Until the first
+## pickup, F does nothing at all.
+var has_feather: bool = false
+var recharge_ticks: int = 0
+## Story fragments picked up so far, in the order found.
+var logs_found: Array[String] = []
+var logs: Array[Dictionary] = []
+var log_banner: String = ""
+var log_banner_ticks: int = 0
 var test_feather_pressed: bool = false
 var player: CharacterBody2D
 var camera: Camera2D
@@ -69,6 +84,8 @@ func _ready() -> void:
 	for entry in level.get("hidden", []):
 		_add_solid(Rect2(entry[0], entry[1], entry[2], entry[3]))
 	# Phantom geometry is deliberately never built. It exists only in _draw().
+	for entry in level.get("mirror", []):
+		_add_mirror(Rect2(entry[0], entry[1], entry[2], entry[3]))
 	_add_solid(Rect2(-32, 0, 32, 430))
 	_add_solid(Rect2(level.width, 0, 32, 430))
 	for entry in level.get("crumbling", []):
@@ -77,6 +94,12 @@ func _ready() -> void:
 		feathers.append({"pos": Vector2(entry[0], entry[1]), "charges": int(entry[2]), "taken": false})
 	for entry in level.hazards:
 		hazard_areas.append(_add_area(Rect2(entry[0], entry[1], entry[2], entry[3]), 8, true))
+	# Hidden hazards are as lethal as any other; only the drawing withholds them.
+	# Phantom hazards get no trigger at all - they are a picture of danger.
+	for entry in level.get("hidden_hazards", []):
+		hazard_areas.append(_add_area(Rect2(entry[0], entry[1], entry[2], entry[3]), 8, true))
+	for entry in level.get("logs", []):
+		logs.append({"pos": Vector2(entry[0], entry[1]), "text": String(entry[2]), "taken": false})
 	var f: Array = level.finish
 	goal = _add_area(Rect2(f[0], f[1], f[2], f[3]), 16, false)
 	player = Player.new()
@@ -118,6 +141,31 @@ func _add_solid(rect: Rect2) -> void:
 	body.add_child(collision)
 	add_child(body)
 
+func _add_mirror(rect: Rect2) -> void:
+	# Real only in the inverted world. The same StaticBody2D as any solid, with
+	# its collision switched on and off by gravity - one object that exists in
+	# one world, not two objects pretending.
+	var body := StaticBody2D.new()
+	body.position = rect.position + rect.size / 2
+	body.collision_layer = 1
+	body.collision_mask = 2
+	var shape := RectangleShape2D.new()
+	shape.size = rect.size
+	var collision := CollisionShape2D.new()
+	collision.shape = shape
+	collision.disabled = true
+	body.add_child(collision)
+	add_child(body)
+	mirror_ledges.append({"rect": rect, "shape": collision})
+
+func _sync_mirrors() -> void:
+	# Deferred for the same reason the crumble mechanic defers: collision state
+	# cannot be mutated in the middle of a physics query.
+	var on := inverted()
+	for m in mirror_ledges:
+		if m.shape.disabled == on:
+			m.shape.set_deferred("disabled", not on)
+
 func _add_crumble(rect: Rect2) -> void:
 	# Same static body as any solid, plus the state needed to withdraw it.
 	var body := StaticBody2D.new()
@@ -134,10 +182,13 @@ func _add_crumble(rect: Rect2) -> void:
 		"state": Crumble.INTACT, "timer": 0, "debris": 0})
 
 func _player_standing_on(rect: Rect2) -> bool:
-	# Feet resting on this ledge's top surface, within the ledge's horizontal span.
+	# Upright, the feet rest on the ledge's top. Inverted, they rest against its
+	# underside and the player's origin sits one collider-height beyond it, so a
+	# ceiling can give way under someone hanging from it.
 	if not player.is_on_floor():
 		return false
-	if absf(player.position.y - rect.position.y) > 3.0:
+	var surface: float = rect.end.y + 28.0 if inverted() else rect.position.y
+	if absf(player.position.y - surface) > 3.5:
 		return false
 	return player.position.x + 9.0 > rect.position.x and player.position.x - 9.0 < rect.end.x
 
@@ -159,12 +210,15 @@ func _update_crumble() -> void:
 				ledge.debris += 1
 
 func use_feather() -> void:
+	if not has_feather:
+		return
 	if reversal_ticks > 0:
 		# Cancelling early costs the charge anyway. Choosing the moment to flip
 		# back is the skill; a refund would make holding it strictly better.
 		restore_gravity()
 	elif feather_charges > 0:
 		feather_charges -= 1
+		recharge_ticks = RECHARGE_TICKS
 		reversal_ticks = REVERSAL_TICKS
 		player.gravity_sign = -1.0
 
@@ -180,10 +234,35 @@ func _update_feathers() -> void:
 			continue
 		if body.intersects(Rect2(f.pos.x - 9.0, f.pos.y - 9.0, 18.0, 18.0)):
 			f.taken = true
-			feather_charges += int(f.charges)
+			# The first Feather grants the ability itself. Later ones are story
+			# objects, not fuel: they top the charge up and nothing more, and
+			# the charge never stacks.
+			has_feather = true
+			feather_charges = 1
+			recharge_ticks = 0
+
+func _update_logs() -> void:
+	var body := Rect2(player.position.x - 9.0, player.position.y - 28.0, 18.0, 28.0)
+	for l in logs:
+		if l.taken:
+			continue
+		if body.intersects(Rect2(l.pos.x - 11.0, l.pos.y - 11.0, 22.0, 22.0)):
+			l.taken = true
+			logs_found.append(l.text)
+			log_banner = l.text
+			log_banner_ticks = 280
+
+func _reset_logs() -> void:
+	logs_found.clear()
+	log_banner = ""
+	log_banner_ticks = 0
+	for l in logs:
+		l.taken = false
 
 func _reset_feathers() -> void:
 	feather_charges = 0
+	has_feather = false
+	recharge_ticks = 0
 	restore_gravity()
 	for f in feathers:
 		f.taken = false
@@ -201,10 +280,14 @@ func _add_area(rect: Rect2, layer: int, spikes: bool) -> Area2D:
 	area.collision_layer = layer
 	area.collision_mask = 2
 	if spikes:
-		# Three exact triangular trigger silhouettes; no oversized invisible box.
-		for i in range(3):
+		# Exact triangular trigger silhouettes, no oversized invisible box. These
+		# tile at a fixed 8px pitch rather than splitting the rect into three:
+		# the original divided any width into three 8px spikes, so a 24px hazard
+		# tiled perfectly but the 260px spike corridor added later would have
+		# been 90% gap - lethal-looking and almost entirely safe to walk.
+		for i in range(maxi(1, int(rect.size.x / 8.0))):
 			var triangle := CollisionPolygon2D.new()
-			var x := float(i) * rect.size.x / 3.0
+			var x := float(i) * 8.0
 			triangle.polygon = PackedVector2Array([Vector2(x, rect.size.y), Vector2(x + 4, 0), Vector2(x + 8, rect.size.y)])
 			area.add_child(triangle)
 	else:
@@ -232,6 +315,7 @@ func restart_attempt() -> void:
 	contact_settle_ticks = 2
 	_reset_crumble()
 	_reset_feathers()
+	_reset_logs()
 	player.reset_at(Vector2(level.spawn[0], level.spawn[1]))
 	player.enabled = true
 	camera.position = Vector2(320, 180)
@@ -274,6 +358,15 @@ func _physics_process(delta: float) -> void:
 		elapsed += delta
 		_update_crumble()
 		_update_feathers()
+		_update_logs()
+		_sync_mirrors()
+		# The charge returns on its own. Nothing to manage, nothing to hoard.
+		if has_feather and feather_charges < 1:
+			recharge_ticks -= 1
+			if recharge_ticks <= 0:
+				feather_charges = 1
+		if log_banner_ticks > 0:
+			log_banner_ticks -= 1
 		var feather_pressed := Input.is_action_just_pressed("feather") or test_feather_pressed
 		test_feather_pressed = false
 		if feather_pressed:
@@ -353,22 +446,25 @@ func _draw() -> void:
 		_draw_slab(Rect2(entry[0], entry[1], entry[2], entry[3]))
 	# A phantom is painted exactly like real ground - that is the whole lie.
 	# A revealed hidden floor gets its own treatment so truth reads as truth.
-	for r in _belief_slabs():
-		if inverted():
-			_draw_revealed(r)
-		else:
-			_draw_slab(r)
+	if inverted():
+		for entry in level.get("hidden", []):
+			_draw_revealed(Rect2(entry[0], entry[1], entry[2], entry[3]))
+		for entry in level.get("mirror", []):
+			_draw_slab(Rect2(entry[0], entry[1], entry[2], entry[3]))
+	else:
+		for entry in level.get("phantom", []):
+			_draw_slab(Rect2(entry[0], entry[1], entry[2], entry[3]))
 	_draw_crumble()
 	_draw_pads(t)
 	_draw_feathers(t)
+	_draw_logs(t)
 
 	# Spikes are drawn from the hazard's own rect. The starter drew every spike
 	# at a literal y=320/304 while _add_area built the trigger from the real
 	# rect, so a raised hazard rendered detached from what actually kills you.
-	for entry in level.hazards:
-		var hr := Rect2(entry[0], entry[1], entry[2], entry[3])
-		for i in range(3):
-			var hx: float = hr.position.x + float(i) * hr.size.x / 3.0
+	for hr in rendered_hazards():
+		for i in range(maxi(1, int(hr.size.x / 8.0))):
+			var hx: float = hr.position.x + float(i) * 8.0
 			draw_colored_polygon(PackedVector2Array([
 				Vector2(hx, hr.end.y), Vector2(hx + 4, hr.position.y), Vector2(hx + 8, hr.end.y)]), P.hazard)
 
@@ -406,8 +502,14 @@ func _draw() -> void:
 	_sign(font, Vector2(3002, 212), "YOU WERE NEVER FALLING", 13, P.text_faint)
 	_sign(font, Vector2(3160, 236), "IT IS NOT THE SAME GAP", 13, P.text_warn)
 	_sign(font, Vector2(3352, 212), "BELIEF RENDERS. TRUTH DOES NOT.", 12, P.text_faint)
-	_sign(font, Vector2(3690, 232), "OBSERVATORY", 15, P.text_warn)
-	_sign(font, Vector2(3540, 252), "ONLY THOSE WHO CAN FALL UPWARD MAY ENTER", 13, P.cold)
+	# Four signs, three of which are lying. The player has been taught to check.
+	_sign(font, Vector2(3752, 212), "SECTOR SEALED", 14, P.text_warn)
+	_sign(font, Vector2(3908, 236), "HAZARD  /  DO NOT CROSS", 12, P.text_warn)
+	_sign(font, Vector2(4086, 212), "FLOOR COMPROMISED", 14, P.text_warn)
+	_sign(font, Vector2(4086, 230), "Take the gantry. It will not hold long.", 12, P.text_faint)
+	_sign(font, Vector2(4400, 212), "SECTION CLEAR", 13, P.text_warn)
+	_sign(font, Vector2(4520, 232), "OBSERVATORY", 15, P.text_warn)
+	_sign(font, Vector2(4370, 252), "ONLY THOSE WHO CAN FALL UPWARD MAY ENTER", 13, P.cold)
 
 func _sign(font: Font, at: Vector2, text: String, size: int, tint: Color) -> void:
 	draw_string(font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, tint)
@@ -448,6 +550,20 @@ func pad_prompt() -> bool:
 func _belief_slabs() -> Array[Rect2]:
 	var out: Array[Rect2] = []
 	for entry in level.get("hidden" if inverted() else "phantom", []):
+		out.append(Rect2(entry[0], entry[1], entry[2], entry[3]))
+	# A mirror ledge is genuinely solid while inverted, so it is drawn as one.
+	if inverted():
+		for entry in level.get("mirror", []):
+			out.append(Rect2(entry[0], entry[1], entry[2], entry[3]))
+	return out
+
+## Hazards the player can see this frame. Hidden spikes are lethal but unseen
+## upright; phantom spikes are a full drawing with no trigger behind them.
+func rendered_hazards() -> Array[Rect2]:
+	var out: Array[Rect2] = []
+	for entry in level.hazards:
+		out.append(Rect2(entry[0], entry[1], entry[2], entry[3]))
+	for entry in level.get("hidden_hazards" if inverted() else "phantom_hazards", []):
 		out.append(Rect2(entry[0], entry[1], entry[2], entry[3]))
 	return out
 
@@ -630,6 +746,26 @@ func _draw_feathers(t: float) -> void:
 			var m: float = fposmod(t * 0.7 + float(k) * 9.0, 27.0)
 			draw_rect(Rect2(c.x - 1.0, c.y + 9.0 - m, 2.0, 2.0),
 				Color(P.cold.r, P.cold.g, P.cold.b, 0.30 * (1.0 - m / 27.0)))
+
+func _draw_logs(t: float) -> void:
+	# A dropped recorder, deliberately mundane next to the Feather: this is
+	# somebody's abandoned equipment, not an anomaly. The indicator blinks while
+	# the entry is unread, which is the only reason to walk over and take it.
+	var P := pal()
+	for l in logs:
+		if l.taken:
+			continue
+		var c: Vector2 = l.pos
+		var bob: float = sin(t * 0.04 + c.x * 0.01) * 1.5
+		var r := Rect2(c.x - 5.0, c.y - 7.0 + bob, 10.0, 14.0)
+		draw_rect(r, P.slab.darkened(0.3))
+		draw_rect(Rect2(r.position.x, r.position.y, r.size.x, 1.0),
+			Color(P.text_warn.r, P.text_warn.g, P.text_warn.b, 0.85))
+		var blink: float = 0.3 + 0.55 * (0.5 + 0.5 * sin(t * 0.14 + c.x))
+		draw_rect(Rect2(c.x - 1.5, c.y - 3.0 + bob, 3.0, 3.0),
+			Color(P.text_warn.r, P.text_warn.g, P.text_warn.b, blink))
+		draw_rect(Rect2(c.x - 3.0, c.y + 2.0 + bob, 6.0, 1.0),
+			Color(P.edge.r, P.edge.g, P.edge.b, 0.65))
 
 func _draw_crumble() -> void:
 	var P := pal()

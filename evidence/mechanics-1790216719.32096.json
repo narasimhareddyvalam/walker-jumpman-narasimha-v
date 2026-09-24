@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-09-24T01:33:02",
+  "created_at": "2026-09-24T02:25:19",
   "engine": "4.7.2-stable (official)",
   "failures": 0,
   "results": [
@@ -182,25 +182,25 @@
       "observed": {
         "deaths": 0,
         "jump_marks_used": 12,
-        "position": "(3870.177, 201.2586)",
+        "position": "(4841.329, 201.2584)",
         "state": 4,
-        "ticks": 1434
+        "ticks": 1867
       },
       "status": "PASS"
     },
     {
       "id": "route-reaches-new-landings",
       "observed": {
-        "landed_on": 12,
-        "new_landings_available": 22
+        "landed_on": 15,
+        "new_landings_available": 30
       },
       "status": "PASS"
     },
     {
       "id": "finish-past-original-section",
       "observed": {
-        "finish_x": 3750.0,
-        "width": 3980.0
+        "finish_x": 4750.0,
+        "width": 4980.0
       },
       "status": "PASS"
     },
@@ -271,10 +271,11 @@
       "status": "PASS"
     },
     {
-      "id": "feather-grants-charges-once",
+      "id": "feather-grants-the-ability-and-one-charge",
       "observed": {
-        "after": 2,
-        "granted": 2
+        "after": 1,
+        "granted": 1,
+        "has_feather": true
       },
       "status": "PASS"
     },
@@ -303,10 +304,26 @@
       "status": "PASS"
     },
     {
-      "id": "feather-cancel-restores-without-refund",
+      "id": "feather-cancel-costs-the-charge",
       "observed": {
-        "charges": 1,
+        "charges": 0,
         "gravity_sign": 1.0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "feather-recharges-after-spending",
+      "observed": {
+        "budget": 150,
+        "charges": 1,
+        "ticks_to_recharge": 147
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "feather-never-stacks-above-one",
+      "observed": {
+        "charges": 1
       },
       "status": "PASS"
     },
@@ -326,11 +343,12 @@
       "status": "PASS"
     },
     {
-      "id": "retry-resets-gravity-and-charges",
+      "id": "retry-resets-gravity-and-the-feather",
       "observed": {
         "charges": 0,
         "feather_taken": false,
-        "gravity_sign": 1.0
+        "gravity_sign": 1.0,
+        "has_feather": false
       },
       "status": "PASS"
     },
@@ -409,6 +427,103 @@
       "observed": {
         "inverted_void_luminance": 0.0451396070420742,
         "upright_void_luminance": 0.923570930957794
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "pads-mark-every-mandatory-reversal",
+      "observed": {
+        "pads": 7,
+        "uncovered_spend_points": []
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "pad-prompts-only-with-a-charge",
+      "observed": {
+        "on_floor": true,
+        "prompt_with_charge": true,
+        "prompt_without_charge": false
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "pad-prompt-clears-once-inverted",
+      "observed": {
+        "gravity_sign": -1.0,
+        "prompt": false
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "mirror-absent-while-upright",
+      "observed": {
+        "fell_past": true,
+        "rect": "[P: (3900.0, 170.0), S: (90.0, 16.0)]"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "mirror-solid-while-inverted",
+      "observed": {
+        "caught": true,
+        "expected_y": 214.0,
+        "player_y": 214.005722045898
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "hidden-hazard-is-invisible-but-lethal",
+      "observed": {
+        "drawn_upright": false,
+        "state": 3
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "hidden-hazard-shows-when-inverted",
+      "observed": {
+        "drawn_inverted": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "phantom-hazard-is-drawn-but-harmless",
+      "observed": {
+        "deaths": 0,
+        "drawn": true,
+        "state": 1
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "ceiling-crumble-triggers-when-inverted",
+      "observed": {
+        "player_y": 194.004165649414,
+        "state": 1,
+        "ticks": 18
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "logs-start-uncollected",
+      "observed": {
+        "found": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "logs-deliver-story-on-pickup",
+      "observed": {
+        "found": 1,
+        "text": "[\"Day 41.  Containment holding.  Third quiet week.\"]"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "logs-reset-on-retry",
+      "observed": {
+        "found": 0
       },
       "status": "PASS"
     }

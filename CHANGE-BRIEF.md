@@ -383,3 +383,94 @@ Two fixture updates, neither of them a weakening: the route's jump at x=2780 was
 removed so it *walks* the Void Gap rather than jumping the question, and
 `finish-unreachable-without-feather` moved from x=2950 to x=3800 because its old
 coordinate now sits on the hidden floor. Both assertions are unchanged.
+
+---
+
+## Revision 4 — 2026-09-23, late: the playtest rewrites the economy
+
+The human playtest (§3 of `TEST-REPORT.md`) found three comprehension defects
+and, on the second pass, rejected one of the fixes. This revision records what
+changed as a result, including a design reversal.
+
+### The Feather stops being scarce
+
+**The original design was wrong, and P12 predicted why.** Scarce charges made
+*inspecting* expensive, in a chapter whose entire subject is checking whether
+what you see is real. Players avoid the verb the game is about.
+
+| | Before | After |
+|---|---|---|
+| Supply | 5 charges across 3 pickups | one charge, `RECHARGE_TICKS = 150` (2.5 s) |
+| First pickup | grants 2 charges | grants the **ability**; `F` does nothing before it |
+| Cancelling | costs the charge, no refund | unchanged — but waiting gets it back |
+| Stacking | up to 5 | never above 1 |
+
+**What this costs:** the route fork's resource decision. "Spend a charge on the
+ceiling or walk the long way free" is no longer a real question. That was a good
+decision and it is gone. **What it buys:** flipping becomes a verb you use
+freely, which is what makes every illusion below solvable rather than a gamble.
+
+`tuning.gd` is still byte-identical. The change is to the ability's supply, not
+to movement.
+
+### The world lies in four new ways
+
+Each has a rule, and the rule is always the same one: **appearance and substance
+are independent, and inversion shows substance.**
+
+| Element | Upright | Inverted | Solid? |
+|---|---|---|---|
+| `hidden` | not drawn | drawn as lattice | always |
+| `phantom` | drawn as slab | not drawn | never |
+| `mirror` | not drawn | drawn as slab | **only inverted** |
+| `hidden_hazards` | not drawn | drawn | always lethal |
+| `phantom_hazards` | drawn | not drawn | never lethal |
+
+Plus a **sealed door** that is a tall phantom (walk straight through
+`SECTOR SEALED`), a **spike corridor** that must be crossed inverted, and
+**ceilings that crumble** while you hang from them.
+
+Four of the section's signs are lying: `SECTOR SEALED`, `HAZARD / DO NOT CROSS`,
+`SECTION CLEAR`, and — the only honest one — `FLOOR COMPROMISED`. By this point
+the player has been taught to check.
+
+### Story delivery, not more signage
+
+Six **log fragments** are collectible like the Feather and deliver one line
+each, escalating from institutional notices to something addressed to the
+player. The closing line is the chapter's turn: the observatory was never an
+exit, and `SUBJECT 07` has been here before. This answers *why can you use the
+Feather* while opening *what did you do here*.
+
+### New predictions
+
+**P14 — the recharge will feel too slow at the spike corridor.** 2.5 s is a long
+time to stand still over lethal ground. *Check:* playtest; the route fixture
+already has to wait for a charge at two marks.
+
+**P15 — hidden spikes will feel unfair even with the `SECTION CLEAR` sign.**
+Unlike the Betrayal, there is no visible alternative route until you flip.
+*Check:* playtest. If confirmed, the mirror ledge above needs a visible tell
+while upright.
+
+**P16 — mirror ledges will be mistaken for hidden floors.** Both appear on
+inversion; only one is solid there. *Check:* playtest.
+
+### Automated coverage after Revision 4
+
+**65 mechanics checks / 0 failures** and **9 keyboard checks / 0 failures**.
+Route: **1867 ticks, 0 deaths**, finishing inside the observatory at x≈4841.
+Level width 3980 → **4980**.
+
+Thirteen checks were added and each was watched failing first. Four existing
+Feather checks were **rewritten** rather than deleted, because the contract they
+asserted genuinely changed; the rewrite is recorded above so the original
+expectation is not silently lost.
+
+### A real bug the new geometry exposed
+
+`_add_area` divided **any** hazard rect into exactly three 8 px triangles. At
+the starter's 24 px hazards that tiles perfectly, so nothing ever showed it. The
+260 px spike corridor would have been roughly 90% gap — lethal-looking and
+almost entirely safe to walk. Spikes now tile at a fixed 8 px pitch in both the
+trigger and the drawing. Found by a failing check, not by inspection.

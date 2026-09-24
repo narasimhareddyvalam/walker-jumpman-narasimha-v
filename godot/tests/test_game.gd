@@ -142,10 +142,12 @@ func run() -> void:
 	for entry in game.level.crumbling:
 		new_landings.append(Rect2(entry[0], entry[1], entry[2], entry[3]))
 	var stood_on := {}
-	# Budget raised from the starter's 900 because the level is now roughly three
-	# times longer, not because the route became slower. The observed figure is
-	# reported below so the margin stays visible.
-	while game.state == Game.State.PLAYING and route_ticks < 2400:
+	# Budget raised from the starter's 900 because the level is now roughly five
+	# times longer, and again to 3600 once the Feather became a rechargeable
+	# ability - the fixture waits on the spot for a charge rather than walking
+	# off an edge, which is what a player does. The observed figure is reported
+	# below so the margin stays visible.
+	while game.state == Game.State.PLAYING and route_ticks < 3600:
 		route.step(game.player, game)
 		await steps(1)
 		route_ticks += 1
@@ -223,13 +225,18 @@ func run() -> void:
 	await steps(3)
 	var granted: int = game.feather_charges
 	await steps(5)
-	check("feather-grants-charges-once", granted == int(game.level.feathers[0][2]) and game.feather_charges == granted,
-		{"granted": granted, "after": game.feather_charges})
+	# Design change after playtest: the Feather is a rechargeable ability, not a
+	# stock. The first pickup grants the ability and exactly one charge; the
+	# level data's third field is now ignored for anything but the first.
+	check("feather-grants-the-ability-and-one-charge",
+		game.has_feather and granted == 1 and game.feather_charges == 1,
+		{"has_feather": game.has_feather, "granted": granted, "after": game.feather_charges})
 
 	# Spending a charge inverts gravity; the player then falls upward onto a ceiling.
 	await fresh()
 	game.player.position = Vector2(2100, 260)
 	game.player.velocity = Vector2.ZERO
+	game.has_feather = true
 	game.feather_charges = 1
 	game.test_feather_pressed = true
 	await steps(2)
@@ -258,19 +265,40 @@ func run() -> void:
 
 	# Cancelling early restores gravity and does not refund the charge.
 	await fresh()
-	game.player.position = Vector2(2100, 260)
-	game.feather_charges = 2
+	# On the ledge at 1900-2020, not mid-air: the recharge wait below is long
+	# enough that a falling player would die and the retry would clear the
+	# Feather before the charge came back.
+	game.player.position = Vector2(1950, 270)
+	game.has_feather = true
+	game.feather_charges = 1
+	await steps(3)
 	game.test_feather_pressed = true
 	await steps(2)
 	game.test_feather_pressed = true
 	await steps(2)
-	check("feather-cancel-restores-without-refund",
-		game.player.gravity_sign > 0.0 and game.feather_charges == 1 and game.reversal_ticks == 0,
+	# Cancelling still costs the charge. What changed is that waiting gets it
+	# back, so the skill is when you flip rather than how many you hoarded.
+	check("feather-cancel-costs-the-charge",
+		game.player.gravity_sign > 0.0 and game.feather_charges == 0 and game.reversal_ticks == 0,
 		{"gravity_sign": game.player.gravity_sign, "charges": game.feather_charges})
+
+	# The charge comes back on its own, and never stacks above one.
+	var recharge_ticks := 0
+	while game.feather_charges == 0 and recharge_ticks < 400:
+		await steps(1)
+		recharge_ticks += 1
+	check("feather-recharges-after-spending",
+		game.feather_charges == 1 and recharge_ticks <= Game.RECHARGE_TICKS + 8,
+		{"charges": game.feather_charges, "ticks_to_recharge": recharge_ticks,
+		 "budget": Game.RECHARGE_TICKS})
+	await steps(Game.RECHARGE_TICKS * 2)
+	check("feather-never-stacks-above-one", game.feather_charges == 1,
+		{"charges": game.feather_charges})
 
 	# Left alone, the reversal expires on its own.
 	await fresh()
 	game.player.position = Vector2(2100, 260)
+	game.has_feather = true
 	game.feather_charges = 1
 	game.test_feather_pressed = true
 	await steps(Game.REVERSAL_TICKS + 4)
@@ -287,21 +315,25 @@ func run() -> void:
 
 	# A retry restores normal gravity, clears charges, and re-arms the Feathers.
 	await fresh()
-	game.feather_charges = 3
+	game.has_feather = true
+	game.feather_charges = 1
 	game.test_feather_pressed = true
 	await steps(2)
 	game.restart_attempt()
 	await steps(2)
-	check("retry-resets-gravity-and-charges",
-		game.player.gravity_sign > 0.0 and game.feather_charges == 0 and not game.feathers[0].taken,
-		{"gravity_sign": game.player.gravity_sign, "charges": game.feather_charges, "feather_taken": game.feathers[0].taken})
+	check("retry-resets-gravity-and-the-feather",
+		game.player.gravity_sign > 0.0 and not game.has_feather and game.feather_charges == 0
+		and not game.feathers[0].taken,
+		{"gravity_sign": game.player.gravity_sign, "has_feather": game.has_feather,
+		 "charges": game.feather_charges, "feather_taken": game.feathers[0].taken})
 
 	# The observatory cannot be entered without the Feather: a normal jump from
 	# the floor below never reaches the doorway.
 	await fresh()
-	# Moved from x=2950 with the observatory: that coordinate now sits on the
-	# Void Gap's hidden floor. The assertion itself is unchanged.
-	game.player.position = Vector2(3800, 280)
+	# Follows the observatory, which has moved twice: x=2950 became the Void
+	# Gap's hidden floor, and x=3800 became the sealed-door corridor. The
+	# assertion itself has never changed.
+	game.player.position = Vector2(4800, 280)
 	await steps(3)
 	game.player.require_jump_release = false
 	game.player.test_jump_pressed = true
@@ -344,6 +376,7 @@ func run() -> void:
 			 "y": game.player.position.y, "rect": str(hr)})
 
 		# Truth-vision: the same floor becomes visible the moment gravity inverts.
+		game.has_feather = true
 		game.feather_charges = 1
 		game.test_feather_pressed = true
 		await steps(2)
@@ -376,6 +409,7 @@ func run() -> void:
 		# Inverted, the lie stops being rendered.
 		await fresh()
 		game.player.position = Vector2(2100, 260)
+		game.has_feather = true
 		game.feather_charges = 1
 		game.test_feather_pressed = true
 		await steps(2)
@@ -409,6 +443,7 @@ func run() -> void:
 	else:
 		var up: Dictionary = game.pal().duplicate()
 		game.player.position = Vector2(2100, 260)
+		game.has_feather = true
 		game.feather_charges = 1
 		game.test_feather_pressed = true
 		await steps(2)
@@ -439,7 +474,7 @@ func run() -> void:
 			check(id, false, {"pads": pads.size(), "has_pad_prompt": game.has_method("pad_prompt")})
 	else:
 		# Every x the shipped route spends a charge at must be standing on a pad.
-		var spend_points: Array[float] = [2000.0, 2320.0, 3120.0, 3500.0, 3800.0]
+		var spend_points: Array[float] = [2000.0, 2320.0, 3120.0, 3500.0, 4020.0, 4440.0, 4773.0]
 		var uncovered: Array[float] = []
 		for sx in spend_points:
 			var covered := false
@@ -458,6 +493,7 @@ func run() -> void:
 		game.feather_charges = 0
 		await steps(3)
 		var without: bool = game.pad_prompt()
+		game.has_feather = true
 		game.feather_charges = 1
 		await steps(1)
 		var with_charge: bool = game.pad_prompt()
@@ -471,6 +507,126 @@ func run() -> void:
 		check("pad-prompt-clears-once-inverted",
 			game.player.gravity_sign < 0.0 and not game.pad_prompt(),
 			{"gravity_sign": game.player.gravity_sign, "prompt": game.pad_prompt()})
+
+	# --- Mirror ledges: real only in the other world ---
+	await fresh()
+	var mirrors: Array = game.level.get("mirror", [])
+	if mirrors.is_empty():
+		check("mirror-absent-while-upright", false, {"mirror_entries": 0})
+		check("mirror-solid-while-inverted", false, {"mirror_entries": 0})
+	else:
+		var mr := Rect2(mirrors[0][0], mirrors[0][1], mirrors[0][2], mirrors[0][3])
+		game.player.position = Vector2(mr.position.x + mr.size.x * 0.5, mr.position.y - 22.0)
+		game.player.velocity = Vector2.ZERO
+		await steps(2)
+		var fell_past := false
+		for i in range(45):
+			await steps(1)
+			if game.state == Game.State.PLAYING and game.player.position.y > mr.end.y + 18.0:
+				fell_past = true
+				break
+		check("mirror-absent-while-upright", fell_past,
+			{"rect": str(mr), "fell_past": fell_past})
+
+		# Inverted, the same rect catches a player falling upward onto its underside.
+		await fresh()
+		game.player.position = Vector2(mr.position.x + mr.size.x * 0.5, mr.end.y + 78.0)
+		game.player.velocity = Vector2.ZERO
+		game.has_feather = true
+		game.feather_charges = 1
+		game.test_feather_pressed = true
+		await steps(2)
+		var caught := false
+		for i in range(70):
+			await steps(1)
+			if game.player.is_on_floor() and absf(game.player.position.y - (mr.end.y + 28.0)) < 5.0:
+				caught = true
+				break
+		check("mirror-solid-while-inverted", caught,
+			{"caught": caught, "player_y": game.player.position.y, "expected_y": mr.end.y + 28.0})
+
+	# --- Hazards lie in both directions ---
+	await fresh()
+	var hidden_hz: Array = game.level.get("hidden_hazards", [])
+	var phantom_hz: Array = game.level.get("phantom_hazards", [])
+	if hidden_hz.is_empty() or phantom_hz.is_empty() or not game.has_method("rendered_hazards"):
+		for id in ["hidden-hazard-is-invisible-but-lethal", "hidden-hazard-shows-when-inverted",
+			"phantom-hazard-is-drawn-but-harmless"]:
+			check(id, false, {"hidden": hidden_hz.size(), "phantom": phantom_hz.size(),
+				"has_rendered_hazards": game.has_method("rendered_hazards")})
+	else:
+		var hh := Rect2(hidden_hz[0][0], hidden_hz[0][1], hidden_hz[0][2], hidden_hz[0][3])
+		var drawn_upright: bool = has_rect(game.rendered_hazards(), hh)
+		game.player.position = Vector2(hh.position.x + hh.size.x * 0.5, hh.position.y + 8.0)
+		await steps(5)
+		check("hidden-hazard-is-invisible-but-lethal",
+			not drawn_upright and game.state == Game.State.DYING,
+			{"drawn_upright": drawn_upright, "state": game.state})
+
+		await fresh()
+		game.player.position = Vector2(2100, 260)
+		game.has_feather = true
+		game.feather_charges = 1
+		game.test_feather_pressed = true
+		await steps(2)
+		check("hidden-hazard-shows-when-inverted",
+			game.player.gravity_sign < 0.0 and has_rect(game.rendered_hazards(), hh),
+			{"drawn_inverted": has_rect(game.rendered_hazards(), hh)})
+
+		# The opposite lie: full spikes, drawn in detail, that cannot hurt anyone.
+		await fresh()
+		var ph := Rect2(phantom_hz[0][0], phantom_hz[0][1], phantom_hz[0][2], phantom_hz[0][3])
+		var ph_drawn: bool = has_rect(game.rendered_hazards(), ph)
+		# Stood squarely in the middle of them, not hovering above: the point is
+		# that these spikes cannot hurt anyone, so contact has to be real.
+		game.player.position = Vector2(ph.position.x + ph.size.x * 0.5, ph.position.y + 8.0)
+		await steps(8)
+		check("phantom-hazard-is-drawn-but-harmless",
+			ph_drawn and game.state == Game.State.PLAYING,
+			{"drawn": ph_drawn, "state": game.state, "deaths": game.deaths})
+
+	# --- A ceiling can give way under an inverted player ---
+	await fresh()
+	var ceiling_ledge := -1
+	for i in range(game.crumble_ledges.size()):
+		if float(game.crumble_ledges[i].rect.position.y) < 200.0:
+			ceiling_ledge = i
+			break
+	if ceiling_ledge < 0:
+		check("ceiling-crumble-triggers-when-inverted", false, {"ceiling_crumble_ledges": 0})
+	else:
+		var cl: Dictionary = game.crumble_ledges[ceiling_ledge]
+		var cr: Rect2 = cl.rect
+		game.player.position = Vector2(cr.position.x + cr.size.x * 0.5, cr.end.y + 70.0)
+		game.player.velocity = Vector2.ZERO
+		game.has_feather = true
+		game.feather_charges = 1
+		game.test_feather_pressed = true
+		await steps(2)
+		var hung := 0
+		while int(cl.state) == Game.Crumble.INTACT and hung < 80:
+			await steps(1)
+			hung += 1
+		check("ceiling-crumble-triggers-when-inverted",
+			int(cl.state) == Game.Crumble.SHAKING,
+			{"state": int(cl.state), "ticks": hung, "player_y": game.player.position.y})
+
+	# --- Story logs ---
+	await fresh()
+	var logs: Array = game.level.get("logs", [])
+	if logs.size() < 4 or not ("logs_found" in game):
+		check("logs-deliver-story-on-pickup", false, {"log_entries": logs.size()})
+		check("logs-reset-on-retry", false, {"log_entries": logs.size()})
+	else:
+		check("logs-start-uncollected", game.logs_found.is_empty(), {"found": game.logs_found.size()})
+		game.player.position = Vector2(float(logs[0][0]), float(logs[0][1]) + 18.0)
+		await steps(4)
+		check("logs-deliver-story-on-pickup",
+			game.logs_found.size() == 1 and String(game.logs_found[0]).length() > 0,
+			{"found": game.logs_found.size(), "text": str(game.logs_found)})
+		game.restart_attempt()
+		await steps(2)
+		check("logs-reset-on-retry", game.logs_found.is_empty(), {"found": game.logs_found.size()})
 
 	var report := {"scope":"Chapter One: The Fall. Machine checks only; not human playtesting or full GDD acceptance", "engine":Engine.get_version_info().string,"created_at":Time.get_datetime_string_from_system(true),"results":results,"failures":failures}
 	var out := ProjectSettings.globalize_path("res://../evidence")

@@ -16,7 +16,7 @@ var jump_marks: Array[float] = [138.0, 292.0, 424.0, 548.0, 712.0,
 ## the Betrayal, the Phantom and the observatory door cannot be passed any other
 ## way - and they are funded by the third Feather at x=3060.
 var feather_marks: Array[float] = [2000.0, 2240.0, 2320.0, 2620.0,
-	3120.0, 3360.0, 3500.0, 3700.0, 3800.0]
+	3120.0, 3360.0, 3500.0, 3700.0, 4020.0, 4360.0, 4440.0, 4620.0, 4773.0]
 var next_jump: int = 0
 var next_feather: int = 0
 
@@ -31,6 +31,13 @@ func step(player: CharacterBody2D, game: Node2D = null) -> void:
 		return
 	# Grounded gate keeps each reversal deterministic: inverted, "grounded"
 	# means standing on a ceiling.
-	if next_feather < feather_marks.size() and player.position.x >= feather_marks[next_feather] and player.is_on_floor():
-		game.test_feather_pressed = true
-		next_feather += 1
+	if next_feather < feather_marks.size() and player.position.x >= feather_marks[next_feather] \
+		and player.is_on_floor():
+		# The Feather recharges now rather than being stockpiled, so a mark can
+		# be reached before the charge is back. Wait on the spot instead of
+		# walking off the edge - which is what a player would do.
+		if game.reversal_ticks > 0 or game.feather_charges > 0:
+			game.test_feather_pressed = true
+			next_feather += 1
+		else:
+			player.test_axis = 0.0
