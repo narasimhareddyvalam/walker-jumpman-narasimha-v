@@ -104,6 +104,58 @@ watched failing before the code that satisfies it existed.
 
 ---
 
+## Fresh-copy verification
+
+Run against a **clean clone from GitHub**, not the working folder, as the
+assignment requires.
+
+```bash
+git clone https://github.com/narasimhareddyvalam/walker-jumpman-narasimha-v.git
+cd walker-jumpman-narasimha-v
+godot --headless --path godot --script res://tests/test_game.gd
+godot --headless --path godot --script res://tests/test_keyboard.gd
+```
+
+| Check | Result |
+|---|---|
+| Clone succeeds, all required files present | ✅ README, CHANGE-BRIEF, TEST-REPORT, FRICTIONAL, SOURCES, GDD, SUBMISSION, full `godot/` project, full reel evidence |
+| No caches, credentials or keys committed | ✅ no `.godot/`, `.env`, `credentials/`, `*.p12` |
+| Nothing over 25 MB | ✅ largest tracked file is well under |
+| Mechanics checks **from the clone** | ✅ **70 checks / 0 failures** |
+| Keyboard checks **from the clone** | ✅ **9 checks / 0 failures** |
+| **The film depicts this source** | ✅ see below |
+
+### The film depicts the submitted source, proven rather than asserted
+
+`coverage.json` records a `build_id` — a SHA-256 over the sorted per-file
+hashes of every game source file — captured at the moment the footage was
+recorded. Recomputing that same hash from the fresh clone gives:
+
+```
+clone   f17c2a5485f3ee0dd73803dc711c59b5dbf2390aa1e53ece178c4da0a7617f72
+film    f17c2a5485f3ee0dd73803dc711c59b5dbf2390aa1e53ece178c4da0a7617f72
+```
+
+Identical. The source a reviewer downloads is byte-for-byte the source the film
+shows. The method is in `youtube/.../CAPTURE.md` and can be re-run.
+
+### Source ZIP
+
+Produced with `git archive` from the verified clone, so it contains exactly the
+tracked tree and nothing else — no `.git`, no caches, no credentials, no media.
+
+| | |
+|---|---|
+| Filename | `walker-jumpman-narasimha-v-fc5d2ac.zip` |
+| Size | 3.0 MB · 139 files |
+| SHA-256 | `39afae7dd146f3192dc437afb3e5261a9641c26f13e342d3eefb05b44b20abdd` |
+
+> The ZIP above is built from commit `fc5d2ac`. If a later commit adds the film
+> URL, rebuild the ZIP from that commit and use its SHA in the Canvas note —
+> the final submitted SHA cannot be embedded in the commit it names.
+
+---
+
 ## How to run it
 
 ```bash
