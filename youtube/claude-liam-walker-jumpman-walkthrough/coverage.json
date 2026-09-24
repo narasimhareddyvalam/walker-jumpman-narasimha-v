@@ -2,27 +2,27 @@
   "schema_version": 1,
   "game": {
     "name": "walker-jumpman-narasimha-v",
-    "build_id": "b7ad71839f87ad99a5c34abc88f3ba87c66000ae74eac53442d1f10f07e76a30"
+    "build_id": "f17c2a5485f3ee0dd73803dc711c59b5dbf2390aa1e53ece178c4da0a7617f72"
   },
   "captures": {
     "run-01": {
       "path": "capture/run-01.mp4",
-      "sha256": "fe81ad0f89372306e4a06e4141dc5d3da7b78e93e4b67c652622ec800e5983fc",
-      "build_id": "b7ad71839f87ad99a5c34abc88f3ba87c66000ae74eac53442d1f10f07e76a30",
+      "sha256": "1e5d6b2cef2e222ca2f5e19050d5e92b2de0f4c43e817de04bc60beedf0b752c",
+      "build_id": "f17c2a5485f3ee0dd73803dc711c59b5dbf2390aa1e53ece178c4da0a7617f72",
       "method": "scripted-input",
       "input_log": "capture/run-01-inputs.jsonl"
     },
     "run-02": {
       "path": "capture/run-02.mp4",
-      "sha256": "3fed7b5570f1a54a95d7ce2a7bfba7ea782eb720bf6b693194561dfa4cf7ba5b",
-      "build_id": "b7ad71839f87ad99a5c34abc88f3ba87c66000ae74eac53442d1f10f07e76a30",
+      "sha256": "5ca99c470d06f458e88e544ad41f15c1b8ef8ac7cee7b41dfcb66d0dc803ba5b",
+      "build_id": "f17c2a5485f3ee0dd73803dc711c59b5dbf2390aa1e53ece178c4da0a7617f72",
       "method": "scripted-input",
       "input_log": "capture/run-02-inputs.jsonl"
     },
     "run-03": {
       "path": "capture/run-03.mp4",
-      "sha256": "b8c662f39f2c657004b219e364db159afb5404b0ce3892b1dd6b58df84336efd",
-      "build_id": "b7ad71839f87ad99a5c34abc88f3ba87c66000ae74eac53442d1f10f07e76a30",
+      "sha256": "c1a06ec0866b958b030411a85ede54257d7843f9fa404681346efcbb0eaf4a47",
+      "build_id": "f17c2a5485f3ee0dd73803dc711c59b5dbf2390aa1e53ece178c4da0a7617f72",
       "method": "scripted-input",
       "input_log": "capture/run-03-inputs.jsonl"
     }

@@ -1,16 +1,20 @@
 # CAPTURE — how the gameplay footage was made
 
-**Game:** `walker-jumpman-narasimha-v` · **game-source commit:** `8041bc0`
+**Game:** `walker-jumpman-narasimha-v` · **game-source commit:** `c898a4b`
 **Engine:** Godot **4.7.2.stable.official.ed1daf0bf**
 **Host:** macOS (Darwin 25.6.0), Apple silicon
 **Capture date:** 2026-09-24
+
+> The captures were re-made after Gate V found a genuine HUD contrast defect.
+> The build_id and the per-capture hashes below are those of the corrected
+> source, which is the source the finished film actually shows.
 
 ---
 
 ## build_id
 
 ```
-b7ad71839f87ad99a5c34abc88f3ba87c66000ae74eac53442d1f10f07e76a30
+f17c2a5485f3ee0dd73803dc711c59b5dbf2390aa1e53ece178c4da0a7617f72
 ```
 
 **Method.** SHA-256 of the concatenated per-file SHA-256 listing of every game
@@ -97,7 +101,7 @@ exercises pause and resume through real `Escape` and `Enter` presses.
 
 | Run | Ticks | Duration | Frames @60 | Outcome |
 |---|---|---|---|---|
-| `run-01` | 1883 | 31.38 s | 1884 | chapter completed, **0 deaths** |
+| `run-01` | 2054 | 34.23 s | 2055 | chapter completed, **0 deaths**, then a replay from the completion card |
 | `run-02` | 1338 | 22.30 s | 1339 | genuine death at the Betrayal, then automatic retry |
 | `run-03` | 394 | 6.57 s | 395 | pause, resume, manual retry |
 
@@ -123,5 +127,11 @@ Recorded because two of them produced footage that looked fine and was wrong.
    OS focus; `Input.action_press` does not. The driver now drives both paths, so
    an unattended capture cannot be ruined by another window taking focus.
 
-All three were caught by the driver's own assertions rather than by watching the
+4. **Replay after completion left the walk key held.** The route ends with
+   `move_right` down, so pressing Enter on the completion card restarted the
+   chapter with the player already moving — they were at x=113 instead of the
+   spawn point. The assertion caught it; `release_all()` now runs before the
+   replay.
+
+All four were caught by the driver's own assertions rather than by watching the
 footage, which is the reason the assertions exist.

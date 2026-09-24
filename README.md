@@ -208,10 +208,30 @@ The honest working log is in [FRICTIONAL.md](FRICTIONAL.md).
 
 ## Final film
 
-<!-- TODO before submission: replace with the real values. Do not submit with placeholders. -->
-**Not yet produced.** When rendered, this section will carry the film's URL,
-exact filename and SHA-256 checksum, and the game-source commit it depicts.
-Media files are kept out of this repository per the assignment.
+**THE WORLD IS FALLING — Extending Walker Jumpman**
+Made with the Brutalist `godot-waikthrough` skill, walker modifier.
+
+| | |
+|---|---|
+| Filename | `claude-liam-walker-jumpman-walkthrough.mp4` |
+| Format | 3840 × 2160 · H.264 · 30 fps · AAC stereo |
+| Runtime | 3:38 (218.4 s) |
+| SHA-256 | `c6bfa3802a204e7f37277ae4e49082a07e0c232383cb383c1385e57bed3eacec` |
+| Game source shown | commit `c898a4b` |
+| URL | *pending — course media storage; see [SUBMISSION.md](SUBMISSION.md)* |
+
+The 37 MB master is kept out of this repository per the assignment. Everything
+else about the film is committed under
+[`youtube/claude-liam-walker-jumpman-walkthrough/`](youtube/claude-liam-walker-jumpman-walkthrough/):
+the beat sheet with the full narration, the `coverage.json` evidence contract,
+capture notes, shot list, riffs, a factcheck indexing every spoken claim to the
+command or test that proves it, and the QC report.
+
+All gameplay in the film is **native 3840 × 2160 captured from the running
+game** by an input-only driver that presses keys and never teleports, forces
+completion, or disables collision. The input logs are committed alongside. The
+opening prompt card is **labelled on screen as a reconstruction**, because it is
+one.
 
 ---
 
