@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-09-24T16:32:16",
+  "created_at": "2026-09-24T16:55:29",
   "engine": "4.7.2-stable (official)",
   "failures": 0,
   "results": [
@@ -523,7 +523,7 @@
       "id": "logs-deliver-story-on-pickup",
       "observed": {
         "found": 1,
-        "text": "[\"Containment holding.  Nothing has fallen down in three weeks.\"]"
+        "text": "[\"Everything started falling UP. Nobody knows why.\"]"
       },
       "status": "PASS"
     },

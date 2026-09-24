@@ -13,7 +13,7 @@ var jump_marks: Array[float] = [138.0, 292.0, 424.0, 548.0, 712.0,
 ## Where the route spends or cancels a Feather charge, in order. Spends are
 ## 2000, 2320, 3120, 3500 and 3800; the rest are cancels, which cost nothing but
 ## decide where the player lands. The three corridor reversals are mandatory -
-## the Betrayal, the Phantom and the observatory door cannot be passed any other
+## the Betrayal, the Phantom and the tower door cannot be passed any other
 ## way - and they are funded by the third Feather at x=3060.
 var feather_marks: Array[float] = [2000.0, 2240.0, 2320.0, 2620.0,
 	3120.0, 3360.0, 3500.0, 3700.0, 4020.0, 4360.0, 4440.0, 4620.0, 4773.0]

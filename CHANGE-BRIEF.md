@@ -474,3 +474,83 @@ the starter's 24 px hazards that tiles perfectly, so nothing ever showed it. The
 260 px spike corridor would have been roughly 90% gap — lethal-looking and
 almost entirely safe to walk. Spikes now tile at a fixed 8 px pitch in both the
 trigger and the drawing. Found by a failing check, not by inspection.
+
+---
+
+## Revision 5 — 2026-09-24: plain language, and warnings from the first screen
+
+Second round of playtest feedback, verbatim:
+
+> *"remove this day wise journey in the game and also make this clear - Feather
+> like superpower or something. PRESS F TO FALL UPWARD. - make it more clear"*
+
+> *"the story line wordings are not clear. make sure the story line is clear and
+> people who are playing will understand the storyline - even a 5 year old
+> should be able to understand storyline. and whatever riddles you added like do
+> not jump, do not cross here should be present for the end user gamer from
+> starting of the level. not only at the end of the game. the text is too much
+> here and is confusing for user"*
+
+### O6 — the writing was literary, not legible
+
+Every line in the game was written to be *evocative*. `Recovery: one object. It
+does not fall. It is not ours.` is a sentence that rewards a second reading, and
+a player running right at 160 px/s does not get one.
+
+All signage and all six logs were rewritten in plain words, short sentences,
+concrete nouns. `SITE 07`, `SUBJECT 07`, `GRAVITATIONAL RESEARCH`, `EVACUATION
+ORDER 09`, `STRUCTURAL COHESION FAILING` and `OBSERVATORY` are gone. The
+observatory is now **the tower**.
+
+The story is now: *gravity broke, everything falls up, everyone ran away, you
+stayed, you find a feather that falls up, and at the end you learn you built
+this.* Six one-line fragments carry it.
+
+### O7 — warnings arrived too late
+
+The instructional signs (`WALK. DO NOT JUMP.`) only existed around the puzzles
+in the second half. A player met the first trick with no training in reading
+signs at all. There are now signs from the opening screen — `THE WORLD FALLS UP
+/ Run right. Reach the tower.`, `SPIKES HURT / Jump over them.`, `THE GROUND IS
+BREAKING / Keep moving.` — so by the time a sign starts lying, the player has
+been reading them for two thousand pixels.
+
+### O8 — three text layers at once
+
+Screenshot showed the log banner, the ability-unlock card and two world signs
+competing in one frame. A log fragment collected while the unlock card is up now
+waits its turn rather than stacking, and the redundant `THE FEATHER / RECOVERED
+HERE` world sign was deleted — the card already says it.
+
+### O9 — the power did not announce itself
+
+Picking up the feather now raises a card naming it and stating what it does. The
+HUD reads `FEATHER` with `READY / INVERTED / RECHARGING` instead of four pips
+counting something invisible, and the pad prompt is a drawn keycap plus
+`REVERSE GRAVITY` / *you will fall upward onto the ceiling*.
+
+### A harness bug, and two wrong diagnoses
+
+The sky-death capture began failing its assertion. **I guessed the cause twice
+and was wrong both times**, blaming the choice of ceiling, and committed a
+comment confidently explaining a reason that was false.
+
+A throwaway probe settled it in one run: the original ceiling killed the player
+perfectly well. The harness sampled `game.deaths` *after* a blocking
+`capture()`, and a PNG write costs about 33 physics ticks — the same length as
+the death-and-retry window — so the death happened inside the screenshot and the
+count never saw it.
+
+The false comment has been corrected in place. A consequence of the same
+measurement: **a photograph of the instant of death cannot be timed reliably**,
+so those captures are now named for what they can actually show
+(`41-leaving-the-level-upward`), and the death is evidenced by the assertion and
+by the `sky-is-fatal` check instead of by a picture that might be of the respawn.
+
+### Automated coverage after Revision 5
+
+**66 mechanics checks / 0 failures** and **9 keyboard checks / 0 failures**.
+No assertion was weakened; the only check added this revision extends
+`feather-grants-the-ability-and-one-charge` to cover the unlock announcement,
+and is labelled in the source as written after the state existed rather than
+staged as its own red-green cycle.

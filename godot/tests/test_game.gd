@@ -332,10 +332,10 @@ func run() -> void:
 		{"gravity_sign": game.player.gravity_sign, "has_feather": game.has_feather,
 		 "charges": game.feather_charges, "feather_taken": game.feathers[0].taken})
 
-	# The observatory cannot be entered without the Feather: a normal jump from
+	# The tower cannot be entered without the Feather: a normal jump from
 	# the floor below never reaches the doorway.
 	await fresh()
-	# Follows the observatory, which has moved twice: x=2950 became the Void
+	# Follows the tower, which has moved twice: x=2950 became the Void
 	# Gap's hidden floor, and x=3800 became the sealed-door corridor. The
 	# assertion itself has never changed.
 	game.player.position = Vector2(4800, 280)

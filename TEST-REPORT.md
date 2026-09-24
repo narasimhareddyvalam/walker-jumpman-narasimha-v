@@ -35,7 +35,9 @@ G=/Applications/Godot.app/Contents/MacOS/Godot
 | After the Feather + Chapter One | 43 mechanics + 9 keyboard, **0 failures**, route 1130 ticks | `d4ffd22` |
 | After INVERSION | 49 mechanics + 9 keyboard, **0 failures**, route 1434 ticks | `83685d3` |
 | After the light/dark palette | 51 mechanics + 9 keyboard, **0 failures** | `a6e24d4` |
-| After the playtest fixes | 54 mechanics + 9 keyboard, **0 failures** | see §4 |
+| After the playtest fixes | 54 mechanics + 9 keyboard, **0 failures** | `ba24a9c` |
+| After the rechargeable feather and the lying-world section | 65 mechanics + 9 keyboard, **0 failures**, route 1867 ticks | `d8e2336` |
+| After plain-language rewrite and the unlock card | **66 mechanics + 9 keyboard, 0 failures** | `1aff6b4` + |
 
 All **25 of the starter's original mechanics checks are retained and still
 pass.** None was deleted, relaxed, or had an expected value changed.
@@ -59,8 +61,9 @@ runs reported `hidden_entries: 0, has_rendered_slabs: false`, then
 |---|---|
 | Jump rise, normal gravity | 56.00 px |
 | Jump displacement, inverted | 56.05 px |
-| Full route | 1434 ticks, **0 deaths**, **0 charges left** |
+| Full route | 1867 ticks, **0 deaths** |
 | Landings past the original section | 22 available, 12 stood on by the route |
+| Level width | 4980 px, roughly five times the starter's route |
 
 The inverted jump matching the normal jump to 0.05 px is the evidence that
 gravity reversal is a **sign flip** and not a tuning change. `tuning.gd` is
@@ -81,15 +84,31 @@ they appear.
 | Capture | Shows |
 |---|---|
 | `19-the-premise` | opening signage and upward-falling debris |
-| `20-ground-dissolving` … `22-raised-hazard` | the collapsing section and the fork |
-| `23-the-feather`, `23b-press-f-here` | the anomaly, and the reversal-pad prompt |
-| `24-inverted-ceiling` … `26-second-feather` | inverted traversal and the charge economy |
+| `20-ground-dissolving` … `22-raised-hazard` | the breaking section and the fork |
+| `23-the-feather` | the object, before pickup |
+| `23a-the-power-unlocked` | the ability card naming the power |
+| `23b-press-f-here` | a reversal pad with the keycap prompt |
+| `24-inverted-ceiling` … `26-second-feather` | inverted traversal |
 | `27-void-gap-holding` | standing on a floor that is not drawn |
 | `28-you-were-never-falling` | the landing past the Void Gap |
-| `30-the-phantom` / `31-phantom-omitted` | the same stretch upright then inverted |
-| `32-observatory-door`, `33-chapter-ends` | the relocated finish and the ending card |
-| `34`–`36` | three genuine deaths: sky, pit, dissolving ground |
-| `37` / `38` | the same spot one tick apart — the reveal |
+| `29-truth-vision` | inverted, with hidden geometry rendered |
+| `30-the-phantom` / `31-phantom-omitted` | the same stretch upright then inverted — the lie, then its absence |
+| `32-the-locked-door` | a wall marked `DOOR LOCKED` that is not solid |
+| `33-the-hazard-was-a-lie` | walking through fully-drawn harmless spikes |
+| `34-inverted-over-the-spikes` | the lethal corridor crossed on the ceiling |
+| `35-the-gantry-gave-way` | ceilings collapsed behind an inverted player |
+| `36-section-clear-was-a-lie` | invisible spikes revealed under a sign reading `SAFE` |
+| `37-the-mirror-ledge` | a platform solid only while inverted |
+| `38-the-tower-door` / `39-chapter-ends` | the relocated finish and the ending card |
+| `40-rising-off-the-ceiling` | inverted, at the end of a ceiling with open sky beyond |
+| `41-leaving-the-level-upward` | still rising, still alive, about to exit the level |
+| `42-ground-gave-way` | mid-fall through a ledge fragmenting underfoot |
+| `43` / `44` | the same spot one tick apart — the reveal |
+
+`40`–`42` are the setup for two genuine deaths, not photographs of them; see
+§6 for why the instant of death cannot be captured reliably. The deaths
+themselves are asserted by the capture script and by `sky-is-fatal` and
+`crumble-stall-is-fatal` in the mechanics suite.
 
 ---
 
@@ -163,6 +182,10 @@ is stated rather than inferred. Distance fade retained so the shaft still reads
 as deep.
 
 ### O1 → opening
+
+> **Superseded.** The signage quoted below was itself replaced in round 3 (O6)
+> for being jargon. It is kept here because it is what the O1 fix actually
+> looked like, and because the record is more useful than a tidy one.
 
 The starter's tutorial signage was replaced with signage that does both jobs at
 once:
@@ -244,3 +267,47 @@ premise now lands, whether the debris reads as falling upward, and whether the
 - **P13 — do the two palettes read as one place?** Untested.
 - No audio. No exported build. Source only.
 - Chapters Two to Five in `GDD.md` are **design only** — no code, no level data.
+
+---
+
+## 6. Third round of feedback — writing and legibility
+
+> *"remove this day wise journey in the game"* · *"Feather like superpower or
+> something… make it more clear"* · *"the story line wordings are not clear…
+> even a 5 year old should be able to understand"* · *"whatever riddles you
+> added like do not jump, do not cross here should be present… from starting of
+> the level"* · *"the text is too much here and is confusing for user"*
+
+| # | Observation | Change |
+|---|---|---|
+| **O6** | Story unreadable at speed | All signage and six logs rewritten in short, plain sentences. `SITE 07`, `SUBJECT 07`, `EVACUATION ORDER 09`, `GRAVITATIONAL RESEARCH` removed; the observatory is now **the tower**. |
+| **O7** | Warnings only appeared near the late puzzles | Signs now start on the opening screen, so the player has been reading them for ~2000 px before one starts lying. |
+| **O8** | Three text layers competing in one frame | A log collected while the unlock card is showing waits its turn; the redundant `THE FEATHER / RECOVERED HERE` sign deleted. |
+| **O9** | The power never announced itself | Pickup raises a card naming it; HUD reads `FEATHER` + `READY / INVERTED / RECHARGING`; the pad prompt is a keycap plus `REVERSE GRAVITY`. |
+
+### A harness defect worth recording separately
+
+The sky-death capture began failing its assertion. **Two diagnoses were wrong**
+before a throwaway probe found the cause: the harness sampled `game.deaths`
+*after* a blocking `capture()`, and a PNG write costs ~33 physics ticks — the
+same length as the death-and-retry window — so the death occurred inside the
+screenshot and was never observed.
+
+A consequence we accepted rather than solved: **an instant-of-death photograph
+cannot be timed reliably** at that cost. Those captures are now named for what
+they can actually show (`41-leaving-the-level-upward`), and the death is
+evidenced by the capture script's assertion plus the `sky-is-fatal` mechanics
+check — not by a picture that might be of the respawn.
+
+---
+
+## 7. Still outstanding
+
+**The human playthrough.** Three rows of the required table remain unverified by
+a person: the extended route reaching both new landings and the relocated
+finish, failure and recovery plus replay, and camera/presentation readability.
+The first playtest stopped at an affordance gap before reaching them; the fixes
+for that are in, but a fix for a comprehension defect is only proven by someone
+who did not previously understand it.
+
+This is recorded as unverified rather than claimed.

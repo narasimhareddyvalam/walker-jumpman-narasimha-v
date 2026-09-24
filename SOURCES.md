@@ -43,14 +43,24 @@ instructor's source.
 - The Runner character (`player.gd::_draw`), replacing the starter's four
   stacked rectangles.
 - Gravity reversal as a **sign flip** (`gravity_sign`) — no tuning value altered.
-- The Feather: pickups, scarce charges, the `F` control, the reversal window,
-  and the lethal sky bound.
-- Crumbling ledges: contact-triggered collapse, debris, and retry reset.
-- Chapter One's level data, roughly three times the original length.
+- The feather: one pickup granting a permanent ability, a single recharging
+  charge, the `F` control, the reversal window, and the lethal sky bound.
+- Crumbling ledges: contact-triggered collapse, debris, and retry reset — and
+  ceilings that give way under an inverted player.
+- **The INVERSION rule and everything built on it:** hidden geometry, phantom
+  geometry, mirror ledges, hidden and phantom hazards, and a phantom wall used
+  as a door that is not locked.
+- Reversal pads and the `PRESS F` affordance, added after a playtest showed the
+  chapter depended on a key it never taught.
+- Six collectible story-log fragments and the ability-unlock card.
+- Chapter One's level data, roughly five times the original length.
 - Data-driven drawing to fix hazards and the finish marker rendering at
-  hard-coded coordinates.
-- The dark palette, parallax strata, drifting debris and minimal HUD.
-- 18 new automated checks, the extended route fixture, and three new harnesses:
+  hard-coded coordinates, and an 8px spike pitch replacing a divide-by-three
+  that only tiled correctly at the starter's hazard width.
+- **Two palettes chosen by gravity** — light upright, dark inverted — plus
+  building-rooftop and service-catwalk platform art, parallax strata, tumbling
+  debris and a minimal HUD.
+- 41 new automated checks, the extended route fixture, and four new harnesses:
   `probe_reach.gd`, `probe_gravity.gd`, `capture_character.gd`,
   `capture_extension.gd`.
 
@@ -95,7 +105,7 @@ The assignment requires this to be specific, so it is.
   section would *feel* different rather than merely be longer.
 - **The whole premise.** THE WORLD IS FALLING, the failing-gravity world, the
   Feather as an anomalous technological object rather than a magic item,
-  environmental storytelling over dialogue, the observatory, the door line
+  environmental storytelling over dialogue, the tower, the door line
   *"ONLY THOSE WHO CAN FALL UPWARD MAY ENTER"*, and the chapter ending on an
   unanswered question.
 - **That the Feather must be scarce** and that cancelling it early must not
@@ -147,7 +157,7 @@ these were caught by checking rather than by inspection:
 - Wrote two crumble checks that sampled `is_on_floor()` before the player had
   begun to fall, so they failed for a reason that had nothing to do with the
   game.
-- Built the observatory as an open ledge, so the automated route drifted past
+- Built the tower as an open ledge, so the automated route drifted past
   the doorway while rising and died in the sky. The room was enclosed.
 
 ### What has not been verified by a human yet

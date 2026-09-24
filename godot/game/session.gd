@@ -372,7 +372,7 @@ func _physics_process(delta: float) -> void:
 			recharge_ticks -= 1
 			if recharge_ticks <= 0:
 				feather_charges = 1
-		if log_banner_ticks > 0:
+		if log_banner_ticks > 0 and unlock_ticks <= 0:
 			log_banner_ticks -= 1
 		if unlock_ticks > 0:
 			unlock_ticks -= 1
@@ -477,7 +477,7 @@ func _draw() -> void:
 			draw_colored_polygon(PackedVector2Array([
 				Vector2(hx, hr.end.y), Vector2(hx + 4, hr.position.y), Vector2(hx + 8, hr.end.y)]), P.hazard)
 
-	# The observatory doorway, drawn on its own trigger rect rather than on the
+	# The tower doorway, drawn on its own trigger rect rather than on the
 	# ground, so what the player reads is where the level actually ends.
 	var fr := Rect2(level.finish[0], level.finish[1], level.finish[2], level.finish[3])
 	draw_rect(fr, Color(P.cold.r, P.cold.g, P.cold.b, 0.10))
@@ -490,35 +490,33 @@ func _draw() -> void:
 	# Opening. Playtest finding: "the story line isnt clear from start" - the
 	# first two signs were still the starter's tutorial text, so the chapter
 	# opened on instructions instead of a premise. Both jobs now happen at once.
-	_sign(font, Vector2(33, 226), "SITE 07  /  GRAVITATIONAL RESEARCH", 15, P.text_warn)
-	_sign(font, Vector2(33, 246), "The debris stopped falling down.", 13, P.text_dim)
-	_sign(font, Vector2(33, 264), "Nobody left here knows why.", 12, P.text_faint)
-	_sign(font, Vector2(33, 282), "A D  walk      SPACE  jump", 12, P.text_faint)
-	_sign(font, Vector2(474, 206), "EVACUATION ORDER 09", 14, P.text_warn)
-	_sign(font, Vector2(474, 224), "Reach the observatory.", 12, P.text_dim)
-	_sign(font, Vector2(474, 240), "It is the last thing still anchored.", 12, P.text_faint)
-	_sign(font, Vector2(958, 196), "SITE 07 / GRAVITATIONAL RESEARCH", 15, P.text_warn)
-	_sign(font, Vector2(958, 216), "STRUCTURAL COHESION FAILING", 13, P.text_faint)
-	_sign(font, Vector2(1386, 196), "UPPER GANTRY", 13, P.text_warn)
-	_sign(font, Vector2(1376, 308), "LOWER DECK", 13, P.text_dim)
-	_sign(font, Vector2(1878, 236), "THE FEATHER  /  RECOVERED HERE", 12, P.text_faint)
-	_sign(font, Vector2(2042, 250), "THE FLOOR IS NOT THE ONLY FLOOR", 13, P.text_faint)
-	# The INVERSION corridor. Every warning the player needs is written down:
-	# the Betrayal punishes assuming, not reading.
-	# Staggered in y as well as x: at 13px these strings run ~7px per character
-	# and neighbouring signs overlapped when they shared a baseline.
+	# Signage in plain words, and present from the very first screen rather than
+	# only around the puzzles. Playtest: the story read as jargon, and the
+	# warnings only appeared late, so the player met the first trick untrained.
+	# Every hint is short, concrete, and says what to DO.
+	_sign(font, Vector2(33, 222), "THE WORLD FALLS UP", 15, P.text_warn)
+	_sign(font, Vector2(33, 242), "Run right. Reach the tower.", 13, P.text_dim)
+	_sign(font, Vector2(33, 260), "A D to walk.   SPACE to jump.", 12, P.text_faint)
+	_sign(font, Vector2(474, 210), "SPIKES HURT", 14, P.text_warn)
+	_sign(font, Vector2(474, 228), "Jump over them.", 12, P.text_faint)
+	_sign(font, Vector2(966, 196), "THE GROUND IS BREAKING", 15, P.text_warn)
+	_sign(font, Vector2(966, 216), "Keep moving. Do not stand still.", 12, P.text_faint)
+	_sign(font, Vector2(1386, 196), "HIGH ROAD", 13, P.text_warn)
+	_sign(font, Vector2(1376, 308), "LOW ROAD", 13, P.text_dim)
+	_sign(font, Vector2(2042, 250), "Some floors you cannot see.", 13, P.text_faint)
 	_sign(font, Vector2(2806, 236), "WALK. DO NOT JUMP.", 13, P.text_warn)
-	_sign(font, Vector2(3002, 212), "YOU WERE NEVER FALLING", 13, P.text_faint)
-	_sign(font, Vector2(3160, 236), "IT IS NOT THE SAME GAP", 13, P.text_warn)
-	_sign(font, Vector2(3352, 212), "BELIEF RENDERS. TRUTH DOES NOT.", 12, P.text_faint)
-	# Four signs, three of which are lying. The player has been taught to check.
-	_sign(font, Vector2(3752, 212), "SECTOR SEALED", 14, P.text_warn)
-	_sign(font, Vector2(3908, 236), "HAZARD  /  DO NOT CROSS", 12, P.text_warn)
-	_sign(font, Vector2(4086, 212), "FLOOR COMPROMISED", 14, P.text_warn)
-	_sign(font, Vector2(4086, 230), "Take the gantry. It will not hold long.", 12, P.text_faint)
-	_sign(font, Vector2(4400, 212), "SECTION CLEAR", 13, P.text_warn)
-	_sign(font, Vector2(4520, 232), "OBSERVATORY", 15, P.text_warn)
-	_sign(font, Vector2(4370, 252), "ONLY THOSE WHO CAN FALL UPWARD MAY ENTER", 13, P.cold)
+	_sign(font, Vector2(3002, 212), "The floor was always there.", 13, P.text_faint)
+	_sign(font, Vector2(3160, 236), "THIS GAP IS EMPTY", 13, P.text_warn)
+	_sign(font, Vector2(3160, 254), "Go up instead.", 12, P.text_faint)
+	_sign(font, Vector2(3390, 212), "NOT EVERY FLOOR IS REAL", 13, P.text_warn)
+	# Three of the next four signs are lying. By now the player checks.
+	_sign(font, Vector2(3752, 212), "DOOR LOCKED", 14, P.text_warn)
+	_sign(font, Vector2(3908, 236), "DANGER", 13, P.text_warn)
+	_sign(font, Vector2(4086, 206), "THE FLOOR WILL KILL YOU", 14, P.text_warn)
+	_sign(font, Vector2(4086, 224), "Go up. Run on the ceiling.", 12, P.text_faint)
+	_sign(font, Vector2(4400, 212), "SAFE", 13, P.text_warn)
+	_sign(font, Vector2(4520, 228), "THE TOWER", 15, P.text_warn)
+	_sign(font, Vector2(4380, 252), "Only those who fall up may enter.", 13, P.cold)
 
 func _sign(font: Font, at: Vector2, text: String, size: int, tint: Color) -> void:
 	draw_string(font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, tint)

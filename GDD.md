@@ -1,143 +1,176 @@
 # THE WORLD IS FALLING — Game Design Document
 
-**Author:** Narasimha Reddy Valam · **Assisted by:** Claude Code (Opus 5)
-**Built on:** [nikbearbrown/walker-jumpman](https://github.com/nikbearbrown/walker-jumpman) @ `9387542`
-
-> **Read this first.** Only **Chapter One: The Fall** is implemented. Everything
-> under "Chapters not built" is design on paper — no code, no level data, no
-> assets exist for it. It is recorded here so the shipped chapter can be judged
-> as the opening of something, rather than mistaken for a whole game.
+**Project:** `walker-jumpman-narasimha-v` · extends the `walker-jumpman` starter
+**Status:** Chapter One is **built and playable**. Chapters Two to Five below are
+**design only** — no code, no level data, no assets. Nothing in the unbuilt
+section exists in the repository, and this document says so at every heading.
 
 ---
 
-## Premise
+## The story, in plain words
 
-The laws of physics are failing. Not dramatically, at first — a rock falls the
-wrong way, debris hangs where it should have landed, a skyline sits upside down
-on the horizon. The player is trying to move forward and work out what happened.
+Gravity broke. Everything started falling **up** instead of down.
 
-Nothing is explained by a narrator. The story is carried by what the level does
-and what the player finds in it.
+Everyone ran away. You stayed behind to find out why.
 
-## Design rule the whole game obeys
+You find a **feather** that falls upward. While you hold it, you can fall upward
+too. That is how you cross the places nobody else could.
 
-**Every major object serves three purposes at once:**
+At the end of the chapter you reach the tower — and learn that you are the one
+who broke gravity in the first place.
 
-1. a gameplay mechanic,
-2. a platforming/puzzle tool,
-3. a piece of the story.
+That last line is the chapter's turn. It answers *why does the feather obey
+you?* and immediately opens *what were you doing here?* — which is where Chapter
+Two starts.
 
-An object that only opens a door is a key, and this game does not use keys.
+---
 
-| Object | Mechanic | Tool | Story |
-|---|---|---|---|
-| 🪶 **The Feather** | reverse gravity, limited charges | reach what is above you | the failure can be *used* |
-| 🧿 **The Eye** | reveal hidden geometry briefly | see paths that are not there | the world is already partly gone |
-| ⏳ **The Clock** | freeze moving objects | cross what will not hold still | you have done this before |
-| 🔮 **The Mirror** | swap to a reflected world | navigate two versions of a room | there is another you |
+## The one rule the whole game obeys
+
+> **The world shows you what you expect, not what is there.**
+
+Everything in the game follows from that single sentence:
+
+- A floor can be **real but not drawn** — you walk on nothing and it holds.
+- A floor can be **drawn but not real** — it looks solid and you fall through.
+- Spikes can be **invisible and deadly**, or **visible and completely harmless**.
+- A wall can look locked and let you walk straight through it.
+
+And there is always a way to check: **turn gravity upside down.** Inverted, the
+world stops flattering you and shows what is actually there. The lie is bright
+and comfortable; the truth is dark.
+
+This is why the palette flips. Light is the lie. Dark is what is really there.
+
+It is also why the check has to be cheap. The Feather recharges in 2.5 seconds
+rather than being rationed — a game about checking cannot charge you for
+checking. (An earlier build made charges scarce. Players stopped inspecting,
+which broke the whole point. Recorded as P12 in `CHANGE-BRIEF.md`.)
 
 ---
 
 ## Chapter One: The Fall — **BUILT**
 
-This is the chapter that exists and runs. Full verification is in
-`TEST-REPORT.md`; predictions and findings are in `CHANGE-BRIEF.md`.
+### What the player does, in order
 
-### Shape of the chapter
+| Beat | What happens | What it teaches |
+|---|---|---|
+| **The break** | Rubble tumbles upward past you. Signs say the world falls up. | the premise, before any mechanic |
+| **Falling ground** | Ledges crumble seconds after you touch them. | keep moving |
+| **The fork** | A high road and a low road, both survivable. | the level has opinions, not one path |
+| **The feather** | Picking it up announces a power: you can reverse gravity. | you have a verb now |
+| **The ceiling runs** | Marked pads show where to flip. You run on the underside of the world. | using the verb |
+| **The Void Gap** | A chasm with nothing visible below. Walking in, a hidden floor catches you. | *things exist that you cannot see* |
+| **The reveal** | Flip while standing there — the floor renders as a lattice. | *inverted sight shows the truth* |
+| **The Betrayal** | An identical-looking gap. This one is genuinely empty. | **don't trust the rule — trust the tool** |
+| **The Phantom** | A platform drawn exactly like real ground. It holds nothing. | the lie works both ways |
+| **The locked door** | A bulkhead marked `DOOR LOCKED`. You walk straight through it. | signs are claims, not facts |
+| **The spike corridor** | The floor is lethal end to end. Ceilings above crumble as you hang from them. | pressure, not trickery |
+| **`SAFE`** | A clear stretch of floor with invisible spikes in it, and a mirror ledge above that only exists inverted. | the last and worst lie |
+| **The tower** | The exit is above you. Only falling upward gets you in. | the chapter's thesis as a door |
 
-1. **The familiar world.** The starter's original route, preserved and playable.
-2. **The ground stops holding.** Ledges dissolve a short time after they are
-   stood on. Signage reads `SITE 07 / GRAVITATIONAL RESEARCH`, then
-   `STRUCTURAL COHESION FAILING`.
-3. **A fork.** The upper gantry is quick and passes a hazard; the lower deck is
-   longer and dissolving. Failing the upper line drops the player onto the lower
-   one rather than killing them.
-4. **The Feather.** An object falling upward in place. Touching it grants
-   charges. Nothing explains it.
-5. **The teaching gap.** A gap too wide to cross by jumping, under a ceiling.
-   The only way on is to invert. The player learns by necessity.
-6. **The ceiling run.** Inverted traversal along the underside of the facility,
-   with the reversal window running down. Flip back too early and fall short;
-   too late and run off the end into the sky.
-7. **The observatory.** `ONLY THOSE WHO CAN FALL UPWARD MAY ENTER.` The finish
-   sits inside a shaft above the floor, reachable only while inverted.
-8. **The reveal.** `THE LANDSCAPE IS FLOATING. GRAVITATIONAL FAILURE / SPREADING.`
-   Then two questions, unanswered: *What was the Feather? Why could you use it?*
+### The Betrayal is fair, and here is why
+
+It kills you using the lesson the previous screen taught. Three things keep it
+honest:
+
+1. A sign above it reads `THIS GAP IS EMPTY / Go up instead.`
+2. Flipping reveals the truth before you commit, and flipping is nearly free.
+3. The ceiling route across it is visible from the approach.
+
+The punishment is for **assuming**, never for failing to read minds.
 
 ### The Feather, as implemented
 
-- Charges are scarce: two Feathers grant three charges total.
-- Two reversals are **mandatory** (teaching gap, observatory door); one is an
-  optional shortcut. Spending the shortcut leaves exactly enough.
-- `F` (or Shift) spends a charge and inverts gravity for 180 ticks.
-- Pressing `F` again cancels early and **does not refund**, so choosing when to
-  flip back is a skill rather than a free option.
-- The window also expires on its own. Being somewhere fatal when it does is the
-  player's mistake, not the game's.
-- Falling upward out of the level kills, exactly as the pit does.
-
-### Decisions the chapter asks for
-
-| Decision | Cost of getting it wrong |
+| | |
 |---|---|
-| Spend a charge on the shortcut, or walk the dissolving route? | arriving at the door with nothing |
-| When to flip back on the ceiling run? | too early: fall short. too late: the sky |
-| Keep moving on dissolving ledges, or read the next jump first? | the ledge does not wait |
-| Upper gantry or lower deck at the fork? | the hazard, or the timer |
+| Acquired | one pickup, which grants the ability permanently. Before it, `F` does nothing. |
+| Charges | exactly one, never stacking |
+| Recharge | `RECHARGE_TICKS = 150` (2.5 s) |
+| Duration | `REVERSAL_TICKS = 180` (3 s), then gravity restores on its own |
+| Cancel | `F` again, early, at no refund — *when* you flip back is the skill |
+| Death | falling upward out of the level is as fatal as the pit |
+| Readout | the character's trail is amber upright, cyan inverted. The HUD says READY / INVERTED / RECHARGING. |
+
+**Gravity reversal is a sign flip, not a tuning change.** Every value in
+`tuning.gd` is byte-identical to the starter's; only the *direction* applied to
+gravity, the jump impulse and `up_direction` changes. Measured: an inverted jump
+displaces 56.05 px where a normal jump rises 56.00 px.
+
+### How the illusions are built
+
+The starter already iterated the level's solids twice — once to build colliders,
+once to draw them. The whole mechanic is the difference between those two loops:
+
+| Level data | In the collider loop? | In the draw loop? |
+|---|---|---|
+| `solids` | yes | yes |
+| `hidden` | yes | only while inverted |
+| `phantom` | **no** | only while upright |
+| `mirror` | only while inverted | only while inverted |
+| `hazards` | yes | yes |
+| `hidden_hazards` | yes | only while inverted |
+| `phantom_hazards` | **no** | only while upright |
+
+No new node types. No collision check was removed — hidden geometry *adds*
+colliders and phantom geometry adds none.
 
 ---
 
-## Chapters not built
+## Chapters not built — design only
 
-**None of the following is implemented.** No code, level data, or assets exist.
+**None of the following exists in code.** They are recorded so the shape of the
+whole game is legible, and so Chapter One's ending has somewhere to point.
 
 ### Chapter Two — The Forest Below
-An inverted forest where some platforms hang from the ceiling. The Feather stops
-being an unlock and becomes a routing tool: the player now chooses *which*
-surface to travel on. Ends on **the Eye**, which reveals hidden geometry for a
-few seconds — and, once, shows a figure standing exactly where the player is
-standing.
+The world is upside down and stays that way. Platforms hang from a ceiling that
+used to be the ground. Introduces **objects that only exist while you are not
+looking at them** — the camera's facing becomes a mechanic.
 
 ### Chapter Three — The City That Doesn't Exist
-Built around the Eye and the Feather together. Paths exist that cannot be seen;
-revealing them costs time, and they must be *remembered* once the vision fades.
-Ends on **the Clock**, which stops everything for three seconds — and displays a
-line the player has no reason to understand yet: *you have used this before.*
+Perception, not gravity. Whole districts render differently depending on the
+direction you approach from. Introduces **the Mirror**: a second object that
+swaps what is solid with what is drawn, everywhere, at once.
 
-### Chapter Four — The Gravity Engine
-Three tools in combination: freeze a rotating platform, invert, cross, restore.
-The chapter's real content is the turn: the objects the player has been
-collecting to repair the world are components *of* the machine, and every one
-recovered makes it stronger. Ends on **the Mirror**.
+### Chapter Four — The Memory
+You start finding your own handwriting. Rooms you have never visited are
+familiar. Introduces **the Clock**, which rewinds a room to a previous state —
+including states you caused.
 
-### Chapter Five — The Other World
-Some geometry exists only in the reflection. The player navigates two versions of
-the same space, switching between them mid-traversal.
+### Chapter Five — The Other Side
+The reveal: the inversion was not an accident, and there is a second world that
+has been running the same experiment in the opposite direction. Two endings —
+restore gravity and erase yourself, or keep the world inverted and remain.
 
-**The reveal:** gravity was never breaking. Reality was ending, and the
-Gravity Engine was the only thing holding it together. The protagonist built it,
-understood what it would cost, and erased their own memory rather than carry it.
+### Objects across the arc
+Every major object is meant to be three things at once — a movement mechanic, a
+puzzle tool, and a piece of the story.
 
-**The choice, left to the player and never graded by the game:**
-- **Restore** — put the objects back. The world returns to normal, and everything
-  seen during the game is lost with it.
-- **Break** — take them out. Gravity collapses completely, and the world becomes
-  something else.
+| Object | Manipulates | Chapter |
+|---|---|---|
+| The Feather | gravity | One — **built** |
+| The Eye | observation | Two |
+| The Mirror | perception | Three |
+| The Clock | time | Four |
+| The Engine | the rule itself | Five |
 
 ---
 
 ## Tone
 
-Abandoned research facilities, industrial structure, fog, silence, floating
-debris, impossible architecture, minimal interface. The player should
-consistently feel that *something went badly wrong here* without being told so.
+Dark, quiet, industrial. No enemies, no combat, no dialogue trees. The story is
+found, not told: environmental signage plus six collectible log fragments, each
+one line long. Nobody explains anything to the player directly.
 
-Every section ends on a reveal or an unanswered question. Chapter Two should
-answer one question and raise two more. Nothing is explained on first sight.
+Signs are written the way a frightened person writes them — short, practical,
+sometimes wrong.
+
+---
 
 ## Honest scope note
 
-Chapter One was scoped to what could be built, tested, played and explained
-within one assignment window. The remaining chapters are deliberately left as
-design so that the built chapter is not thinned out to gesture at all five. A
-convincing opening is worth more than five unfinished fragments.
+Chapter One is roughly five times the length of the starter's route and is the
+only part that exists. The chapter list above is a design sketch: it has no
+level data, no assets, no prototypes, and no schedule. It is included because
+the assignment asks what the extension *is*, and Chapter One's ending only makes
+sense if you can see what it opens onto — not to imply more was built than was.

@@ -1,6 +1,6 @@
 extends SceneTree
 ## Captures Chapter One from real play: the anomaly, the Feather, inverted
-## traversal, the observatory door, and genuine deaths in both directions.
+## traversal, the tower door, and genuine deaths in both directions.
 ## Scripted input only - no teleporting, no forced completion, no disabled
 ## collision. These are NOT human playtest evidence.
 const Game = preload("res://game/session.gd")
@@ -64,13 +64,13 @@ func run() -> void:
 		3180.0: "29-truth-vision",
 		3400.0: "30-the-phantom",
 		3560.0: "31-phantom-omitted",
-		3800.0: "32-sector-sealed",
+		3800.0: "32-the-locked-door",
 		3995.0: "33-the-hazard-was-a-lie",
 		4150.0: "34-inverted-over-the-spikes",
 		4350.0: "35-the-gantry-gave-way",
 		4470.0: "36-section-clear-was-a-lie",
 		4620.0: "37-the-mirror-ledge",
-		4760.0: "38-observatory-door",
+		4760.0: "38-the-tower-door",
 	}
 	var taken := {}
 	var deaths_seen: int = 0
@@ -151,36 +151,36 @@ func run() -> void:
 	# the shot meant the death landed inside the PNG write and the count below
 	# could never see it. The route was right all along; the harness was eating
 	# the event.
+	# A capture costs roughly 33 physics ticks - measured, and the same length as
+	# the whole death-and-retry window. That makes a photograph of the instant of
+	# death impossible to time: the shot either lands before it or after the
+	# respawn. So these two shots are named for what they can actually show, and
+	# the death itself is proved by the assertion below plus the sky-is-fatal
+	# mechanics check. Claiming a picture of the death we cannot reliably take
+	# would be exactly the kind of mislabelled evidence this file already got
+	# wrong once.
 	var sky_deaths: int = game.deaths
 	var died := false
 	var sky_reason := ""
 	var sky_shot := false
 	await capture("40-rising-off-the-ceiling")
-	if game.deaths > sky_deaths:
-		died = true
-		sky_reason = "died during the capture; counted, reason not sampled in time"
-		sky_shot = true
 	for i in range(240):
-		if died:
-			break
 		game.player.test_axis = 1.0
 		await step()
-		# Captured on the way out, not on the death. capture() awaits a render
-		# frame and the 0.55s retry elapses during it, so a shot taken at the
-		# moment of death arrives after the respawn and shows the spawn point.
 		if not sky_shot and game.state == Game.State.PLAYING \
-			and game.player.position.y < float(game.level.sky_y) + 46.0:
+			and game.player.position.y < float(game.level.sky_y) + 90.0:
 			sky_shot = true
-			await capture("41-fell-into-the-sky")
+			await capture("41-leaving-the-level-upward")
 		if game.state == Game.State.DYING:
 			died = true
 			sky_reason = game.death_reason
 			break
 		if game.deaths > sky_deaths:
 			died = true
+			sky_reason = "(counted; death landed inside a capture)"
 			break
 	assert(died, "running off the ceiling inverted did not kill")
-	assert(sky_shot, "never got close enough to the sky bound to capture it")
+	assert(sky_shot, "never captured the player leaving the level upward")
 	print("SKY: died as expected, reason=%s" % sky_reason)
 
 	# --- Standing still on dissolving ground ---
@@ -220,6 +220,7 @@ func run() -> void:
 			break
 		if game.deaths > pit_deaths:
 			fell = true
+			pit_reason = "(counted; death landed inside a capture)"
 			break
 	assert(fell, "standing on dissolving ground did not kill")
 	assert(pit_shot, "never saw the ledge collapse under the player")

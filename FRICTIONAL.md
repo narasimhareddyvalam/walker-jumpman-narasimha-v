@@ -280,6 +280,61 @@ predicted.
 
 ---
 
+## 13. Writing for a player, not for myself
+
+Second round of feedback, and it was about words rather than code. I said the
+storyline was not clear and that a five-year-old should be able to follow it.
+
+Reading the game back, the criticism was obviously right. Lines like
+*"Recovery: one object. It does not fall. It is not ours."* are written to be
+re-read. Nobody re-reads a sign while running right at 160 pixels per second.
+Everything had been written to sound good rather than to be understood at speed.
+
+All of it was rewritten in short, plain sentences. `SITE 07`, `SUBJECT 07`,
+`EVACUATION ORDER 09` and `GRAVITATIONAL RESEARCH` are gone — they were
+atmosphere pretending to be information. The observatory is now just *the
+tower*. The story is: gravity broke, everything falls up, everyone ran, I
+stayed, I found a feather that falls up, and at the end I find out I built this.
+
+I also asked why the warning signs only showed up near the puzzles at the end. I
+had not noticed that: by the time the game first lies to you, you have had no
+practice reading its signs at all. There are signs from the first screen now.
+
+And the screenshot I sent showed three layers of text on screen at once — a log
+banner, the ability card and two world signs. A log picked up while the card is
+showing now waits its turn.
+
+---
+
+## 14. Guessing twice, then measuring once
+
+The sky-death capture started failing its assertion. I watched Claude guess the
+cause twice — both times blaming which ceiling the route ran off — and both
+times it was wrong. Worse, the second guess went into the repository as a
+comment confidently explaining a reason that was false.
+
+Then it stopped and wrote a throwaway probe instead of guessing again. One run
+settled it: the original ceiling killed the player perfectly well headless. The
+real cause was in the test harness. A `capture()` call costs about 33 physics
+ticks while the engine keeps running, and the death count was being sampled
+*after* that call — so the death happened inside the screenshot and was never
+observed.
+
+Two things I take from this. First, the fix was in a place neither guess had
+looked at, and only instrumenting found it. Second, the wrong comment was
+arguably the worse artifact: a failing assertion announces itself, but a
+confident false explanation sitting in the source does not. It has been
+corrected in place and the history notes that it was wrong.
+
+The same measurement had a consequence we had to accept rather than solve: if a
+capture takes 33 ticks and the death-and-retry window is 33 ticks, then a
+photograph of the moment of death cannot be timed reliably. Rather than ship a
+picture that might be of the respawn and call it a death, those shots are now
+named for what they actually show, and the death is evidenced by the assertion
+and by the `sky-is-fatal` check.
+
+---
+
 ## Traceability
 
 | Entry | Where to check it |
@@ -292,5 +347,8 @@ predicted.
 | Unexplained capture failure | commit `60a226a` message |
 | Gravity as a sign flip | commit `6c7c210`, `probe_gravity.gd` |
 | Tests fixed, not weakened | commit `5cd69aa` |
-| Enclosed observatory | commit `953fc21` |
+| Enclosed tower | commit `953fc21` |
+| INVERSION rule and the Betrayal | commit `83685d3` |
+| Evidence that photographed the wrong moment | commit `3233366` |
+| Two wrong diagnoses, then a probe | `CHANGE-BRIEF.md` Revision 5 |
 

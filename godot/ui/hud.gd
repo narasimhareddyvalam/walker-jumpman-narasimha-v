@@ -4,7 +4,7 @@ var game: Node2D
 # the player what it can through the world, not through the interface.
 # The HUD follows the world's palette rather than carrying its own, so the
 # readout cannot contradict which world the player is standing in. On COMPLETE
-# the card renders dark, because entering the observatory means being inverted.
+# the card renders dark, because entering the tower means being inverted.
 func p() -> Dictionary:
 	return game.pal() if is_instance_valid(game) else game.DARK
 
@@ -86,7 +86,7 @@ func _draw() -> void:
 
 	# A log fragment just picked up. Story arrives as a reward for walking over
 	# to it, rather than as signage the player runs past without reading.
-	if game.log_banner_ticks > 0 and game.log_banner != "":
+	if game.log_banner_ticks > 0 and game.log_banner != "" and game.unlock_ticks <= 0:
 		var t: float = clampf(float(game.log_banner_ticks) / 40.0, 0.0, 1.0)
 		var w := ThemeDB.fallback_font.get_string_size(game.log_banner,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
@@ -120,8 +120,8 @@ func _draw() -> void:
 	draw_rect(Rect2(0, 0, 640, 360), Color(P.void.r, P.void.g, P.void.b, 0.82))
 	draw_rect(Rect2(96, 112, 448, 194), Color(P.void.r, P.void.g, P.void.b, 0.97))
 	var title := "THE WORLD IS FALLING"
-	var detail := "The debris is falling upward. Nobody knows why."
-	var hint := "Reach the observatory.      Chapter One  /  The Fall"
+	var detail := "Everything falls UP now."
+	var hint := "Reach the tower.      Chapter One  /  The Fall"
 	var button := "ENTER"
 	if game.state == game.State.PAUSED:
 		title = "HELD"
@@ -130,8 +130,8 @@ func _draw() -> void:
 		button = "ENTER  /  RESUME"
 	elif game.state == game.State.COMPLETE:
 		# The chapter ends on what the player sees, not on a score.
-		title = "THE LANDSCAPE IS FLOATING"
-		detail = "GRAVITATIONAL FAILURE  /  SPREADING"
+		title = "YOU BUILT THIS"
+		detail = "You made the world fall up."
 		hint = "%.1fs      %d retries      chapter one ends" % [game.last_finish_time, game.deaths]
 		button = "ENTER  /  AGAIN"
 	draw_rect(Rect2(150, 118, 340, 1), Color(cold.r, cold.g, cold.b, 0.35))
@@ -140,7 +140,7 @@ func _draw() -> void:
 	if hint != "":
 		centered(hint, 196, 11, P.text_faint)
 	if game.state == game.State.COMPLETE:
-		centered("What was the Feather?", 224, 11, P.text_faint)
-		centered("Why could you use it?", 240, 11, P.text_faint)
+		centered("What was the feather?", 224, 11, P.text_faint)
+		centered("Why did it obey you?", 240, 11, P.text_faint)
 	draw_rect(Rect2(150, 262, 340, 1), Color(cold.r, cold.g, cold.b, 0.35))
 	centered(button, 284, 12, cold)

@@ -13,7 +13,7 @@
   "crumbling": [[1024, 296, 64, 14], [1152, 272, 64, 14], [1420, 216, 64, 14], [2420, 296, 64, 14], [2540, 296, 64, 14], [4180, 150, 80, 16], [4260, 150, 80, 16]],
   "feathers": [[1960, 258, 2], [2700, 258, 1], [3060, 258, 2]],
   "pads": [[1966, 280, 54, 3], [2293, 280, 54, 3], [3086, 288, 54, 3], [3466, 288, 54, 3], [4020, 288, 54, 3], [4440, 288, 54, 3], [4773, 288, 54, 3]],
-  "logs": [[300, 300, "Containment holding.  Nothing has fallen down in three weeks."], [1300, 230, "The debris in Shaft 2 goes up now.  Nobody will go and look."], [1990, 262, "Recovery: one object.  It does not fall.  It is not ours."], [2960, 270, "It is not an anomaly.  It answers a person, not a field."], [3960, 270, "Only one subject could hold the inversion.  We logged them as SUBJECT 07."], [4740, 270, "SUBJECT 07 - the door knows you.  You have done this before."]],
+  "logs": [[300, 300, "Everything started falling UP. Nobody knows why."], [1300, 230, "Everyone ran away. I stayed to find out."], [1990, 262, "I found a feather. It falls up, not down."], [2960, 270, "When I hold it, I can fall up too."], [3960, 270, "Some floors hide. Some floors are lies."], [4740, 270, "The tower knows my name. I built this."]],
   "hazards": [[320, 304, 24, 16], [1610, 200, 24, 16], [4100, 272, 260, 16]],
   "hidden_hazards": [[4500, 272, 100, 16]],
   "phantom_hazards": [[3960, 272, 60, 16]],

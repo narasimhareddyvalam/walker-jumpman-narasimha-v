@@ -45,7 +45,7 @@ also works when Godot is installed in `/Applications`.
 |---|---|
 | **A / D** or **← / →** | move |
 | **Space** | jump (fixed height, no double jump) |
-| **F** or **Shift** | **spend a Feather charge — reverse gravity.** Press again to flip back early |
+| **F** or **Shift** | **reverse gravity** — you fall upward. Press again to flip back early. Recharges in 2.5 s |
 | **R** | retry |
 | **Esc / P** | pause · **Enter** confirm · **M** menu |
 
@@ -56,15 +56,25 @@ binding is the starter's, unchanged.
 
 ## What this is
 
-The laws of physics are failing. Debris drifts upward, the skyline hangs the
-wrong way, and the ground stops holding. You find an object that should not
-exist and learn what it does by needing it.
+Gravity broke. Everything started falling **up** instead of down. Everyone ran
+away; you stayed to find out why. You find a **feather** that falls upward, and
+while you hold it you can fall upward too. At the end you reach the tower and
+learn that you are the one who broke gravity.
 
-**The chapter, in order:** the familiar route → the ground begins dissolving →
-a fork between a quick gantry and a longer collapsing deck → **the Feather** →
-a gap that can only be crossed by falling upward → an inverted run along the
-ceiling → an observatory door that admits only those who can fall upward → a
-reveal, and two questions it does not answer.
+The chapter runs on a single rule: **the world shows you what you expect, not
+what is there.** A floor can be real but not drawn, so you walk on nothing and
+it holds. Another can be drawn but not real. Spikes can be invisible and deadly,
+or fully drawn and harmless. There is always a way to check — turn gravity
+upside down, and the world stops flattering you.
+
+That is why the palette flips. **Light is the lie. Dark is what is really
+there.**
+
+**The chapter, in order:** the familiar route → the ground begins breaking → a
+fork between two roads → **the feather** → ceiling runs → a chasm that catches
+you → the same chasm that does not → a platform that isn't there → a locked door
+that isn't locked → a lethal floor → a stretch marked `SAFE` that isn't → the
+tower, which only admits those who can fall upward.
 
 The full design, including the four chapters that are **designed but not built**,
 is in [GDD.md](GDD.md).
@@ -84,18 +94,25 @@ Movement parameters and the 18×28 collider are unchanged. Inverted, the figure
 is mirrored about the collider's centre line, so the drawing stays inside the
 same box.
 
-### Mechanic — the Feather
-Scarce gravity-reversal charges. Two Feathers grant three charges; two reversals
-are mandatory and one is an optional shortcut, so spending the shortcut leaves
-exactly enough. Cancelling early does not refund, which makes *when you flip
-back* a skill. Falling upward out of the level is as fatal as the pit.
+### Mechanic — the feather
+One pickup grants the ability permanently; before it, `F` does nothing. You hold
+exactly **one charge**, it never stacks, and it returns **2.5 seconds** after you
+spend it. A reversal lasts 3 seconds and then restores itself. Cancelling early
+costs the charge anyway, so *when you flip back* is the skill. Falling upward out
+of the level is as fatal as the pit.
+
+An earlier build rationed charges across three pickups. That was wrong, and I
+had predicted why in P12: making inspection expensive, in a chapter whose entire
+subject is checking what is real, taught players to avoid the verb the game is
+about. The recharge is what makes every illusion below solvable rather than a
+gamble.
 
 **Gravity reversal does not change the jump.** Every value in `tuning.gd` is
 byte-identical; only the **sign** applied to gravity, the jump impulse and
 `up_direction` flips. Measured: an inverted jump displaces **56.05 px** where a
 normal jump rises **56.00 px**.
 
-### Level — roughly three times longer
+### Level — roughly five times longer
 Twenty-two new landings past the original section, crumbling ledges, a fork, an
 inverted ceiling run, and the finish relocated into a shaft that cannot be
 entered without the mechanic. All geometry was sized against a **measured** jump
@@ -109,17 +126,25 @@ geometry; inverted vision does the exact reverse. Collision is never consulted
 by either, so the player can always check by flipping — which makes every
 surprise a deduction rather than a trick.
 
-Three beats teach it. The **Void Gap** is an apparent chasm with a hidden floor
+Seven beats teach it. The **Void Gap** is an apparent chasm with a hidden floor
 that catches anyone who keeps walking. The **Betrayal** is a visually identical
 gap with nothing in it — the lesson you just learned is the wrong lesson. The
-**Phantom** is a platform drawn exactly like real ground that holds nothing at
-all. A sign over the Betrayal reads `IT IS NOT THE SAME GAP`, and the ceiling
-route past it is visible from the approach: the punishment is for assuming, not
-for failing to read minds.
+**Phantom** is a platform drawn exactly like real ground that holds nothing. A
+**locked door** is a wall you walk straight through. **Phantom spikes** are fully
+drawn and harmless; **hidden spikes** are invisible and lethal. A **mirror ledge**
+is solid only while inverted.
+
+A sign over the Betrayal reads `THIS GAP IS EMPTY / Go up instead.`, and the
+ceiling route past it is visible from the approach: the punishment is for
+assuming, never for failing to read minds.
 
 Mechanically this is the difference between two loops that already existed —
 one building colliders from level data, one drawing from it. Hidden geometry
-joins only the first; phantom geometry joins neither.
+joins only the first; phantom geometry joins neither; mirror geometry joins both
+but only while gravity is reversed.
+
+Story arrives as **six collectible log fragments**, one line each, written in
+plain words and escalating to the chapter's turn: you built this.
 
 ### Presentation
 The starter drew hazards and the finish marker at hard-coded coordinates while
@@ -128,7 +153,7 @@ rendered detached from the thing that actually kills or completes. All drawing
 is now data-driven.
 
 The cream-and-teal palette is gone. In its place are **two** schemes chosen by
-gravity: upright, the facility is pale institutional daylight — the comfortable
+gravity: upright, the world is pale daylight — the comfortable
 lie; inverted, it is near-black — what is actually there. Sixteen colour keys
 flip together, the HUD included, so the interface can never contradict which
 world the player is standing in. Parallax strata, drifting debris and a minimal
@@ -138,7 +163,7 @@ HUD throughout.
 
 ## Verification
 
-**51 mechanics checks and 9 keyboard checks, 0 failures.** All 25 of the
+**66 mechanics checks and 9 keyboard checks, 0 failures.** All 25 of the
 starter's original mechanics checks are retained and still pass; none were
 deleted, relaxed, or had an expected value changed. Every check added for the
 Feather and for INVERSION was written and **watched failing** before the code
