@@ -26,21 +26,41 @@ func _draw() -> void:
 	var cold: Color = P.cold
 	text_at("THE WORLD IS FALLING", Vector2(22, 26), 13, P.text_dim)
 	text_at("CH. 01 / THE FALL", Vector2(500, 26), 11, P.text_faint)
-	# Charges are the only persistent readout, because they are the only thing
-	# the player cannot see by looking at the world.
+	# The power's state, named and spelled out. Four small pips said nothing to
+	# a player who did not already know what they counted, and there is only
+	# ever one charge now - what matters is READY, INVERTED or RECHARGING.
 	var charges: int = game.feather_charges
-	for i in range(4):
-		var lit := i < charges
-		var box := Rect2(22 + i * 13, 38, 9, 3)
-		draw_rect(box, cold if lit else Color(cold.r, cold.g, cold.b, 0.13))
-	if game.reversal_ticks > 0:
-		var span: float = float(game.reversal_ticks) / float(game.REVERSAL_TICKS)
-		draw_rect(Rect2(22, 45, 76 * span, 1), cold)
-	elif game.has_feather:
-		text_at("F", Vector2(104, 44), 10, P.text_faint)
+	if game.has_feather:
+		text_at("FEATHER", Vector2(22, 45), 10, P.text_faint)
+		var bar := Rect2(74, 40, 92, 4)
+		draw_rect(bar, Color(cold.r, cold.g, cold.b, 0.16))
+		if game.reversal_ticks > 0:
+			var span: float = float(game.reversal_ticks) / float(game.REVERSAL_TICKS)
+			draw_rect(Rect2(bar.position.x, bar.position.y, bar.size.x * span, bar.size.y), cold)
+			text_at("INVERTED", Vector2(172, 45), 10, cold)
+		elif charges > 0:
+			draw_rect(bar, cold)
+			text_at("READY   F", Vector2(172, 45), 10, cold)
+		else:
+			var back: float = 1.0 - clampf(float(game.recharge_ticks) / float(game.RECHARGE_TICKS), 0.0, 1.0)
+			draw_rect(Rect2(bar.position.x, bar.position.y, bar.size.x * back, bar.size.y),
+				Color(cold.r, cold.g, cold.b, 0.5))
+			text_at("RECHARGING", Vector2(172, 45), 10, P.text_faint)
 	if not game.logs.is_empty():
 		text_at("LOG  %d / %d" % [game.logs_found.size(), game.logs.size()],
 			Vector2(500, 44), 10, P.text_faint)
+
+	# Picking up a power and reading a note are different events, so they do not
+	# look the same. This one is a card, and it says what the power does.
+	if game.unlock_ticks > 0:
+		var fade: float = clampf(float(game.unlock_ticks) / 50.0, 0.0, 1.0)
+		draw_rect(Rect2(150, 120, 340, 62), Color(P.void.r, P.void.g, P.void.b, 0.93 * fade))
+		draw_rect(Rect2(150, 120, 340, 2), Color(cold.r, cold.g, cold.b, 0.85 * fade))
+		draw_rect(Rect2(150, 180, 340, 2), Color(cold.r, cold.g, cold.b, 0.85 * fade))
+		centered("THE FEATHER", 143, 17, Color(cold.r, cold.g, cold.b, fade))
+		centered("You can reverse gravity.", 160, 12, Color(P.text_dim.r, P.text_dim.g, P.text_dim.b, fade))
+		centered("Press  F  on a marked pad to fall upward.", 174, 11,
+			Color(P.text_faint.r, P.text_faint.g, P.text_faint.b, fade))
 
 	# Standing on a reversal pad with a charge in hand. Playtest finding: "its
 	# not clear where to click F and invert and play upside down" - the chapter
@@ -48,11 +68,21 @@ func _draw() -> void:
 	# it. The prompt is deliberately loud, and appears only where pressing F
 	# actually does something.
 	if game.pad_prompt():
-		var pulse: float = 0.72 + 0.28 * sin(float(game.world_tick) * 0.12)
-		draw_rect(Rect2(196, 296, 248, 22), Color(P.void.r, P.void.g, P.void.b, 0.86))
-		draw_rect(Rect2(196, 296, 248, 1), Color(cold.r, cold.g, cold.b, 0.55))
-		draw_rect(Rect2(196, 317, 248, 1), Color(cold.r, cold.g, cold.b, 0.55))
-		centered("PRESS  F  TO FALL UPWARD", 312, 14, Color(cold.r, cold.g, cold.b, pulse))
+		var pulse: float = 0.74 + 0.26 * sin(float(game.world_tick) * 0.12)
+		# A drawn keycap rather than the word "press": the instruction is the key
+		# itself, then what it does, then what that will feel like.
+		draw_rect(Rect2(178, 292, 284, 36), Color(P.void.r, P.void.g, P.void.b, 0.9))
+		draw_rect(Rect2(178, 292, 284, 2), Color(cold.r, cold.g, cold.b, 0.6))
+		draw_rect(Rect2(178, 326, 284, 2), Color(cold.r, cold.g, cold.b, 0.6))
+		var cap := Rect2(190, 299, 22, 22)
+		draw_rect(cap, Color(cold.r, cold.g, cold.b, 0.15 * pulse))
+		draw_rect(Rect2(cap.position.x, cap.position.y, cap.size.x, 1), Color(cold.r, cold.g, cold.b, pulse))
+		draw_rect(Rect2(cap.position.x, cap.end.y - 1, cap.size.x, 1), Color(cold.r, cold.g, cold.b, pulse))
+		draw_rect(Rect2(cap.position.x, cap.position.y, 1, cap.size.y), Color(cold.r, cold.g, cold.b, pulse))
+		draw_rect(Rect2(cap.end.x - 1, cap.position.y, 1, cap.size.y), Color(cold.r, cold.g, cold.b, pulse))
+		text_at("F", Vector2(197, 316), 15, Color(cold.r, cold.g, cold.b, pulse))
+		text_at("REVERSE GRAVITY", Vector2(222, 311), 13, Color(cold.r, cold.g, cold.b, pulse))
+		text_at("you will fall upward onto the ceiling", Vector2(222, 323), 9, P.text_faint)
 
 	# A log fragment just picked up. Story arrives as a reward for walking over
 	# to it, rather than as signage the player runs past without reading.

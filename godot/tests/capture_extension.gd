@@ -47,6 +47,7 @@ func run() -> void:
 		# The opening premise and the reversal-pad prompt, both added after the
 		# playtest reported the story and the F key were unreadable.
 		100.0: "19-the-premise",
+		1968.0: "23a-the-power-unlocked",
 		1985.0: "23b-press-f-here",
 		1120.0: "20-ground-dissolving",
 		1300.0: "21-the-fork",
@@ -122,26 +123,46 @@ func run() -> void:
 	await fresh()
 	route = Route.new()
 	deaths_seen = game.deaths
-	for i in range(3200):
+	# Withhold the flip-back at the end of the 2300-2640 ceiling, so the route
+	# plays normally and then runs off that ceiling still inverted. That ceiling
+	# has the most open sky after it - the next is at 3100, 460px away - which
+	# leaves the widest margin before the reversal expires.
+	#
+	# Note for anyone reading the history: two earlier commits blamed the choice
+	# of ledge for this sequence failing. That was wrong. probe_sky.gd showed the
+	# original ledge killed the player perfectly well; the failure was the
+	# harness sampling the death count after a blocking capture. The ledge here
+	# is a margin improvement, not the fix.
+	route.feather_marks = route.feather_marks.filter(func(m): return m < 2600.0)
+	for i in range(3600):
 		if game.deaths > deaths_seen:
 			deaths_seen = game.deaths
 			route = Route.new()
+			route.feather_marks = route.feather_marks.filter(func(m): return m < 2600.0)
 		route.step(game.player, game)
 		await step()
-		# Never cancel the first reversal, so the player runs off the end of the
-		# ceiling still inverted.
-		if route.next_feather >= 1:
-			route.feather_marks.clear()
-		if game.player.position.x > 2270.0 and game.player.gravity_sign < 0.0:
+		if game.player.position.x > 2650.0 and game.player.gravity_sign < 0.0:
 			break
 		if game.state != Game.State.PLAYING:
 			break
-	await capture("40-rising-off-the-ceiling")
+	# Sampled BEFORE the capture. capture() awaits a render frame and the engine
+	# keeps stepping physics through it - measured at roughly 30 ticks, which is
+	# exactly how long this player takes to reach the sky bound. Sampling after
+	# the shot meant the death landed inside the PNG write and the count below
+	# could never see it. The route was right all along; the harness was eating
+	# the event.
 	var sky_deaths: int = game.deaths
 	var died := false
 	var sky_reason := ""
 	var sky_shot := false
+	await capture("40-rising-off-the-ceiling")
+	if game.deaths > sky_deaths:
+		died = true
+		sky_reason = "died during the capture; counted, reason not sampled in time"
+		sky_shot = true
 	for i in range(240):
+		if died:
+			break
 		game.player.test_axis = 1.0
 		await step()
 		# Captured on the way out, not on the death. capture() awaits a render

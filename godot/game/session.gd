@@ -58,6 +58,10 @@ var logs_found: Array[String] = []
 var logs: Array[Dictionary] = []
 var log_banner: String = ""
 var log_banner_ticks: int = 0
+## Frames left on the "you now have a power" card. Kept separate from the log
+## banner: picking up an ability and reading a note are different events and
+## should not look the same.
+var unlock_ticks: int = 0
 var test_feather_pressed: bool = false
 var player: CharacterBody2D
 var camera: Camera2D
@@ -237,6 +241,8 @@ func _update_feathers() -> void:
 			# The first Feather grants the ability itself. Later ones are story
 			# objects, not fuel: they top the charge up and nothing more, and
 			# the charge never stacks.
+			if not has_feather:
+				unlock_ticks = 320
 			has_feather = true
 			feather_charges = 1
 			recharge_ticks = 0
@@ -256,6 +262,7 @@ func _reset_logs() -> void:
 	logs_found.clear()
 	log_banner = ""
 	log_banner_ticks = 0
+	unlock_ticks = 0
 	for l in logs:
 		l.taken = false
 
@@ -367,6 +374,8 @@ func _physics_process(delta: float) -> void:
 				feather_charges = 1
 		if log_banner_ticks > 0:
 			log_banner_ticks -= 1
+		if unlock_ticks > 0:
+			unlock_ticks -= 1
 		var feather_pressed := Input.is_action_just_pressed("feather") or test_feather_pressed
 		test_feather_pressed = false
 		if feather_pressed:
@@ -481,7 +490,7 @@ func _draw() -> void:
 	# Opening. Playtest finding: "the story line isnt clear from start" - the
 	# first two signs were still the starter's tutorial text, so the chapter
 	# opened on instructions instead of a premise. Both jobs now happen at once.
-	_sign(font, Vector2(33, 226), "SITE 07  /  DAY 41", 15, P.text_warn)
+	_sign(font, Vector2(33, 226), "SITE 07  /  GRAVITATIONAL RESEARCH", 15, P.text_warn)
 	_sign(font, Vector2(33, 246), "The debris stopped falling down.", 13, P.text_dim)
 	_sign(font, Vector2(33, 264), "Nobody left here knows why.", 12, P.text_faint)
 	_sign(font, Vector2(33, 282), "A D  walk      SPACE  jump", 12, P.text_faint)
@@ -492,7 +501,7 @@ func _draw() -> void:
 	_sign(font, Vector2(958, 216), "STRUCTURAL COHESION FAILING", 13, P.text_faint)
 	_sign(font, Vector2(1386, 196), "UPPER GANTRY", 13, P.text_warn)
 	_sign(font, Vector2(1376, 308), "LOWER DECK", 13, P.text_dim)
-	_sign(font, Vector2(1878, 236), "ANOMALY RECOVERED HERE", 12, P.text_faint)
+	_sign(font, Vector2(1878, 236), "THE FEATHER  /  RECOVERED HERE", 12, P.text_faint)
 	_sign(font, Vector2(2042, 250), "THE FLOOR IS NOT THE ONLY FLOOR", 13, P.text_faint)
 	# The INVERSION corridor. Every warning the player needs is written down:
 	# the Betrayal punishes assuming, not reading.

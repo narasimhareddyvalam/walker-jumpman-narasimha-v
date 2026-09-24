@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-09-24T02:25:19",
+  "created_at": "2026-09-24T16:32:16",
   "engine": "4.7.2-stable (official)",
   "failures": 0,
   "results": [
@@ -280,6 +280,13 @@
       "status": "PASS"
     },
     {
+      "id": "feather-pickup-announces-the-power",
+      "observed": {
+        "unlock_ticks": 312
+      },
+      "status": "PASS"
+    },
+    {
       "id": "feather-inverts-and-spends",
       "observed": {
         "charges": 0,
@@ -516,7 +523,7 @@
       "id": "logs-deliver-story-on-pickup",
       "observed": {
         "found": 1,
-        "text": "[\"Day 41.  Containment holding.  Third quiet week.\"]"
+        "text": "[\"Containment holding.  Nothing has fallen down in three weeks.\"]"
       },
       "status": "PASS"
     },

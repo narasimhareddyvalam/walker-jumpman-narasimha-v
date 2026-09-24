@@ -231,6 +231,11 @@ func run() -> void:
 	check("feather-grants-the-ability-and-one-charge",
 		game.has_feather and granted == 1 and game.feather_charges == 1,
 		{"has_feather": game.has_feather, "granted": granted, "after": game.feather_charges})
+	# Gaining the power has to announce itself, or the player never learns they
+	# have one. This assertion was added after the state existed, extending the
+	# check above rather than staged as its own red-green cycle.
+	check("feather-pickup-announces-the-power", game.unlock_ticks > 0,
+		{"unlock_ticks": game.unlock_ticks})
 
 	# Spending a charge inverts gravity; the player then falls upward onto a ceiling.
 	await fresh()
