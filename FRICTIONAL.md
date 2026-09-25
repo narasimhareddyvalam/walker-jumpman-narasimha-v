@@ -4,7 +4,7 @@
 
 This is a record of what was actually attempted, what broke, and what changed as
 a result. Entries describing code and command output are drawn from real runs and
-real commits and real runs. The design decisions, rejections and judgements
+real commits. The design decisions, rejections and judgements
 recorded here are mine; Claude organised the notes and wrote the implementation
 being described.
 
