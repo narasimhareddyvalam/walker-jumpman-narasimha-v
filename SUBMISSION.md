@@ -11,7 +11,7 @@
 | **Game-source revision shown in the film** | `c898a4b` |
 | **Godot version** | 4.7.2.stable.official.ed1daf0bf |
 | **Operating system** | macOS 26.5 (Darwin 25.6.0), Apple silicon |
-| **Final film filename** | `claude-liam-walker-jumpman-walkthrough.mp4` |
+| **Final film filename** | `narasimha-reddy-valam-walker-jumpman-walkthrough.mp4` |
 | **Final film URL** | `<PENDING — course media storage>` |
 | **Final film SHA-256** | `ad3cb5aaf265373eef34cd8a98ad3a3e454ec2e44e690ec1417fdd90221e779d` |
 

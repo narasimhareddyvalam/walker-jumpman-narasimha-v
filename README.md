@@ -233,7 +233,7 @@ Made with the Brutalist `godot-waikthrough` skill, walker modifier.
 
 | | |
 |---|---|
-| Filename | `claude-liam-walker-jumpman-walkthrough.mp4` |
+| Filename | `narasimha-reddy-valam-walker-jumpman-walkthrough.mp4` |
 | Format | 3840 × 2160 · H.264 · 30 fps · AAC stereo |
 | Runtime | 5:11 (311.3 s) |
 | SHA-256 | `ad3cb5aaf265373eef34cd8a98ad3a3e454ec2e44e690ec1417fdd90221e779d` |
