@@ -1,27 +1,49 @@
 # THE WORLD IS FALLING — Chapter One: The Fall
 
-**Project name:** `walker-jumpman-narasimha-v`
-**Student:** Narasimha Reddy Valam · CSYE 7270
-**Engine:** Godot **4.7.2.stable.official.ed1daf0bf** · GDScript, Compatibility/OpenGL renderer
-**Platform built and tested on:** macOS 26.5 (Darwin 25.6.0), Apple Silicon
+> **The world shows you what you expect, not what is there.**
+
+A dark side-scrolling puzzle-platformer built in Godot, where the central
+mechanic is not a jump but a question: *is what I am looking at real?*
+
+Gravity has failed. Debris falls upward past a dead research site, and the
+player is the one person who stayed behind instead of running. They find a
+**feather** that falls up — and while they hold it, so can they.
+
+What makes the chapter work is what that ability is *for*. This world lies.
+
+- A floor can be **real but never drawn** — you walk out over an apparent chasm
+  and something catches you.
+- A floor can be **drawn but not real** — it looks like solid ground and holds
+  nothing at all.
+- A platform can exist **only while you are upside down**.
+- Spikes can be **invisible and lethal**, or **fully rendered and harmless**.
+- A bulkhead marked `DOOR LOCKED` can be something you walk straight through.
+
+Every one of those has a rule behind it rather than being a trick, and there is
+always a way to check: **turn gravity upside down.** Inverted, the world stops
+flattering you and shows what is actually there.
+
+That is also why the palette flips. Upright, the site is pale institutional
+daylight — the comfortable lie. Inverted, it is near black — what is really
+there. Sixteen colour values change together, the interface included, so the
+screen can never disagree with which way up the player is.
+
+The chapter teaches this in three beats and then turns its own lesson over. The
+**Void Gap** catches a player who keeps walking. The **Betrayal**, a gap that
+looks identical, does not — because the lesson was never *hidden floors exist*,
+it was *check instead of assume*. And the way out is a tower whose door only
+opens for someone who can fall upward.
+
+**Player name:** the Runner — a leaning figure whose trail length *is* its
+horizontal speed, so the character puts itself out when it stops moving, and
+whose trail colour reports which way gravity is currently pulling.
 
 ---
 
-## Starter credit
-
-This is an **extension of**, not a replacement for,
-**[nikbearbrown/walker-jumpman](https://github.com/nikbearbrown/walker-jumpman)**
-by Nik Bear Brown, at commit **`9387542`**.
-
-That commit is the first commit in this repository, so every later commit is
-mine and the diff is exact:
-
-```bash
-git diff 9387542..HEAD --stat
-```
-
-Full attribution, including what was kept from the starter and what I added,
-is in [SOURCES.md](SOURCES.md).
+**Project:** `walker-jumpman-narasimha-v` · **Author:** Narasimha Reddy Valam
+**Engine:** Godot **4.7.2.stable.official.ed1daf0bf** · GDScript, Compatibility/OpenGL
+**Built and tested on:** macOS 26.5 (Darwin 25.6.0), Apple Silicon
+**Verification:** 70 mechanics checks · 9 keyboard checks · 0 failures
 
 ---
 
@@ -54,30 +76,20 @@ binding is the starter's, unchanged.
 
 ---
 
-## What this is
+## The chapter, in order
 
-Gravity broke. Everything started falling **up** instead of down. Everyone ran
-away; you stayed to find out why. You find a **feather** that falls upward, and
-while you hold it you can fall upward too. At the end you reach the tower and
-learn that you are the one who broke gravity.
+The familiar route → the ground begins breaking → a fork between two roads →
+**the feather** → ceiling runs → a chasm that catches you → the same chasm that
+does not → a platform that isn't there → a locked door that isn't locked → a
+lethal floor → a stretch marked `SAFE` that isn't → the tower, which only admits
+those who can fall upward.
 
-The chapter runs on a single rule: **the world shows you what you expect, not
-what is there.** A floor can be real but not drawn, so you walk on nothing and
-it holds. Another can be drawn but not real. Spikes can be invisible and deadly,
-or fully drawn and harmless. There is always a way to check — turn gravity
-upside down, and the world stops flattering you.
+It ends on the line the story has been building to, and on one question it
+deliberately refuses to answer.
 
-That is why the palette flips. **Light is the lie. Dark is what is really
-there.**
-
-**The chapter, in order:** the familiar route → the ground begins breaking → a
-fork between two roads → **the feather** → ceiling runs → a chasm that catches
-you → the same chasm that does not → a platform that isn't there → a locked door
-that isn't locked → a lethal floor → a stretch marked `SAFE` that isn't → the
-tower, which only admits those who can fall upward.
-
-The full design, including the four chapters that are **designed but not built**,
-is in [GDD.md](GDD.md).
+The full design — including the four chapters that are **designed but not
+built**, the environmental visual language, and the story in detail — is in
+[GDD.md](GDD.md).
 
 ---
 
@@ -178,6 +190,25 @@ lie; inverted, it is near-black — what is actually there. Sixteen colour keys
 flip together, the HUD included, so the interface can never contradict which
 world the player is standing in. Parallax strata, drifting debris and a minimal
 HUD throughout.
+
+---
+
+## Credit
+
+Built on the **[walker-jumpman](https://github.com/nikbearbrown/walker-jumpman)**
+starter by Nik Bear Brown, at commit **`9387542`** — a short first level with a
+few gaps, a spike, a finish flag, and a character drawn as four stacked
+rectangles.
+
+That commit is the first in this repository, so the diff between it and HEAD is
+exactly my work and can be read in one command:
+
+```bash
+git diff 9387542..HEAD --stat
+```
+
+What was kept, what was added, and the split between my decisions and AI
+implementation is itemised in [SOURCES.md](SOURCES.md).
 
 ---
 
