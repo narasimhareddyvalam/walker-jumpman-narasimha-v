@@ -269,9 +269,9 @@ Made with the Brutalist `godot-waikthrough` skill, walker modifier.
 | Runtime | 5:11 (311.3 s) |
 | SHA-256 | `ad3cb5aaf265373eef34cd8a98ad3a3e454ec2e44e690ec1417fdd90221e779d` |
 | Game source shown | commit `c898a4b` |
-| URL | *pending — course media storage; see [SUBMISSION.md](SUBMISSION.md)* |
+| URL | **[Watch on Northeastern OneDrive](https://northeastern-my.sharepoint.com/personal/valam_n_northeastern_edu/_layouts/15/stream.aspx?id=%2Fpersonal%2Fvalam_n_northeastern_edu%2FDocuments%2FVirtual%20Environments%2Fnarasimha-reddy-valam-walker-jumpman-walkthrough%2Emp4)** |
 
-The 37 MB master is kept out of this repository. Everything
+The 34 MB master is kept out of this repository and hosted on Northeastern OneDrive. Everything
 else about the film is committed under
 [`youtube/claude-liam-walker-jumpman-walkthrough/`](youtube/claude-liam-walker-jumpman-walkthrough/):
 the beat sheet with the full narration, the `coverage.json` evidence contract,

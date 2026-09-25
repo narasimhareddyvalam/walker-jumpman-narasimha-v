@@ -12,7 +12,7 @@
 | **Godot version** | 4.7.2.stable.official.ed1daf0bf |
 | **Operating system** | macOS 26.5 (Darwin 25.6.0), Apple silicon |
 | **Final film filename** | `narasimha-reddy-valam-walker-jumpman-walkthrough.mp4` |
-| **Final film URL** | `<PENDING — course media storage>` |
+| **Final film URL** | [Northeastern OneDrive](https://northeastern-my.sharepoint.com/personal/valam_n_northeastern_edu/_layouts/15/stream.aspx?id=%2Fpersonal%2Fvalam_n_northeastern_edu%2FDocuments%2FVirtual%20Environments%2Fnarasimha-reddy-valam-walker-jumpman-walkthrough%2Emp4) |
 | **Final film SHA-256** | `ad3cb5aaf265373eef34cd8a98ad3a3e454ec2e44e690ec1417fdd90221e779d` |
 
 The film shows game source `c898a4b`. Any commit after that adds submission
@@ -97,9 +97,9 @@ watched failing before the code that satisfies it existed.
   at speed (P15, P16), is the recharge too slow over the spike corridor (P14).
 - **The `evidence/` captures are scripted-input**, labelled as such throughout,
   and do not substitute for the human playtest.
-- **Film media is not in the repository.** The 37 MB master exceeds GitHub's
-  limit and lives in course media storage, identified above by filename and
-  SHA-256. The beat sheet, coverage contract, capture notes, shot list, riffs,
+- **Film media is not in the repository.** The 34 MB master exceeds GitHub's
+  limit and is hosted on Northeastern OneDrive, identified above by filename and
+  SHA-256 so the exact version can be checked. The beat sheet, coverage contract, capture notes, shot list, riffs,
   factcheck, prompts and input logs are all committed under `youtube/`.
 
 ---
