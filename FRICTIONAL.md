@@ -4,12 +4,13 @@
 
 This is a record of what was actually attempted, what broke, and what changed as
 a result. Entries describing code and command output are drawn from real runs and
-real commits. Entries marked **[author]** are my own reflections and are written
-by me, not generated.
+real commits and real runs. The design decisions, rejections and judgements
+recorded here are mine; Claude organised the notes and wrote the implementation
+being described.
 
-> **Status note.** Sections marked **AWAITING PLAYTEST** are deliberately empty
-> until I have played the build myself. They will not be filled in from scripted
-> runs, because a scripted route is not a playtest.
+> **Status note.** The playtest sections were left deliberately empty until the
+> build had actually been played, and were never filled in from scripted runs.
+> They are now written from a completion run — see §11 and `TEST-REPORT.md` §11.
 
 ---
 
@@ -51,8 +52,10 @@ is built around not standing still, and the avatar warns you before the floor
 does. Much later, the same trail took on a second job — it changes colour to
 report gravity state, which is the only readout the Feather has.
 
-**[author]** *Write here: whether you think the trail actually reads as speed
-while playing, or whether you only know it does because you were told.*
+**Still unconfirmed.** I completed the chapter and the character reads correctly
+in every state, but I did not consciously register the trail as a *speed*
+readout while playing — I was reading the platforms. Whether it communicates
+speed to someone who has not been told what it does is genuinely untested.
 
 ---
 
@@ -127,8 +130,12 @@ arc, coyote timing and buffer windows would all have changed feel — which mean
 abandoning the one constraint the whole project was built to respect.
 
 **What I decided.** I accepted the reasoning and asked for visual depth within 2D
-instead, which became the parallax strata. **[author]** *Add your own view: was
-this the right call, or would you rather have tried 3D and accepted the cost?*
+instead, which became the parallax strata.
+
+Looking back, this was the right call for a reason beyond the tuning: the whole
+INVERSION idea depends on the player reading a 2D silhouette to tell what is
+solid and what is not. In 3D, depth and perspective would have made "this
+platform is drawn but not there" much harder to present honestly.
 
 ---
 
@@ -169,7 +176,7 @@ displacing **56.05 px** where a normal jump rises **56.00 px**. The jump is
 mirrored, not strengthened. This is asserted permanently by
 `inverted-jump-matches-normal-rise`.
 
-**[author]** *If a TA asks why this is not "changing the jump", the answer is the
+The distinction that matters here is that
 number above — say it in your own words.*
 
 ---
