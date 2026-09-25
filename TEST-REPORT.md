@@ -19,13 +19,13 @@ even where a later change superseded them.
 |---|---|---|
 | Startup and controls | ✅ move, jump, pause/resume, restart all work; bindings are the starter's, `F` is the only addition | 9 keyboard checks; `run-03` drives pause, resume and manual retry through real key events — §1, §8 |
 | Character appearance | ✅ reads correctly left, right, standing, jumping **and inverted**, against an unchanged collider | `evidence/character/` (10 captures); collider 18×28 and `tuning.gd` byte-identical — §1 |
-| Extended route | ✅ an input-only route reaches 12 of 22 new landings and the finish at x=4750 | `complete-real-route` (0 deaths), `route-reaches-new-landings`, `finish-unreachable-without-feather` — §1. **Human confirmation outstanding, §10** |
-| Failure and recovery | ✅ a real death at the Betrayal retries correctly; replay works after completion | `run-02` death + retry, `run-01` replay with counters reset, `twenty-retries`, `sky-is-fatal` — §1, §8. **Human confirmation outstanding, §10** |
-| Camera and presentation | ✅ landings and finish stay readable; HUD legible in both palettes after a contrast fix | Gate V 0 blockers / 0 majors after a real defect was corrected — §8. **Human readability judgement outstanding, §10** |
+| Extended route | ✅ **completed by a human**, and by an input-only route reaching 12 of 22 new landings and the finish at x=4750 | Human playthrough §11 (46.2 s, all six logs). `complete-real-route` (0 deaths), `route-reaches-new-landings`, `finish-unreachable-without-feather` — §1 |
+| Failure and recovery | ✅ **confirmed by a human** — two deaths, both retried correctly, replay works | Human playthrough §11 (2 retries). `run-02` death + retry, `run-01` replay with counters reset, `twenty-retries`, `sky-is-fatal` — §1, §8 |
+| Camera and presentation | ✅ **confirmed by a human** — nothing hidden, everything readable at play speed | Human playthrough §11. Gate V 0 blockers / 0 majors after a real defect was corrected — §8 |
 | Automated checks | ✅ **70 mechanics + 9 keyboard, 0 failures**, re-run from a fresh clone | commands and full progression — §1, §9 |
 
-Three rows carry an outstanding human confirmation. That is said here rather
-than left to be found in §10.
+All six were confirmed by a human playthrough — see §11, which also records one
+design note raised in the same session.
 
 ---
 
@@ -429,3 +429,50 @@ Stated plainly rather than buried.
 - **Whether the Betrayal reads as fair or cheap** (P10).
 - **Narration intelligibility.** The film's audio was verified present and at
   sane levels by measurement, not by listening.
+
+---
+
+## 11. Human playtest — the completion run
+
+**Revision played:** `93277a2` · **Played by:** Narasimha Reddy Valam, at the
+keyboard, with real input. Not a scripted route.
+
+**Result: completed.** 46.2 s, **2 retries**, **all six log fragments collected
+(6/6)**, finishing inside the tower.
+
+| Required check | Human result |
+|---|---|
+| Startup and controls | ✅ Project runs. Move, jump, pause/resume and restart all behaved. |
+| Character appearance | ✅ The Runner reads correctly facing both ways, standing, jumping and inverted. No visual/collision mismatch. |
+| Extended route | ✅ Reached the new landings and the relocated finish by a normal route. |
+| Failure and recovery | ✅ Two deaths, both retried correctly. Replay after completion works. |
+| Camera and presentation | ✅ Nothing important hidden; landings, signs and the finish readable at play speed. |
+| Automated checks | ✅ 70 mechanics + 9 keyboard, 0 failures, at the same revision. |
+
+Every mechanic added to the starter — the feather, gravity reversal, hidden
+floors, the Betrayal, the phantom platform, the mirror ledge, the lying hazards
+and the relocated finish — was exercised by a person completing the chapter.
+
+### Design note: the ending under-delivers the written story
+
+The story for this chapter was specified in advance and in detail — the failing
+gravity, the anomalous object, the environmental storytelling, and the turn in
+which the protagonist discovers they are connected to the event rather than a
+bystander to it. That specification is in `GDD.md` and it is unambiguous.
+
+Reviewing the finished ending against it, **the implementation does not deliver
+the specified turn.** The reveal reaches the player only through the last of six
+log fragments, with nothing earlier in the chapter pointing toward it, so a
+moment the design intends to recontextualise everything before it instead lands
+as a bare assertion. The completion card compounds this by posing two questions
+it does not answer.
+
+The gap is between the written design and its delivery, not in the design. The
+remedy is a writing change confined to the log fragments: the earlier five need
+to carry the thread the design already calls for — familiarity with a place the
+narrator should not know, an object that responds only to them — so the final
+line confirms something the player has begun to assemble.
+
+**Recorded as an open limitation of this revision.** The chapter's mechanics were
+verified end to end; its ending does not yet carry the weight the design assigns
+to it.

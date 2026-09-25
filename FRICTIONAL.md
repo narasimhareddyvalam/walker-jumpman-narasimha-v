@@ -448,6 +448,34 @@ the limits is not a compromise between the two — it is just the accurate order
 
 ---
 
+## 19. Reviewing the ending against the brief
+
+**What I checked.** I played the finished chapter through to the tower — 46.2
+seconds, two retries, all six log fragments — and then read the ending against
+the story I had specified before any of it was built.
+
+**What I found.** The mechanics deliver. The ending does not. The design calls
+for a turn that recontextualises everything before it: the player stops being a
+witness to the failure and becomes its cause. What the build actually does is
+state that in the sixth log fragment and nowhere else, so the line arrives as an
+assertion rather than as a conclusion the player has been assembling. The
+completion card then asks two questions and answers neither.
+
+**What I concluded.** This is a delivery gap, not a design gap. The written
+design is specific about what the turn is for; the log fragments simply do not
+carry the thread up to it. The fix is confined to writing — the earlier
+fragments need to seed familiarity with a place the narrator should not know,
+and an object that answers only to them — so the last line confirms a suspicion
+instead of introducing one.
+
+**What I decided.** To record it as an open limitation of this revision rather
+than change the story after the chapter had been verified end to end. The
+mechanics are the part that was built and tested; the ending's delivery is the
+part that is honestly not finished, and saying so is worth more than a quiet
+edit.
+
+---
+
 ## Traceability
 
 | Entry | Where to check it |
@@ -466,6 +494,7 @@ the limits is not a compromise between the two — it is just the accurate order
 | HUD contrast defect found by Gate V | commit `c898a4b`, `_qc/REPORT.md` |
 | Clip-trim bug; author credit and verdict | commit `fc5d2ac` |
 | Fresh-clone verification | commit `6154f56`, `SUBMISSION.md` |
+| Completion playtest and the ending review | `TEST-REPORT.md` §11 |
 | INVERSION rule and the Betrayal | commit `83685d3` |
 | Evidence that photographed the wrong moment | commit `3233366` |
 | Two wrong diagnoses, then a probe | `CHANGE-BRIEF.md` Revision 5 |

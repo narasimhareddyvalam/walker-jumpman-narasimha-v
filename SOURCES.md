@@ -133,11 +133,28 @@ screen as a reconstruction because that is what it is.
 - **To reject a branching-path level.** Claude noted two classmates had already
   published branching extensions. I chose crumbling ledges instead so the
   section would *feel* different rather than merely be longer.
-- **The whole premise.** THE WORLD IS FALLING, the failing-gravity world, the
+- **The whole premise, written as a design brief before it was built.** THE
+  WORLD IS FALLING: the failing-gravity world, debris falling upward, the
   Feather as an anomalous technological object rather than a magic item,
   environmental storytelling over dialogue, the tower, the door line
-  *"ONLY THOSE WHO CAN FALL UPWARD MAY ENTER"*, and the chapter ending on an
-  unanswered question.
+  *"ONLY THOSE WHO CAN FALL UPWARD MAY ENTER"*, and a chapter that answers one
+  question while opening another.
+- **INVERSION as the central theme**, and the single law the whole chapter obeys
+  — *the world shows you what you expect, not what is there.* I specified the
+  hidden floor that catches a player who keeps walking, the identical gap that
+  does not, and that every trick must have a learnable rule behind it rather
+  than being a gotcha. The five-chapter arc in `GDD.md` — the Forest Below, the
+  City That Doesn't Exist, the Memory, the Other Side — is mine, as is the rule
+  that every major object must work as mechanic, puzzle tool and story piece at
+  once.
+- **The story's shape across the arc**: that the player's understanding should
+  be recontextualised rather than merely extended — *the world is broken*
+  becoming *the world is inverted*, *I am escaping* becoming *I was trying to
+  reach this place*, *I am discovering what happened* becoming *I am
+  remembering what I did*.
+- **That the environment should teach instead of the interface** — objects
+  resting where only one gravity could have put them, so the player learns to
+  read the architecture rather than follow prompts.
 - **That the Feather must be scarce** and that cancelling it early must not
   refund, so the mechanic creates decisions instead of being a free ability.
 - **That the game must stop looking like the instructor's template**, which

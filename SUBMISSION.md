@@ -75,13 +75,13 @@ watched failing before the code that satisfies it existed.
 
 ## Known limitations
 
-- **The human playtest is incomplete.** Narasimha played the build twice and
-  found five real defects, all recorded and acted on. Three rows of the required
-  table remain unverified by a person: the extended route reaching both new
-  landings and the relocated finish, failure and recovery plus replay, and
-  camera/presentation readability. `TEST-REPORT.md` §7 records this as
-  unverified rather than claiming it. The automated route covers all three, but
-  a scripted route is not a playtest.
+- **The ending under-delivers the written story.** The chapter's design calls
+  for a turn in which the player discovers they caused the failure rather than
+  witnessed it. The build states that only in the final log fragment, so the
+  line lands as an assertion rather than as a conclusion the player has been
+  assembling. This is a delivery gap rather than a design gap — the fix is
+  confined to the earlier log fragments — and it is recorded as open in
+  `TEST-REPORT.md` §11 and `FRICTIONAL.md` §19 rather than quietly edited.
 - **Narration intelligibility is unconfirmed by ear.** The film's audio was
   verified present and at sane levels by measurement (mean −27 dB, max −4 dB, no
   silence over 3 s), not by listening.
