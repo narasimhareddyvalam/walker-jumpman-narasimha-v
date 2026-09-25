@@ -273,11 +273,26 @@ controls line stopped being readable. A backing band was added behind it.
 
 ### Round 2 re-test
 
-**PENDING.** The three fixes are verified by automated checks and by inspection
-of the recaptured evidence, but a fix for a comprehension defect is only proven
-by a human who did not previously understand it. Round 2 records whether the
-premise now lands, whether the debris reads as falling upward, and whether the
-`F` prompt is findable without being told.
+Played again after the three fixes. Results against each:
+
+| Fix | Held up? |
+|---|---|
+| **O3 — the `F` affordance** | ✅ Yes. The pads and prompt work; the chapter stopped being blocked at the reversal, and every later session reached further than this one. This is the fix that mattered. |
+| **O1 — the opening premise** | ⚠️ Partly. The chapter no longer opens on the starter's tutorial text, but the writing was still doing the job badly — see §6, where the wording was rejected outright. |
+| **O2 — the debris** | ❌ No. The fix was worse than the defect. Forty-six pieces each dragging a trailing line read as pins on sticks rather than as falling matter, and it was rejected on sight. |
+
+Two further observations came out of the same session, both acted on:
+
+- **The platforms were plain rectangles.** Flat slabs regardless of what they
+  were meant to be. They became building rooftops and service catwalks chosen by
+  thickness, so the material now says what a surface is before it is stood on.
+- **The debris needed rethinking, not retuning.** Cut from 46 pieces to 14
+  rotating silhouettes of objects from the site. Rotation is what communicates a
+  free fall; a trailing line communicates a line.
+
+The failed debris attempt is kept in this record rather than replaced by the
+version that worked. Going from invisible, to visible-and-wrong, to right took
+three attempts and only the third is in the build.
 
 ---
 
